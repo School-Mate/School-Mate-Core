@@ -71,7 +71,7 @@ export default function Login() {
       <Seo />
 
       <main className='flex h-[100vh] w-[100vw] items-center justify-center'>
-        <div className='flex h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:h-[909px] lg:w-[644px]'>
+        <div className='flex h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
           <div className='w-full px-5 lg:w-[384px] lg:px-0'>
             <div className='mt-7 flex h-14 flex-row items-center justify-center lg:mt-20'>
               <Image
@@ -104,13 +104,16 @@ export default function Login() {
               로그인
             </Button>
           </div>
-          <div className='mt-5 flex w-full flex-row items-center justify-between px-5 lg:w-[375px] lg:px-0'>
+          <div className='mb-auto mt-5 flex w-full flex-row items-center justify-between px-5 lg:w-[375px] lg:px-0'>
             <div className='flex flex-row items-center justify-center'>
               <input
+                id='remember-me'
                 type='checkbox'
-                className='h-[13px] w-[13px] border-[1px] border-[#BABABA] focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[18px] lg:w-[18px]'
+                className='accent-schoolmate-500 checked:bg-schoolmate-500 h-[13px] w-[13px] rounded-[2px] border-[2px] border-[#BABABA] checked:border-transparent focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[18px] lg:w-[18px]'
               />
-              <span className='ml-2'>로그인 유지</span>
+              <label htmlFor='remember-me' className='ml-2'>
+                로그인 유지
+              </label>
             </div>
             <Link href='/password' className='text-sm lg:text-base'>
               비밀번호 찾기{' '}
@@ -119,7 +122,7 @@ export default function Login() {
           </div>
           <div className='mb-10 mt-auto w-full px-5 lg:mt-6 lg:w-[384px] lg:px-0'>
             <button
-              className='flex h-10 w-full flex-row items-center justify-center rounded-[10px] bg-[#F2CB05] lg:mt-20 lg:h-[65px] lg:w-[384px] lg:px-0'
+              className='flex h-10 w-full flex-row items-center justify-center rounded-[10px] bg-[#F2CB05] lg:h-[65px] lg:w-[384px] lg:px-0'
               onClick={() => {
                 handleOpenPopup('kakao');
               }}
