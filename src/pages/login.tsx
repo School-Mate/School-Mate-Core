@@ -2,20 +2,31 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
+import client from '@/lib/client';
+
 import Button from '@/components/buttons/Button';
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
 export default function Login() {
   const [popup, setPopup] = useState<Window | null>();
+  const [provider, setProvider] = useState<'kakao' | 'google'>();
 
   const handleOpenPopup = (provider: 'kakao' | 'google') => {
+    setProvider(provider);
     const width = 500;
     const height = 800;
     const left = window.screenX + (window.outerWidth - width) / 2;
     const top = window.screenY + (window.outerHeight - height) / 2;
+    const kakaoLoginUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_KEY}&redirect_uri=${process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URI}&response_type=code`;
+    const googleLoginUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_KEY}&redirect_uri=${process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URI}&response_type=code&scope=email%20profile`;
+
     const popup = window.open(
-      process.env.NEXT_PUBLIC_API_URL + `/auth/${provider}`,
+      provider === 'kakao'
+        ? kakaoLoginUrl
+        : provider === 'google'
+        ? googleLoginUrl
+        : '',
       '로그인 중...',
       `width=${width},height=${height},left=${left},top=${top}`
     );
@@ -23,43 +34,37 @@ export default function Login() {
   };
 
   useEffect(() => {
-    const currentUrl = window.location.href;
-    const searchParams = new URL(currentUrl).searchParams;
-    const code = searchParams.get('code');
-    if (code) {
-      window.opener.postMessage({ code }, window.location.origin);
-    }
-  }, []);
-
-  // 로그인 팝입이 열리면 로그인 로직을 처리합니다.
-  useEffect(() => {
     if (!popup) {
       return;
     }
 
-    const OAuthCodeListener = (e: any) => {
-      console.log(e);
-      // 동일한 Origin 의 이벤트만 처리하도록 제한
-      if (e.origin !== window.location.origin) {
+    const timer = setInterval(async () => {
+      if (!popup) {
+        timer && clearInterval(timer);
         return;
       }
-      const { code } = e.data;
-      if (code) {
-        // eslint-disable-next-line no-console
-        console.log(`The popup URL has URL code param = ${code}`);
+      const currentUrl = popup.location.href;
+      if (!currentUrl) {
+        return;
       }
-      popup?.close();
-      setPopup(null);
-    };
-
-    window.addEventListener('message', OAuthCodeListener, false);
+      const searchParams = new URL(currentUrl).searchParams;
+      const code = searchParams.get('code');
+      if (code) {
+        popup.close();
+        timer && clearInterval(timer);
+        try {
+          await client.get(`/auth/${provider}/callback?code=${code}`);
+        } catch (error) {
+          return;
+        }
+      }
+    }, 500);
 
     return () => {
-      window.removeEventListener('message', OAuthCodeListener);
-      popup?.close();
-      setPopup(null);
+      timer && clearInterval(timer);
     };
-  }, [popup]);
+  }, [popup, provider]);
+
   return (
     <Layout>
       {/* <Seo templateTitle='Home' /> */}
