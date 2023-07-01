@@ -2,10 +2,10 @@ import { AppProps } from 'next/app';
 import { ToastContainer } from 'react-toastify';
 import { SWRConfig } from 'swr';
 
+import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.css';
 import '@/styles/colors.css';
 import '@/styles/schoolmate.css';
-import 'react-toastify/dist/ReactToastify.css';
 
 import { swrfetcher } from '@/lib/client';
 
