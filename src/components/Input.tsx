@@ -48,7 +48,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           'focus:outline-none focus-visible:ring-0',
           'focus:border-schoolmate-300 focus:ring-schoolmate-300"',
           'shadow-sm',
-          'transition-colors duration-75'
+          'px-3 transition-colors duration-75'
         )}
         {...rest}
       >
