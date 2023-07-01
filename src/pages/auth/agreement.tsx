@@ -1,5 +1,5 @@
 import Router from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import useUser from '@/lib/hooks/useUser';
 
@@ -14,6 +14,12 @@ const LoginAgreement = () => {
   const [agreementPrivacy, setAgreementPrivacy] = useState<boolean>(false);
   const [agreementAds, setAgreementAds] = useState<boolean>(false);
   const { user, mutateUser } = useUser();
+
+  useEffect(() => {
+    if (user?.verified) {
+      Router.push('/');
+    }
+  }, [user]);
 
   const handleAgreementAll = () => {
     if (!agreementAge) {
@@ -159,13 +165,13 @@ const LoginAgreement = () => {
               </div>
               <div className='flex flex-row space-x-2 lg:space-x-9'>
                 <Button
-                  className='mb-5 mt-14 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:mb-14 lg:mt-40 lg:h-[65px]'
+                  className='mb-5 mt-14 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:mt-40 lg:h-[65px]'
                   variant='outline'
                 >
                   취소
                 </Button>
                 <Button
-                  className='mb-5 mt-14 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:mb-14 lg:mt-40 lg:h-[65px]'
+                  className='mb-5 mt-14 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:mt-40 lg:h-[65px]'
                   variant='primary'
                   onClick={() => {
                     nextButton(
