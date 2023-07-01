@@ -41,7 +41,7 @@ const LoginAgreement = () => {
     if (type === 'agreemanet') {
       handleAgreementAll();
     } else if (type === 'next') {
-      Router.push(`/auth/registor?marketing=${agreementAds}`);
+      Router.push(`/auth/registor?marketing=${agreementAds ? 'Y' : 'N'}`);
     }
   };
 
