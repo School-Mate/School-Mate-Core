@@ -32,7 +32,7 @@ interface LoginProps {
 const Login: NextPage<LoginProps> = ({ redirectTo }) => {
   const [popup, setPopup] = useState<Window | null>();
   const [provider, setProvider] = useState<'kakao' | 'google'>();
-  const { user, mutateUser } = useUser();
+  const { mutateUser } = useUser();
 
   const handleOpenPopup = (provider: 'kakao' | 'google') => {
     setProvider(provider);
@@ -78,6 +78,7 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
           const { data } = await client.get<User>(
             `/auth/${provider}/callback?code=${code}`
           );
+
           await mutateUser();
 
           if (!data.verified) {
