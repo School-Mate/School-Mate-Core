@@ -8,7 +8,15 @@ export const client = axios.create({
   withCredentials: true,
 });
 
-client.interceptors.response.use(
+export const loggedClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true,
+});
+
+loggedClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
