@@ -1,16 +1,38 @@
-import Image from 'next/image';
+import { AxiosError } from 'axios';
+import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
+import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import client from '@/lib/client';
+import useUser from '@/lib/hooks/useUser';
+import Toast from '@/lib/toast';
 
 import Button from '@/components/buttons/Button';
+import Checkbox from '@/components/CheckBox';
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
-export default function Login() {
+import { User } from '@/types/user';
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { redirectTo } = ctx.query;
+
+  return {
+    props: {
+      redirectTo: redirectTo || '/',
+    },
+  };
+};
+
+interface LoginProps {
+  redirectTo: string;
+}
+
+const Login: NextPage<LoginProps> = ({ redirectTo }) => {
   const [popup, setPopup] = useState<Window | null>();
   const [provider, setProvider] = useState<'kakao' | 'google'>();
+  const { user, mutateUser } = useUser();
 
   const handleOpenPopup = (provider: 'kakao' | 'google') => {
     setProvider(provider);
@@ -53,9 +75,20 @@ export default function Login() {
         popup.close();
         timer && clearInterval(timer);
         try {
-          await client.get(`/auth/${provider}/callback?code=${code}`);
+          const { data } = await client.get<User>(
+            `/auth/${provider}/callback?code=${code}`
+          );
+          await mutateUser();
+
+          if (!data.verified) {
+            return Router.push('/auth/agreement');
+          } else {
+            return Router.push(redirectTo);
+          }
         } catch (error) {
-          return;
+          if (error instanceof AxiosError) {
+            return Toast(error.response?.data?.message, 'error');
+          }
         }
       }
     }, 500);
@@ -67,32 +100,41 @@ export default function Login() {
 
   return (
     <Layout>
-      {/* <Seo templateTitle='Home' /> */}
-      <Seo />
+      <Seo templateTitle='로그인' />
 
       <main className='flex h-[100vh] w-[100vw] items-center justify-center'>
         <div className='flex h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
           <div className='w-full px-5 lg:w-[384px] lg:px-0'>
             <div className='mt-7 flex h-14 flex-row items-center justify-center lg:mt-20'>
-              <Image
-                src='/images/logo.png'
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src='/svg/Logo.svg'
                 alt='logo'
-                width={100}
-                height={100}
-                objectFit='contain'
+                className='h-[60px] w-[60px] lg:h-[70px] lg:w-[70px]'
+                style={{
+                  filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.2))',
+                }}
               />
+              <span
+                style={{
+                  fontFamily: 'Fredoka',
+                }}
+                className='ml-5 text-[20pt] font-semibold lg:text-[30pt]'
+              >
+                schoolmate
+              </span>
             </div>
-            <div className='mt-10 flex flex-col lg:mt-20'>
+            <div className='mt-10 flex flex-col lg:mt-10'>
               <span className='mb-1 text-sm lg:text-lg'>전화번호</span>
               <input
-                className='mt-1 h-10 rounded-[10px] border-[2px] border-[#BABABA] focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[57px]'
+                className='mt-1 h-10 rounded-[10px] border-[2px] border-[#BABABA] px-3 focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[57px]'
                 type='text'
               />
             </div>
             <div className='mt-2 flex flex-col lg:mt-4'>
               <span className='mb-1 text-sm lg:text-lg'>비밀번호</span>
               <input
-                className='mt-1 h-10 rounded-[10px] border-[2px] border-[#BABABA] focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[57px]'
+                className='mt-1 h-10 rounded-[10px] border-[2px] border-[#BABABA] px-3 focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[57px]'
                 type='password'
               />
             </div>
@@ -106,23 +148,22 @@ export default function Login() {
           </div>
           <div className='mb-auto mt-5 flex w-full flex-row items-center justify-between px-5 lg:w-[375px] lg:px-0'>
             <div className='flex flex-row items-center justify-center'>
-              <input
+              <Checkbox
                 id='remember-me'
-                type='checkbox'
-                className='accent-schoolmate-500 checked:bg-schoolmate-500 h-[13px] w-[13px] rounded-[2px] border-[2px] border-[#BABABA] checked:border-transparent focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[18px] lg:w-[18px]'
+                className='h-[13px] w-[13px] rounded-[2px] border-[2px] lg:h-[18px] lg:w-[18px]'
               />
               <label htmlFor='remember-me' className='ml-2'>
                 로그인 유지
               </label>
             </div>
             <Link href='/password' className='text-sm lg:text-base'>
-              비밀번호 찾기{' '}
-              <i className='fa-solid fa-chevron-right text-[10px] lg:text-sm' />
+              비밀번호 찾기
+              <i className='fa-solid fa-chevron-right ml-1 text-[10px] lg:text-sm' />
             </Link>
           </div>
           <div className='mb-10 mt-auto w-full px-5 lg:mt-6 lg:w-[384px] lg:px-0'>
             <button
-              className='flex h-10 w-full flex-row items-center justify-center rounded-[10px] bg-[#F2CB05] lg:h-[65px] lg:w-[384px] lg:px-0'
+              className='flex h-10 w-full flex-row items-center justify-center rounded-[10px] bg-[#FEE500] lg:h-[65px] lg:w-[384px] lg:px-0'
               onClick={() => {
                 handleOpenPopup('kakao');
               }}
@@ -154,7 +195,7 @@ export default function Login() {
                 아직 스쿨메이트 회원이 아니세요?
               </span>
               <Link
-                href='/signup'
+                href='/auth/signup'
                 className='text-sm underline underline-offset-2 lg:text-base'
               >
                 회원가입하기
@@ -165,4 +206,6 @@ export default function Login() {
       </main>
     </Layout>
   );
-}
+};
+
+export default Login;
