@@ -1,0 +1,49 @@
+@tailwind components;
+
+.background {
+  background-color: #f6f6f6;
+}
+
+.Toastify__toast {
+  background-color: #313234;
+  border-radius: 12px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  color: #fff;
+}
+
+.Toastify__toast-body {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex: none;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: fit-content;
+}
+
+.Toastify__toast-container {
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.appearance-none {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+@layer components {
+  [type="checkbox"]:checked {
+    background-image: url('data:image/svg+xml,<svg viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z"/></svg>');
+    @apply text-white;
+  }
+}

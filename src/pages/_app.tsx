@@ -1,8 +1,13 @@
 import { AppProps } from 'next/app';
+import { ToastContainer } from 'react-toastify';
+import { SWRConfig } from 'swr';
 
+import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.css';
-// !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
 import '@/styles/colors.css';
+import '@/styles/schoolmate.css';
+
+import { swrfetcher } from '@/lib/client';
 
 /**
  * !STARTERCONF info
@@ -10,7 +15,19 @@ import '@/styles/colors.css';
  */
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <SWRConfig
+      value={{
+        fetcher: swrfetcher,
+        onError: (err) => {
+          console.error(err);
+        },
+      }}
+    >
+      <Component {...pageProps} />
+      <ToastContainer />
+    </SWRConfig>
+  );
 }
 
 export default MyApp;
