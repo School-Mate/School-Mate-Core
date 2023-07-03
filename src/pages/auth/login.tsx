@@ -13,6 +13,7 @@ import Checkbox from '@/components/CheckBox';
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
+import { Response } from '@/types/client';
 import { User } from '@/types/user';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -32,7 +33,54 @@ interface LoginProps {
 const Login: NextPage<LoginProps> = ({ redirectTo }) => {
   const [popup, setPopup] = useState<Window | null>();
   const [provider, setProvider] = useState<'kakao' | 'google'>();
+  const [phone, setPhone] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [loginLoading, setLoginLoading] = useState<boolean>(false);
   const { mutateUser } = useUser();
+
+  useEffect(() => {
+    if (!popup) {
+      return;
+    }
+
+    const timer = setInterval(async () => {
+      if (!popup) {
+        timer && clearInterval(timer);
+        return;
+      }
+      const currentUrl = popup.location.href;
+      if (!currentUrl) {
+        return;
+      }
+      const searchParams = new URL(currentUrl).searchParams;
+      const code = searchParams.get('code');
+      if (code) {
+        popup.close();
+        timer && clearInterval(timer);
+        try {
+          const { data } = await client.get<Response<User>>(
+            `/auth/${provider}/callback?code=${code}`
+          );
+
+          await mutateUser();
+
+          if (!data.data.verified) {
+            return Router.push('/auth/agreement');
+          } else {
+            return Router.push(redirectTo);
+          }
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            return Toast(error.response?.data?.message, 'error');
+          }
+        }
+      }
+    }, 500);
+
+    return () => {
+      timer && clearInterval(timer);
+    };
+  }, [popup, provider]);
 
   const handleOpenPopup = (provider: 'kakao' | 'google') => {
     setProvider(provider);
@@ -55,49 +103,38 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
     setPopup(popup);
   };
 
-  useEffect(() => {
-    if (!popup) {
-      return;
+  const handleLogoutAndRegister = async () => {
+    try {
+      await client.get('/auth/logout');
+      await mutateUser();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      Router.push('/auth/agreement');
     }
+  };
 
-    const timer = setInterval(async () => {
-      if (!popup) {
-        timer && clearInterval(timer);
+  const handleLogin = async () => {
+    setLoginLoading(true);
+
+    try {
+      const { data } = await client.post<Response<User>>('/auth/login', {
+        phone: phone.replace(/-/g, ''),
+        password,
+      });
+      await mutateUser();
+      Router.push(redirectTo);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        Toast(error.response?.data?.message, 'error');
         return;
+      } else {
+        Toast('알 수 없는 오류가 발생했습니다.', 'error');
       }
-      const currentUrl = popup.location.href;
-      if (!currentUrl) {
-        return;
-      }
-      const searchParams = new URL(currentUrl).searchParams;
-      const code = searchParams.get('code');
-      if (code) {
-        popup.close();
-        timer && clearInterval(timer);
-        try {
-          const { data } = await client.get<User>(
-            `/auth/${provider}/callback?code=${code}`
-          );
-
-          await mutateUser();
-
-          if (!data.verified) {
-            return Router.push('/auth/agreement');
-          } else {
-            return Router.push(redirectTo);
-          }
-        } catch (error) {
-          if (error instanceof AxiosError) {
-            return Toast(error.response?.data?.message, 'error');
-          }
-        }
-      }
-    }, 500);
-
-    return () => {
-      timer && clearInterval(timer);
-    };
-  }, [popup, provider]);
+    } finally {
+      setLoginLoading(false);
+    }
+  };
 
   return (
     <Layout>
@@ -130,6 +167,16 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
               <input
                 className='mt-1 h-10 rounded-[10px] border-[2px] border-[#BABABA] px-3 focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[57px]'
                 type='text'
+                value={phone}
+                placeholder='010-0000-0000'
+                onChange={(e) => {
+                  setPhone(
+                    e.target.value
+                      ?.replace(/[^0-9]/g, '')
+                      .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3')
+                      .replace(/(-{1,2})$/g, '')
+                  );
+                }}
               />
             </div>
             <div className='mt-2 flex flex-col lg:mt-4'>
@@ -137,12 +184,17 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
               <input
                 className='mt-1 h-10 rounded-[10px] border-[2px] border-[#BABABA] px-3 focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[57px]'
                 type='password'
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
               />
             </div>
 
             <Button
               className='mt-8 flex h-10 w-full items-center justify-center rounded-[10px] lg:mt-12 lg:h-[65px]'
               variant='primary'
+              onClick={handleLogin}
             >
               로그인
             </Button>
@@ -195,12 +247,12 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
               <span className='mr-1 text-sm lg:mr-2 lg:text-base'>
                 아직 스쿨메이트 회원이 아니세요?
               </span>
-              <Link
-                href='/auth/signup'
+              <button
                 className='text-sm underline underline-offset-2 lg:text-base'
+                onClick={handleLogoutAndRegister}
               >
                 회원가입하기
-              </Link>
+              </button>
             </div>
           </div>
         </div>
