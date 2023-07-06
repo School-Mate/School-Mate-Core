@@ -25,5 +25,12 @@ export default function useUser({
     }
   }, [user, redirectIfFound, redirectTo]);
 
+  if (error)
+    return {
+      user: null,
+      mutateUser,
+      error,
+    };
+
   return { user, mutateUser, error };
 }

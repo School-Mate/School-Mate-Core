@@ -31,7 +31,7 @@ export default function Document() {
           rel='stylesheet'
         />
       </Head>
-      <body className='background'>
+      <body>
         <Main />
         <NextScript />
       </body>

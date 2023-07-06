@@ -37,7 +37,9 @@ export const swrfetcher = async <JSON = unknown>(
     .catch((e: AxiosError) => {
       const response = e.response as unknown as { data: { message: string } };
 
-      throw new Error(response?.data?.message || 'Something went wrong');
+      throw new Error(
+        response?.data?.message || '알 수 없는 에러가 발생했습니다.'
+      );
     });
 
 export default client;

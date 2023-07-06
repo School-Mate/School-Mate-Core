@@ -48,7 +48,6 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
         Toast('알 수 없는 오류가 발생했습니다.', 'error');
       }
     } finally {
-      console.log(phoneVerifyCodeRef.current);
       phoneVerifyCodeRef.current?.focus();
       setMessageSending(false);
     }
@@ -360,7 +359,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
   return (
     <Layout>
       <Seo templateTitle='회원가입' />
-      <main className='flex h-[100vh] w-[100vw] items-center justify-center'>
+      <main className='background flex h-[100vh] w-[100vw] items-center justify-center'>
         <div className='flex h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
           {stepList[step]}
         </div>

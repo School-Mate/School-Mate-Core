@@ -1,7 +1,5 @@
 import Router from 'next/router';
-import { useEffect, useState } from 'react';
-
-import useUser from '@/lib/hooks/useUser';
+import { useState } from 'react';
 
 import Button from '@/components/buttons/Button';
 import Checkbox from '@/components/CheckBox';
@@ -13,13 +11,6 @@ const LoginAgreement = () => {
   const [agreementTos, setAgreementTos] = useState<boolean>(false);
   const [agreementPrivacy, setAgreementPrivacy] = useState<boolean>(false);
   const [agreementAds, setAgreementAds] = useState<boolean>(false);
-  const { user, mutateUser } = useUser();
-
-  useEffect(() => {
-    if (user?.verified) {
-      Router.push('/');
-    }
-  }, [user]);
 
   const handleAgreementAll = () => {
     if (!agreementAge) {
@@ -58,7 +49,7 @@ const LoginAgreement = () => {
     <Layout>
       <Seo templateTitle='약관동의' />
 
-      <main className='flex h-[100vh] w-[100vw] items-center justify-center'>
+      <main className='background flex h-[100vh] w-[100vw] items-center justify-center'>
         <div className='flex h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
           <div className='mt-auto w-full max-w-[551px] px-5 lg:px-0'>
             <div className='mt-7 flex flex-row items-center justify-center px-4'>
