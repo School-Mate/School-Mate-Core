@@ -52,6 +52,26 @@ const HomePage: NextPage<HomePageProps> = ({ isLogged, school }) => {
                 titleImage: '/pepe.jpg',
               },
             ]}
+            askeds={[
+              {
+                user: {
+                  name: '장정훈',
+                },
+                title: '사이트 ㅈ망한거같으면 개추 ㅋㅋ',
+              },
+              {
+                user: {
+                  name: '장정훈',
+                },
+                title: '사이트 ㅈ망한거같으면 개추 ㅋㅋ',
+              },
+              {
+                user: {
+                  name: '장정훈',
+                },
+                title: '사이트 ㅈ망한거같으면 개추 ㅋㅋ',
+              },
+            ]}
           />
           <DashboardRightSection />
         </div>
