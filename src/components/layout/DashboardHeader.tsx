@@ -2,12 +2,12 @@ import useUser from '@/lib/hooks/useUser';
 
 import NextImage from '@/components/NextImage';
 
-const Header = () => {
+const Header = ({ school }: { school: ISchoolInfoRow }) => {
   const { user } = useUser();
 
   return (
     <>
-      <header className='mx-auto my-12 flex h-16 max-w-[1210px] flex-row items-center justify-between'>
+      <header className='mx-auto my-12 flex h-16 max-w-[1135px] flex-row items-center justify-between'>
         <div className='flex flex-row items-center justify-center'>
           <div className='mr-4 flex flex-row items-center justify-center'>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -34,7 +34,12 @@ const Header = () => {
                 }}
                 className='text-3xl font-bold'
               >
-                가천고
+                {school.SCHUL_KND_SC_NM === '고등학교'
+                  ? school.SCHUL_NM?.replace(/고등학교$/, '고')
+                  : ''}
+                {school.SCHUL_KND_SC_NM === '중학교'
+                  ? school.SCHUL_NM?.replace(/중학교$/, '중')
+                  : ''}
               </span>
             </div>
           </div>

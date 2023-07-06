@@ -1,9 +1,15 @@
 import Header from '@/components/layout/DashboardHeader';
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const DashboardLayout = ({
+  children,
+  school,
+}: {
+  children: React.ReactNode;
+  school: ISchoolInfoRow;
+}) => {
   return (
     <>
-      <Header />
+      <Header school={school} />
       <main>{children}</main>
     </>
   );

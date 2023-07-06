@@ -1,6 +1,7 @@
 import { AppProps } from 'next/app';
 import { ToastContainer } from 'react-toastify';
 import { SWRConfig } from 'swr';
+import 'dayjs/locale/ko';
 
 import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/globals.css';
