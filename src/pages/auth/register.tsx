@@ -29,7 +29,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
   const [name, setName] = React.useState('');
   const [phoneVerified, setPhoneVerified] = React.useState<boolean>(false);
   const [phoneVerifyCode, setPhoneVerifyCode] = React.useState<string>('');
-  const [step, setStep] = React.useState<number>(1);
+  const [step, setStep] = React.useState<number>(3);
   const phoneVerifyCodeRef = React.useRef<HTMLInputElement>(null);
   const { user, mutateUser, error: userError } = useUser();
 
@@ -187,7 +187,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             본인인증
           </span>
         </div>
-        <div className='mb-8 mt-8 h-full max-h-[350px] w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
+        <div className='mb-8 mt-8 h-[350px] w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
           <div className='flex flex-col'>
             <div className='mb-2 flex flex-row items-center'>
               <span className='text-sm font-bold lg:text-lg'>전화번호</span>
@@ -262,7 +262,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             회원가입
           </span>
         </div>
-        <div className='mb-8 mt-8 h-full max-h-[350px] w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
+        <div className='mb-8 mt-8 h-[350px] h-full w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
           <div className={clsxm('mb-5 flex flex-col')}>
             <div className='mb-1 flex flex-row items-center'>
               <span className='text-sm font-bold lg:text-lg'>이름</span>
@@ -344,7 +344,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             완료되었습니다!
           </span>
         </div>
-        <div className='mb-8 mt-8 flex h-full max-h-[350px] w-full items-center justify-center border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
+        <div className='mb-8 mt-8 flex h-[350px] h-full w-full items-center justify-center border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
           <LottieAnimaition
             className='h-40 w-40'
             loop={false}
@@ -359,8 +359,8 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
   return (
     <Layout>
       <Seo templateTitle='회원가입' />
-      <main className='background flex h-[100vh] w-[100vw] items-center justify-center'>
-        <div className='flex h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
+      <main className='background flex min-h-[100vh] w-[100vw] items-center justify-center'>
+        <div className='my-10 flex min-h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
           {stepList[step]}
         </div>
       </main>

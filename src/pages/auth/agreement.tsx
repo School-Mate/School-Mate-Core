@@ -49,8 +49,8 @@ const LoginAgreement = () => {
     <Layout>
       <Seo templateTitle='약관동의' />
 
-      <main className='background flex h-[100vh] w-[100vw] items-center justify-center'>
-        <div className='flex h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
+      <main className='background flex h-full min-h-[100vh] w-full min-w-[100vw] items-center justify-center'>
+        <div className='my-10 flex min-h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
           <div className='mt-auto w-full max-w-[551px] px-5 lg:px-0'>
             <div className='mt-7 flex flex-row items-center justify-center px-4'>
               {/* eslint-disable-next-line @next/next/no-img-element */}
