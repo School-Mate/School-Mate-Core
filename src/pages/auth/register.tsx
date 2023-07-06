@@ -29,7 +29,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
   const [name, setName] = React.useState('');
   const [phoneVerified, setPhoneVerified] = React.useState<boolean>(false);
   const [phoneVerifyCode, setPhoneVerifyCode] = React.useState<string>('');
-  const [step, setStep] = React.useState<number>(3);
+  const [step, setStep] = React.useState<number>(1);
   const phoneVerifyCodeRef = React.useRef<HTMLInputElement>(null);
   const { user, mutateUser, error: userError } = useUser();
 
@@ -262,7 +262,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             회원가입
           </span>
         </div>
-        <div className='mb-8 mt-8 h-[350px] h-full w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
+        <div className='mb-8 mt-8 h-[350px] w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
           <div className={clsxm('mb-5 flex flex-col')}>
             <div className='mb-1 flex flex-row items-center'>
               <span className='text-sm font-bold lg:text-lg'>이름</span>
@@ -344,7 +344,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             완료되었습니다!
           </span>
         </div>
-        <div className='mb-8 mt-8 flex h-[350px] h-full w-full items-center justify-center border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
+        <div className='mb-8 mt-8 flex h-[350px] w-full items-center justify-center border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
           <LottieAnimaition
             className='h-40 w-40'
             loop={false}
