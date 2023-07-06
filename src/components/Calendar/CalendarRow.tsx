@@ -24,7 +24,7 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
       content.push(<td></td>);
     }
     content.push(
-      <td className='relative text-center  text-gray-800 hover:text-blue-500'>
+      <td className='relative text-center text-gray-800 hover:text-blue-500'>
         1
       </td>
     );
@@ -35,13 +35,13 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
           {activeDay === i + 1 &&
           new Date().getMonth() === currentMonth &&
           new Date().getFullYear() === currentYear ? (
-            <td className='relative text-center  text-gray-800 hover:text-blue-500'>
-              <span className='rounded-full border-2 border-green-400 p-1'>
+            <td className='relative h-4 w-4 text-center text-sm text-gray-800 hover:text-blue-500'>
+              <span className='rounded-full border-2 border-green-400 px-1'>
                 {i + 1}
               </span>
             </td>
           ) : (
-            <td className='relative text-center  text-gray-800 hover:text-blue-500 '>
+            <td className='relative h-4 w-4 px-1 text-center text-sm text-gray-800 hover:text-blue-500'>
               {i + 1}
             </td>
           )}
@@ -59,13 +59,13 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
           {activeDay === i + (7 * row - firstDay) &&
           new Date().getMonth() === currentMonth &&
           new Date().getFullYear() === currentYear ? (
-            <td className='hover:text-schoolmate-500 relative  text-center text-gray-800'>
-              <span className='border-schoolmate-400 rounded-full border-2 p-1'>
+            <td className='hover:text-schoolmate-500 relative h-4 w-4 text-center text-sm text-gray-800'>
+              <span className='border-schoolmate-400 rounded-full border-2 px-1 text-sm'>
                 {i + (7 * row - firstDay)}
               </span>
             </td>
           ) : (
-            <td className='hover:text-schoolmate-500 relative  text-center text-gray-800'>
+            <td className='hover:text-schoolmate-500 relative h-4 w-4 px-1 text-center text-sm text-gray-800'>
               {i + (7 * row - firstDay)}
             </td>
           )}

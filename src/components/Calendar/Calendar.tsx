@@ -32,7 +32,7 @@ const Calendar: React.FC = () => {
   return (
     <div className='bg-white'>
       <div className='w-full rounded'>
-        <div className='-mx-2'>
+        <div>
           <table className='w-full dark:text-white'>
             <thead>
               <tr>

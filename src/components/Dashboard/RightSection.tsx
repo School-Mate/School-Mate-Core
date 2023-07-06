@@ -9,7 +9,20 @@ const DashboardRightSection = () => {
         <div className='flex flex-col'>
           <span className='text-xl font-bold'>위젯 보드</span>
           <div className=''>
-            <WigetCalendar todo={[{}]} />
+            <WigetCalendar
+              todos={[
+                {
+                  title: '수학 숙제',
+                  color: '#FF0000',
+                },
+                {
+                  title: '과학 숙제asdasdasdasdadssd',
+                },
+                {
+                  title: '과학 숙제',
+                },
+              ]}
+            />
           </div>
         </div>
       </div>
