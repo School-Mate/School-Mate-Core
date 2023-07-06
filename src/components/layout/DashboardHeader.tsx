@@ -14,7 +14,7 @@ const Header = () => {
             <img
               src='/svg/Logo.svg'
               alt='logo'
-              className='h-[45px] w-[50px] lg:h-[70px] lg:w-[70px]'
+              className='h-[60px] w-[60px] lg:h-[80px] lg:w-[80px]'
               style={{
                 filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.2))',
               }}
