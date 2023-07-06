@@ -11,6 +11,7 @@ import Toast from '@/lib/toast';
 import Button from '@/components/buttons/Button';
 import Checkbox from '@/components/CheckBox';
 import Layout from '@/components/layout/Layout';
+import Logo from '@/components/Logo';
 import Seo from '@/components/Seo';
 
 import { Response } from '@/types/client';
@@ -140,28 +141,10 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
     <Layout>
       <Seo templateTitle='로그인' />
 
-      <main className='flex h-[100vh] w-[100vw] items-center justify-center'>
+      <main className='background flex h-[100vh] w-[100vw] items-center justify-center'>
         <div className='flex h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
           <div className='w-full px-5 lg:w-[384px] lg:px-0'>
-            <div className='mt-7 flex h-14 flex-row items-center justify-center lg:mt-20'>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src='/svg/Logo.svg'
-                alt='logo'
-                className='h-[60px] w-[60px] lg:h-[70px] lg:w-[70px]'
-                style={{
-                  filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.2))',
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: 'Fredoka',
-                }}
-                className='ml-5 text-[20pt] font-semibold lg:text-[30pt]'
-              >
-                schoolmate
-              </span>
-            </div>
+            <Logo className='mt-7 lg:mt-20' />
             <div className='mt-10 flex flex-col lg:mt-10'>
               <span className='mb-1 text-sm lg:text-lg'>전화번호</span>
               <input
