@@ -8,17 +8,19 @@ dayjs.locale('ko');
 const WigetCalendar: React.FC<{ todos: any[] }> = ({ todos }) => {
   return (
     <>
-      <div className='my-4 flex flex-row rounded-[10px] border bg-white px-6 py-3'>
-        <div className='flex w-full min-w-[110px] flex-col'>
-          <h4 className='text-lg'>{dayjs().format('dddd')}</h4>
-          <h3 className='text-4xl'>{dayjs().format('D')}</h3>
-          <div className='mt-5 flex h-[90px] flex-col justify-between'>
+      <div className='my-4 flex h-[220px] flex-row items-center rounded-[10px] border bg-white px-6 py-4'>
+        <div className='flex h-full w-full min-w-[110px] flex-col'>
+          <div className='flex flex-col justify-between'>
+            <h4 className='text-lg'>{dayjs().format('dddd')}</h4>
+            <h3 className='text-4xl'>{dayjs().format('D')}</h3>
+          </div>
+          <div className='mb-2 mt-auto flex h-[90px] flex-col justify-between'>
             {todos.map((todo, index) => (
               <TodoList todo={todo} key={index} />
             ))}
           </div>
         </div>
-        <div className='flex w-full flex-col'>
+        <div className='flex h-full w-full flex-col justify-between'>
           <h5 className='text-lg font-bold'>{dayjs().format('M')}월</h5>
           <Calendar />
         </div>
