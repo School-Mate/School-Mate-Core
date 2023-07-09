@@ -8,7 +8,7 @@ dayjs.locale('ko');
 const WigetCalendar: React.FC<{ todos: any[] }> = ({ todos }) => {
   return (
     <>
-      <div className='my-4 flex h-[220px] flex-row items-center rounded-[10px] border bg-white px-6 py-4'>
+      <div className='mt-4 flex h-[220px] flex-row items-center rounded-[10px] border bg-white px-6 py-4'>
         <div className='flex h-full w-full min-w-[110px] flex-col'>
           <div className='flex flex-col justify-between'>
             <h4 className='text-lg'>{dayjs().format('dddd')}</h4>
