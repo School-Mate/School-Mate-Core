@@ -51,10 +51,10 @@ const BoardItemButton = React.forwardRef<HTMLButtonElement, BoardItemProps>(
             <h1 className='mt-0.5 text-[11pt] font-semibold leading-[18px]'>
               {title}
             </h1>
-            <p className='text-[9pt] leading-[20px] text-[#8D8D8D]'>
+            <p className='text-[9.5pt] leading-[20px] text-[#8D8D8D]'>
               {content.length > 20 ? content.slice(0, 20) + '...' : content}
             </p>
-            <h3 className='flex flex-row items-center justify-center text-[6pt] font-normal leading-[18px] text-[#707070]'>
+            <h3 className='flex flex-row items-center justify-center text-[8pt] font-normal leading-[18px] text-[#707070]'>
               <span>{schoolMateDateFormat(createdAt)}</span>
               <span className='mx-1 text-[14pt]'>&#183;</span>
               <span>{isAnonymous || !user ? '익명' : user.name}</span>
