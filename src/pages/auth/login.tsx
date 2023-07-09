@@ -142,9 +142,9 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
       <Seo templateTitle='로그인' />
 
       <main className='background flex h-full min-h-[100vh] w-full min-w-[100vw] items-center justify-center'>
-        <div className='my-10 flex min-h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
+        <div className='my-22 flex min-h-[90vh] w-[90vw] flex-col items-center justify-center rounded-[31px] bg-white lg:max-h-[909px] lg:min-h-[75vh] lg:max-w-[644px]'>
           <div className='w-full px-5 lg:w-[384px] lg:px-0'>
-            <Logo className='mt-7 lg:mt-20' />
+            <Logo className='mt-7' />
             <div className='mt-10 flex flex-col lg:mt-10'>
               <span className='mb-1 text-sm lg:text-lg'>전화번호</span>
               <input
@@ -182,7 +182,7 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
               로그인
             </Button>
           </div>
-          <div className='mb-auto mt-5 flex w-full flex-row items-center justify-between px-5 lg:w-[375px] lg:px-0'>
+          <div className='mt-5 flex w-full flex-row items-center justify-between px-5 lg:w-[375px] lg:px-0'>
             <div className='flex flex-row items-center justify-center'>
               <Checkbox
                 id='remember-me'
@@ -197,7 +197,7 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
               <i className='fa-solid fa-chevron-right ml-1 text-[10px] lg:text-sm' />
             </Link>
           </div>
-          <div className='mb-10 mt-auto w-full px-5 lg:mt-6 lg:w-[384px] lg:px-0'>
+          <div className=' mb-10 mt-5 w-full px-5 lg:mt-6 lg:w-[384px] lg:px-0'>
             <button
               className='flex h-10 w-full flex-row items-center justify-center rounded-[10px] bg-[#FEE500] lg:h-[65px] lg:w-[384px] lg:px-0'
               onClick={() => {

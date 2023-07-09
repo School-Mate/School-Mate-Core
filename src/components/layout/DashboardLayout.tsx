@@ -1,3 +1,5 @@
+import Head from 'next/head';
+
 import Header from '@/components/layout/DashboardHeader';
 
 const DashboardLayout = ({
@@ -9,6 +11,9 @@ const DashboardLayout = ({
 }) => {
   return (
     <>
+      <Head>
+        <meta name='viewport' content='width=1400' />
+      </Head>
       <Header school={school} />
       <main>{children}</main>
     </>
