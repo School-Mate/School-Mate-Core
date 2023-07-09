@@ -163,3 +163,33 @@ abbr[title] {
   justify-content: center;
   align-items: center;
 }
+
+.swiper-button-next {
+  background: url('/svg/right-arrow.svg') no-repeat, #fff;
+  background-size: 45% auto;
+  background-position: center;
+  border-radius: 100%;
+  border: 1xp #000;
+  margin-right: -20px;
+}
+
+.swiper-button-prev {
+  background: url('/svg/left-arrow.svg') no-repeat, #fff;
+  background-size: 45% auto;
+  background-position: center;
+  border-radius: 100%;
+  border-color: 1px #000;
+  margin-left: -20px;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  display: none;
+}
+
+.swiper-button-prev.swiper-button-disabled,
+.swiper-button-next.swiper-button-disabled {
+  opacity: 1;
+  cursor: default;
+  pointer-events: none;
+}

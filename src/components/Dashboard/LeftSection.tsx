@@ -1,5 +1,6 @@
 import { NextPage } from 'next';
 import * as React from 'react';
+import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 
 import clsxm from '@/lib/clsxm';
 
@@ -10,15 +11,19 @@ import Asked from '@/components/Dashboard/Asked';
 interface DashboardLeftSectionProps {
   articles: any[];
   askeds: any[];
+  boards: any[];
 }
 
 const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
   articles,
   askeds,
 }) => {
+  const [askSwiper, setAskSwiper] = React.useState<SwiperClass>();
+  const [askedIndex, setAskedIndex] = React.useState<number>(0);
   const [selectedBoard, setSelectedBoard] = React.useState<
     'board' | 'asked' | 'planner'
   >('board');
+
   return (
     <>
       <div className='flex w-full flex-col space-y-8'>
@@ -66,7 +71,7 @@ const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
                 />
               ))}
             </div>
-            <div className='ml-5 w-full rounded-[10px] border'></div>
+            <div className='ml-5 w-full rounded-[10px] border px-4 py-3'></div>
           </div>
           <div className='my-6 w-full border' />
           <Advertisement />
@@ -77,23 +82,68 @@ const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
               'text-xl font-bold',
               'hover:text-[#BEBEBE]',
               'bottom-[50%] top-[50%] flex -translate-y-1/2 transform flex-row items-center bg-white',
-              'absolute right-1 flex h-9 w-9 rounded-full border border-[#BEBEBE]'
+              'absolute left-1 z-10 flex h-9 w-9 rounded-full border border-[#BEBEBE]',
+              askedIndex === 0 ? 'hidden' : 'block'
             )}
+            onClick={() => {
+              askSwiper?.slidePrev();
+            }}
+          >
+            <i className='fas fa-chevron-left mx-auto text-lg' />
+          </button>
+          <button
+            className={clsxm(
+              'text-xl font-bold',
+              'hover:text-[#BEBEBE]',
+              'bottom-[50%] top-[50%] flex -translate-y-1/2 transform flex-row items-center bg-white',
+              'absolute right-1 z-10 flex h-9 w-9 rounded-full border border-[#BEBEBE]'
+            )}
+            onClick={() => {
+              askSwiper?.slideNext();
+            }}
           >
             <i className='fas fa-chevron-right mx-auto text-lg' />
           </button>
-          {askeds.slice(0, 3).map((asked, index) => (
-            <Asked user={asked.user} title={asked.title} key={index} />
-          ))}
+          <Swiper
+            slidesPerView={3}
+            centeredSlides={false}
+            slidesPerGroupSkip={3}
+            grabCursor={true}
+            keyboard={{
+              enabled: true,
+            }}
+            navigation={false}
+            pagination={{
+              clickable: true,
+            }}
+            onSwiper={setAskSwiper}
+            onSlideChange={(swiper) => {
+              setAskedIndex(swiper.activeIndex);
+            }}
+            spaceBetween={20}
+            loop={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: true,
+            }}
+          >
+            {askeds.map((asked, index) => (
+              <>
+                <SwiperSlide key={index}>
+                  <Asked user={asked.user} title={asked.title} key={index} />
+                </SwiperSlide>
+              </>
+            ))}
+          </Swiper>
         </div>
       </div>
     </>
   );
 };
 
-type SelectBoardButtonProps = {
-  isSelected: boolean;
-} & React.ComponentPropsWithRef<'button'>;
+interface SelectBoardButtonProps extends React.ComponentPropsWithRef<'button'> {
+  isSelected?: boolean;
+}
 
 const SelectBoardButton = React.forwardRef<
   HTMLButtonElement,

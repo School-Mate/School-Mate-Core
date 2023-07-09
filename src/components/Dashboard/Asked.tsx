@@ -12,7 +12,7 @@ const Asked: React.FC<{
 }> = ({ user, title }) => {
   return (
     <>
-      <div className='w-full max-w-[260px] rounded-[10px] border p-6'>
+      <div className='w-full rounded-[10px] border p-6'>
         <div className='flex flex-row items-center'>
           <NextImage
             src={user.profile ? user.profile : '/images/profile.jpg'}
