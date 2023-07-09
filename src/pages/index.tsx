@@ -13,8 +13,22 @@ import { Response } from '@/types/client';
 import { ISchoolInfoRow } from '@/types/school';
 import { User } from '@/types/user';
 
-const HomePage: NextPage<HomePageProps> = ({ isLogged, school }) => {
-  if (isLogged && school)
+interface HomePageProps {
+  user?: User;
+  school?: ISchoolInfoRow;
+  isLogged: boolean;
+  isVerifySchool: boolean;
+  isSchoolSelected: boolean;
+}
+
+const HomePage: NextPage<HomePageProps> = ({
+  isLogged,
+  isSchoolSelected,
+  isVerifySchool,
+  school,
+  user,
+}) => {
+  if (isLogged && isSchoolSelected && school && user)
     return (
       <DashboardLayout school={school}>
         <Seo />
@@ -108,7 +122,7 @@ const HomePage: NextPage<HomePageProps> = ({ isLogged, school }) => {
               },
             ]}
           />
-          <DashboardRightSection school={school} todos={[]} />
+          <DashboardRightSection school={school} todos={[]} user={user} />
         </div>
       </DashboardLayout>
     );
@@ -122,54 +136,91 @@ const HomePage: NextPage<HomePageProps> = ({ isLogged, school }) => {
   );
 };
 
-interface HomePageProps {
-  isLogged: boolean;
-  user?: User;
-  school?: ISchoolInfoRow;
-}
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const {
     req: { cookies },
   } = ctx;
 
   try {
-    const { data: userData } = await client.get<Response<User>>('/auth/me', {
-      headers: {
-        Authorization: 'Bearer ' + cookies.Authorization,
-      },
-    });
-    const { data: schoolData } = await client.get<Response<ISchoolInfoRow>>(
-      `/school/${cookies.schoolId}`
+    const { data: userData } = await client.get<Response<User>>(
+      '/auth/me?school=1',
+      {
+        headers: {
+          Authorization: 'Bearer ' + cookies.Authorization,
+        },
+      }
     );
 
     return {
       props: {
         isLogged: true,
+        isVerifySchool: true,
+        isSelectSchool: true,
         user: userData.data,
-        school: schoolData.data,
+        school: userData.data.UserSchool.school,
       },
     };
   } catch (error) {
-    if (cookies.schoolId) {
-      const { data } = await client.get<Response<ISchoolInfoRow>>(
-        `/school/${cookies.schoolId}`
+    try {
+      const { data: userData } = await client.get<Response<User>>(
+        '/auth/me?schoolverify=1',
+        {
+          headers: {
+            Authorization: 'Bearer ' + cookies.Authorization,
+          },
+        }
       );
 
+      if (userData.data?.UserSchoolVerify?.length != 0 || cookies.schoolId) {
+        try {
+          const { data: schoolData } = await client.get<
+            Response<ISchoolInfoRow>
+          >(
+            `/school/${
+              userData.data?.UserSchoolVerify?.length != 0
+                ? userData.data.UserSchoolVerify[0].schoolId
+                : cookies.schoolId
+            }`
+          );
+
+          return {
+            props: {
+              isLogged: true,
+              isSchoolSelected: true,
+              isVerifySchool: false,
+              user: userData.data,
+              school: schoolData.data,
+            },
+          };
+        } catch (error) {
+          return {
+            props: {
+              isLogged: true,
+              isSchoolSelected: false,
+              isVerifySchool: false,
+              user: userData.data,
+            },
+          };
+        }
+      } else {
+        return {
+          props: {
+            isLogged: true,
+            isSchoolSelected: false,
+            isVerifySchool: false,
+            user: userData.data,
+          },
+        };
+      }
+    } catch (error) {
       return {
         props: {
           isLogged: false,
-          user: null,
-          school: data.data,
+          isSchoolSelected: false,
+          isVerifySchool: false,
         },
       };
     }
-
-    return {
-      props: {
-        isLogged: false,
-      },
-    };
   }
 };
 
