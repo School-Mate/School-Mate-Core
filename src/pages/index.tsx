@@ -113,12 +113,53 @@ const HomePage: NextPage<HomePageProps> = ({
             ]}
             boards={[
               {
-                title: '성소수자게시판',
+                name: '자유게시판',
                 id: 1,
               },
               {
-                title: '성소수자게시판',
+                name: '스터디게시판',
                 id: 2,
+              },
+
+              {
+                name: '자격증게시판',
+                id: 3,
+              },
+              {
+                name: '정보게시판',
+                id: 4,
+              },
+              {
+                name: '홍보게시판',
+                id: 5,
+              },
+              {
+                name: '장터게시판',
+                id: 6,
+              },
+              {
+                name: '파티원구해요',
+                id: 7,
+              },
+              {
+                name: '주식메이트',
+                id: 8,
+              },
+              {
+                name: '끝말잇기',
+                id: 9,
+              },
+              {
+                name: '족보게시판',
+                id: 10,
+              },
+              {
+                name: '민주당게시판',
+                id: 11,
+              },
+              {
+                name: '국내야구게시판',
+                id: 12,
               },
             ]}
           />
@@ -140,6 +181,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const {
     req: { cookies },
   } = ctx;
+
+  if (!cookies.Authorization && !cookies.schoolId)
+    return {
+      props: {
+        isLogged: false,
+        isSchoolSelected: false,
+        isVerifySchool: false,
+      },
+    };
 
   try {
     const { data: userData } = await client.get<Response<User>>(

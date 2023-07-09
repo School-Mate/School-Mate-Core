@@ -1,4 +1,5 @@
 import { NextPage } from 'next';
+import Link from 'next/link';
 import * as React from 'react';
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
 
@@ -17,6 +18,7 @@ interface DashboardLeftSectionProps {
 const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
   articles,
   askeds,
+  boards,
 }) => {
   const [askSwiper, setAskSwiper] = React.useState<SwiperClass>();
   const [askedIndex, setAskedIndex] = React.useState<number>(0);
@@ -57,7 +59,7 @@ const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
             </SelectBoardButton>
           </div>
           <div className='mt-4 flex flex-row'>
-            <div className='flex h-[280px] w-full max-w-[474px] flex-col justify-between'>
+            <div className='mr-8 flex h-[280px] w-full max-w-[474px] flex-col justify-between'>
               {articles.slice(0, 3).map((article, index) => (
                 <BoardItemButton
                   key={index}
@@ -71,7 +73,34 @@ const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
                 />
               ))}
             </div>
-            <div className='ml-5 w-full rounded-[10px] border px-4 py-3'></div>
+            <div className='grid w-[318px] grid-cols-2 rounded-[10px] border py-6'>
+              <div className='flex flex-col space-y-4 border-r px-4'>
+                {boards.slice(0, 6).map((board, index) => (
+                  <>
+                    <Link
+                      href={`/board/${board.id}`}
+                      key={index}
+                      className='text-base'
+                    >
+                      {board.name}
+                    </Link>
+                  </>
+                ))}
+              </div>
+              <div className='flex flex-col space-y-4 px-4'>
+                {boards.slice(6, 12).map((board, index) => (
+                  <>
+                    <Link
+                      href={`/board/${board.id}`}
+                      key={index}
+                      className='text-base'
+                    >
+                      {board.name}
+                    </Link>
+                  </>
+                ))}
+              </div>
+            </div>
           </div>
           <div className='my-6 w-full border' />
           <Advertisement />
