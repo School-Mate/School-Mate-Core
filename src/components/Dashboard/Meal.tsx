@@ -22,35 +22,16 @@ const mealType = (returnType: 'number' | 'string') =>
     ? '3'
     : '석식';
 
-function isValid(s: string) {
-  let result = true;
-  const stack = [];
-  const map = {
-    '(': ')',
-  };
-
-  for (let i = 0; i < s.length; i++) {
-    if (s[i] === '(' || s[i] === '[' || s[i] === '{') {
-      stack.push(s[i]);
-    } else {
-      const s_key = stack.pop() as '(';
-      if (s[i] !== map[s_key]) result = false;
-    }
-  }
-  if (stack.length !== 0) result = false;
-  return result;
-}
-
 const WigetMeal: React.FC<WigetMealProps> = ({ school }) => {
   const {
     data: mealData,
-    mutate: mutateUser,
-    error,
+    mutate: mutateMealData,
+    error: mealDataError,
     isLoading: isMealLoading,
   } = useSWR<IMealInfoRow[]>(
     `/school/${school.SD_SCHUL_CODE}/meals?date=${dayjs().format(
       'YYYY-MM-DD'
-    )}&mealType=${mealType('number')}}`
+    )}&mealType=${mealType('number')}`
   );
 
   return (
@@ -60,11 +41,11 @@ const WigetMeal: React.FC<WigetMealProps> = ({ school }) => {
           [오늘의메뉴 - {mealType('string')}]
         </h2>
         <div className='mt-1 flex h-[100px] flex-col items-center justify-center px-5 text-center text-sm'>
-          {isMealLoading ? (
+          {!mealDataError && !mealData ? (
             <Loading />
           ) : (
             <>
-              {error || !mealData ? (
+              {mealDataError || !mealData ? (
                 <p>오늘의 {mealType('string')} 정보가 없습니다</p>
               ) : (
                 <div
