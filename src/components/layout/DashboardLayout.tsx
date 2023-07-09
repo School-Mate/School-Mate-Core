@@ -2,6 +2,8 @@ import Head from 'next/head';
 
 import Header from '@/components/layout/DashboardHeader';
 
+import { ISchoolInfoRow } from '@/types/school';
+
 const DashboardLayout = ({
   children,
   school,

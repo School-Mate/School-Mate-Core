@@ -10,6 +10,7 @@ import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
 import { Response } from '@/types/client';
+import { ISchoolInfoRow } from '@/types/school';
 import { User } from '@/types/user';
 
 const HomePage: NextPage<HomePageProps> = ({ isLogged, school }) => {

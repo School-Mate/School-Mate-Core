@@ -2,6 +2,8 @@ import useUser from '@/lib/hooks/useUser';
 
 import NextImage from '@/components/NextImage';
 
+import { ISchoolInfoRow } from '@/types/school';
+
 const Header = ({ school }: { school: ISchoolInfoRow }) => {
   const { user } = useUser();
 
