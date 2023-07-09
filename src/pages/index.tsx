@@ -108,7 +108,7 @@ const HomePage: NextPage<HomePageProps> = ({ isLogged, school }) => {
               },
             ]}
           />
-          <DashboardRightSection />
+          <DashboardRightSection school={school} todos={[]} />
         </div>
       </DashboardLayout>
     );
