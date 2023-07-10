@@ -2,9 +2,9 @@ import useUser from '@/lib/hooks/useUser';
 
 import NextImage from '@/components/NextImage';
 
-import { ISchoolInfoRow } from '@/types/school';
+import { School } from '@/types/school';
 
-const Header = ({ school }: { school: ISchoolInfoRow }) => {
+const Header = ({ school }: { school: School }) => {
   const { user } = useUser();
 
   return (
@@ -36,11 +36,15 @@ const Header = ({ school }: { school: ISchoolInfoRow }) => {
                 }}
                 className='text-3xl font-bold'
               >
-                {school.SCHUL_KND_SC_NM === '고등학교'
-                  ? school.SCHUL_NM?.replace(/고등학교$/, '고')
+                {school.kndsc === '고등학교'
+                  ? school.name
+                    ? school.name
+                    : school.defaultName?.replace(/고등학교$/, '고')
                   : ''}
-                {school.SCHUL_KND_SC_NM === '중학교'
-                  ? school.SCHUL_NM?.replace(/중학교$/, '중')
+                {school.kndsc === '중학교'
+                  ? school.name
+                    ? school.name
+                    : school.defaultName?.replace(/고등학교$/, '고')
                   : ''}
               </span>
             </div>

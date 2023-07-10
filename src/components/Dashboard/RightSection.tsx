@@ -4,12 +4,12 @@ import WigetBus from '@/components/Dashboard/Bus';
 import WigetCalendar from '@/components/Dashboard/Calendar';
 import WigetMeal from '@/components/Dashboard/Meal';
 
-import { ISchoolInfoRow } from '@/types/school';
+import { School } from '@/types/school';
 import { User } from '@/types/user';
 
 interface DashboardRightSectionProps {
   user: User;
-  school: ISchoolInfoRow;
+  school: School;
   todos: any[];
 }
 
