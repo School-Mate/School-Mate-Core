@@ -36,34 +36,34 @@ const HomePage: NextPage<HomePageProps> = ({
           <DashboardLeftSection
             articles={[
               {
-                title: '사이트 ㅈ망한거같으면 개추 ㅋㅋ',
-                content: '일단 나부터~',
+                title: '테스트 1',
+                content: '테스트........ㅁ.ㄴㅇㅁㄴㅇㅁㄴ ㄴㅁㅇㅁㅇㅁ',
                 createdAt: new Date(),
                 isAnonymous: false,
                 user: {
                   name: '장정훈',
                 },
-                board: '성소수자게시판',
+                board: '테스트게시판1',
               },
               {
-                title: '사이트 ㅈ망한거같으면 개추 ㅋㅋ',
-                content: '일단 나부터~',
+                title: '테스트 2',
+                content: '테스트........ㅁ.ㄴㅇㅁㄴㅇㅁㄴ ㄴㅁㅇㅁㅇㅁ',
                 createdAt: new Date(),
                 isAnonymous: false,
                 user: {
                   name: '장정훈',
                 },
-                board: '성소수자게시판',
+                board: '테스트게시판2',
               },
               {
-                title: '사이트 ㅈ망한거같으면 개추 ㅋㅋ',
-                content: '일단 나부터~',
+                title: '테스트 3',
+                content: '테스트........ㅁ.ㄴㅇㅁㄴㅇㅁㄴ ㄴㅁㅇㅁㅇㅁ',
                 createdAt: new Date(),
                 isAnonymous: false,
                 user: {
                   name: '장정훈',
                 },
-                board: '성소수자게시판',
+                board: '테스트게시판3',
                 titleImage: '/pepe.jpg',
               },
             ]}
@@ -154,11 +154,11 @@ const HomePage: NextPage<HomePageProps> = ({
                 id: 10,
               },
               {
-                name: '민주당게시판',
+                name: '학교생활',
                 id: 11,
               },
               {
-                name: '국내야구게시판',
+                name: '선생님추천',
                 id: 12,
               },
             ]}
