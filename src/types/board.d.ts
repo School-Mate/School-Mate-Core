@@ -1,3 +1,6 @@
 export interface Board {
-  [keyof: string]: any;
+  id: string;
+  boardId: number;
+  name: string;
+  userId: stringF;
 }

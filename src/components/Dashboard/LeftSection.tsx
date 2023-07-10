@@ -19,9 +19,8 @@ import { Review } from '@/types/review';
 interface DashboardLeftSectionProps {
   articles: Article[];
   askeds?: AskedUser[];
-  boards: Board[];
+  boards?: Board[];
   reviews: Review[];
-  isVerifySchool: boolean;
 }
 
 const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
@@ -29,7 +28,6 @@ const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
   askeds,
   boards,
   reviews,
-  isVerifySchool,
 }) => {
   const [askSwiper, setAskSwiper] = React.useState<SwiperClass>();
   const [askedIndex, setAskedIndex] = React.useState<number>(0);
@@ -75,34 +73,44 @@ const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
                 <BoardItemButton key={index} article={article} />
               ))}
             </div>
-            <div className='grid w-[318px] grid-cols-2 rounded-[10px] border py-6'>
-              <div className='flex flex-col space-y-4 border-r px-4'>
-                {boards.slice(0, 6).map((board, index) => (
-                  <>
-                    <Link
-                      href={`/board/${board.id}`}
-                      key={index}
-                      className='text-base'
-                    >
-                      {board.name}
-                    </Link>
-                  </>
-                ))}
-              </div>
-              <div className='flex flex-col space-y-4 px-4'>
-                {boards.slice(6, 12).map((board, index) => (
-                  <>
-                    <Link
-                      href={`/board/${board.id}`}
-                      key={index}
-                      className='text-base'
-                    >
-                      {board.name}
-                    </Link>
-                  </>
-                ))}
-              </div>
-            </div>
+            {boards ? (
+              <>
+                <div className='grid w-[318px] grid-cols-2 rounded-[10px] border py-6'>
+                  <div className='flex flex-col space-y-4 border-r px-4'>
+                    {boards.slice(0, 6).map((board, index) => (
+                      <>
+                        <Link
+                          href={`/board/${board.id}`}
+                          key={index}
+                          className='text-base'
+                        >
+                          {board.name}
+                        </Link>
+                      </>
+                    ))}
+                  </div>
+                  <div className='flex flex-col space-y-4 px-4'>
+                    {boards.slice(6, 12).map((board, index) => (
+                      <>
+                        <Link
+                          href={`/board/${board.id}`}
+                          key={index}
+                          className='text-base'
+                        >
+                          {board.name}
+                        </Link>
+                      </>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className='flex w-[318px] items-center justify-center rounded-[10px] border py-6'>
+                  <Loading />
+                </div>
+              </>
+            )}
           </div>
           <div className='my-6 w-full border' />
           <Advertisement />

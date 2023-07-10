@@ -11,6 +11,7 @@ import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
 import { AskedUser } from '@/types/asked';
+import { Board } from '@/types/board';
 import { Response } from '@/types/client';
 import { User } from '@/types/user';
 
@@ -26,6 +27,7 @@ const HomePage: NextPage<HomePageProps> = ({
   user,
 }) => {
   const { data: askeds } = useSWR<AskedUser[]>('/asked', swrfetcher);
+  const { data: boards } = useSWR<Board[]>('/board', swrfetcher);
 
   if (isSchoolSelected && user)
     return (
@@ -33,7 +35,6 @@ const HomePage: NextPage<HomePageProps> = ({
         <Seo />
         <div className='mx-auto mt-5 flex max-w-[1280px] flex-row justify-center'>
           <DashboardLeftSection
-            isVerifySchool={isVerifySchool}
             articles={[
               {
                 title: '테스트 1',
@@ -68,57 +69,7 @@ const HomePage: NextPage<HomePageProps> = ({
               },
             ]}
             askeds={askeds}
-            boards={[
-              {
-                name: '자유게시판',
-                id: 1,
-              },
-              {
-                name: '스터디게시판',
-                id: 2,
-              },
-
-              {
-                name: '자격증게시판',
-                id: 3,
-              },
-              {
-                name: '정보게시판',
-                id: 4,
-              },
-              {
-                name: '홍보게시판',
-                id: 5,
-              },
-              {
-                name: '장터게시판',
-                id: 6,
-              },
-              {
-                name: '파티원구해요',
-                id: 7,
-              },
-              {
-                name: '주식메이트',
-                id: 8,
-              },
-              {
-                name: '끝말잇기',
-                id: 9,
-              },
-              {
-                name: '족보게시판',
-                id: 10,
-              },
-              {
-                name: '학교생활',
-                id: 11,
-              },
-              {
-                name: '선생님추천',
-                id: 12,
-              },
-            ]}
+            boards={boards}
             reviews={[
               {
                 teacher: '이순신',
