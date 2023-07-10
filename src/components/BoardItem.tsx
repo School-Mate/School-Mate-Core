@@ -5,35 +5,17 @@ import { schoolMateDateFormat } from '@/lib/utils';
 
 import NextImage from '@/components/NextImage';
 
-import { User } from '@/types/user';
+import { Article } from '@/types/article';
 
 interface BoardItem {
-  title: string;
-  content: string;
-  board: string;
-  user?: User;
-  createdAt: Date;
-  isAnonymous: boolean;
-  titleImage?: string;
+  article: Article;
 }
 
 type BoardItemProps = BoardItem & React.ComponentPropsWithRef<'button'>;
 
 const BoardItemButton = React.forwardRef<HTMLButtonElement, BoardItemProps>(
   (
-    {
-      children,
-      className,
-      disabled: buttonDisabled,
-      title,
-      content,
-      user,
-      isAnonymous,
-      createdAt,
-      board,
-      titleImage,
-      ...rest
-    },
+    { children, className, disabled: buttonDisabled, article, ...rest },
     ref
   ) => {
     return (
@@ -49,22 +31,28 @@ const BoardItemButton = React.forwardRef<HTMLButtonElement, BoardItemProps>(
         >
           <div className='flex flex-col items-start'>
             <h1 className='mt-0.5 text-[11pt] font-semibold leading-[18px]'>
-              {title}
+              {article.title}
             </h1>
             <p className='text-[9.5pt] leading-[20px] text-[#8D8D8D]'>
-              {content.length > 20 ? content.slice(0, 20) + '...' : content}
+              {article.content.length > 20
+                ? article.content.slice(0, 20) + '...'
+                : article.content}
             </p>
             <h3 className='flex flex-row items-center justify-center text-[8pt] font-normal leading-[18px] text-[#707070]'>
-              <span>{schoolMateDateFormat(createdAt)}</span>
+              <span>{schoolMateDateFormat(article.createdAt)}</span>
               <span className='mx-1 text-[14pt]'>&#183;</span>
-              <span>{isAnonymous || !user ? '익명' : user.name}</span>
-              <span className='mx-2'>{board}</span>
+              <span>
+                {article.isAnonymous || !article.user
+                  ? '익명'
+                  : article.user.name}
+              </span>
+              <span className='mx-2'>{article.board}</span>
             </h3>
           </div>
           <div>
-            {titleImage && (
+            {article.titleImage && (
               <NextImage
-                src={titleImage}
+                src={article.titleImage}
                 alt='image'
                 style={{
                   objectFit: 'cover',
