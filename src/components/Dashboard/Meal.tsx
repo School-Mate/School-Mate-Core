@@ -3,10 +3,10 @@ import useSWR from 'swr';
 
 import Loading from '@/components/Loading';
 
-import { IMealInfoRow, ISchoolInfoRow } from '@/types/school';
+import { IMealInfoRow, School } from '@/types/school';
 
 interface WigetMealProps {
-  school: ISchoolInfoRow;
+  school: School;
 }
 
 const mealType = (returnType: 'number' | 'string') =>
@@ -29,7 +29,7 @@ const WigetMeal: React.FC<WigetMealProps> = ({ school }) => {
     error: mealDataError,
     isLoading: isMealLoading,
   } = useSWR<IMealInfoRow[]>(
-    `/school/${school.SD_SCHUL_CODE}/meals?date=${dayjs().format(
+    `/school/${school.schoolId}/meals?date=${dayjs().format(
       'YYYY-MM-DD'
     )}&mealType=${mealType('number')}`
   );
