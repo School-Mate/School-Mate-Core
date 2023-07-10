@@ -142,7 +142,7 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
       <Seo templateTitle='로그인' />
 
       <main className='background flex h-full min-h-[100vh] w-full min-w-[100vw] items-center justify-center'>
-        <div className='my-22 flex min-h-[90vh] w-[90vw] flex-col items-center justify-center rounded-[31px] bg-white py-20 lg:max-h-[909px] lg:min-h-[75vh] lg:max-w-[644px]'>
+        <div className='my-8 flex min-h-[85vh] w-[90vw] flex-col items-center justify-center rounded-[31px] bg-white py-10 lg:max-h-[909px] lg:min-h-[75vh] lg:max-w-[644px]'>
           <div className='w-full px-5 lg:w-[384px] lg:px-0'>
             <Logo className='mt-7' />
             <div className='mt-10 flex flex-col lg:mt-10'>
