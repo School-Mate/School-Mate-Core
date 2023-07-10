@@ -1,7 +1,8 @@
 import { GetServerSideProps, NextPage } from 'next';
 import * as React from 'react';
+import useSWR from 'swr';
 
-import client from '@/lib/client';
+import client, { swrfetcher } from '@/lib/client';
 
 import DashboardLeftSection from '@/components/Dashboard/LeftSection';
 import DashboardRightSection from '@/components/Dashboard/RightSection';
@@ -9,31 +10,30 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
+import { AskedUser } from '@/types/asked';
 import { Response } from '@/types/client';
-import { ISchoolInfoRow } from '@/types/school';
 import { User } from '@/types/user';
 
 interface HomePageProps {
   user?: User;
-  school?: ISchoolInfoRow;
-  isLogged: boolean;
   isVerifySchool: boolean;
   isSchoolSelected: boolean;
 }
 
 const HomePage: NextPage<HomePageProps> = ({
-  isLogged,
   isSchoolSelected,
   isVerifySchool,
-  school,
   user,
 }) => {
-  if (isLogged && isSchoolSelected && school && user)
+  const { data: askeds } = useSWR<AskedUser[]>('/asked', swrfetcher);
+
+  if (isSchoolSelected && user)
     return (
-      <DashboardLayout school={school}>
+      <DashboardLayout school={user.UserSchool.school}>
         <Seo />
         <div className='mx-auto mt-5 flex max-w-[1280px] flex-row justify-center'>
           <DashboardLeftSection
+            isVerifySchool={isVerifySchool}
             articles={[
               {
                 title: '테스트 1',
@@ -67,50 +67,7 @@ const HomePage: NextPage<HomePageProps> = ({
                 titleImage: '/pepe.jpg',
               },
             ]}
-            askeds={[
-              {
-                user: {
-                  name: '장정훈',
-                },
-                title: '테스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-              },
-              {
-                user: {
-                  name: '장정훈',
-                },
-                title: '테스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-              },
-              {
-                user: {
-                  name: '장정훈',
-                },
-                title: '테스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-              },
-              {
-                user: {
-                  name: '장정훈',
-                },
-                title: '테스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-              },
-              {
-                user: {
-                  name: '장정훈',
-                },
-                title: '테스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-              },
-              {
-                user: {
-                  name: '장정훈',
-                },
-                title: '테스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-              },
-              {
-                user: {
-                  name: '장정훈',
-                },
-                title: '테스트ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ',
-              },
-            ]}
+            askeds={askeds}
             boards={[
               {
                 name: '자유게시판',
@@ -162,8 +119,20 @@ const HomePage: NextPage<HomePageProps> = ({
                 id: 12,
               },
             ]}
+            reviews={[
+              {
+                teacher: '이순신',
+                content: '좋아요',
+                star: 5,
+                subject: '수학',
+              },
+            ]}
           />
-          <DashboardRightSection school={school} todos={[]} user={user} />
+          <DashboardRightSection
+            school={user.UserSchool.school}
+            todos={[]}
+            user={user}
+          />
         </div>
       </DashboardLayout>
     );
@@ -193,7 +162,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     const { data: userData } = await client.get<Response<User>>(
-      '/auth/me?school=1',
+      '/auth/initiate',
       {
         headers: {
           Authorization: 'Bearer ' + cookies.Authorization,
@@ -202,75 +171,16 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     );
 
     return {
-      props: {
-        isLogged: true,
-        isVerifySchool: true,
-        isSelectSchool: true,
-        user: userData.data,
-        school: userData.data.UserSchool.school,
-      },
+      props: userData.data,
     };
   } catch (error) {
-    try {
-      const { data: userData } = await client.get<Response<User>>(
-        '/auth/me?schoolverify=1',
-        {
-          headers: {
-            Authorization: 'Bearer ' + cookies.Authorization,
-          },
-        }
-      );
-
-      if (userData.data?.UserSchoolVerify?.length != 0 || cookies.schoolId) {
-        try {
-          const { data: schoolData } = await client.get<
-            Response<ISchoolInfoRow>
-          >(
-            `/school/${
-              userData.data?.UserSchoolVerify?.length != 0
-                ? userData.data.UserSchoolVerify[0].schoolId
-                : cookies.schoolId
-            }`
-          );
-
-          return {
-            props: {
-              isLogged: true,
-              isSchoolSelected: true,
-              isVerifySchool: false,
-              user: userData.data,
-              school: schoolData.data,
-            },
-          };
-        } catch (error) {
-          return {
-            props: {
-              isLogged: true,
-              isSchoolSelected: false,
-              isVerifySchool: false,
-              user: userData.data,
-            },
-          };
-        }
-      } else {
-        return {
-          props: {
-            isLogged: true,
-            isSchoolSelected: false,
-            isVerifySchool: false,
-            user: userData.data,
-          },
-        };
-      }
-    } catch (error) {
-      return {
-        props: {
-          isLogged: false,
-          isSchoolSelected: false,
-          isVerifySchool: false,
-        },
-      };
-    }
+    return {
+      props: {
+        isLogged: false,
+        isSchoolSelected: false,
+        isVerifySchool: false,
+      },
+    };
   }
 };
 
