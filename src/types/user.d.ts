@@ -1,4 +1,4 @@
-import { ISchoolInfoRow } from '@/types/school';
+import { ISchoolInfoRow, School } from '@/types/school';
 
 export interface User {
   id: string;
@@ -15,7 +15,7 @@ export interface User {
   Agreement: Agreement;
   Image: Image[];
   UserSchoolVerify: UserSchoolVerify[];
-  UserSchool: UserSchool;
+  UserSchool: UserSchoolWithUser;
 }
 
 export interface Agreement {
@@ -59,6 +59,10 @@ export interface SocialLogin {
   userId: string;
   socialId: string;
 }
+
+export type UserSchoolWithUser = UserSchool & {
+  school: School;
+};
 
 export type UserLoginProviderType = 'id' | 'social';
 export type Process = 'pending' | 'success' | 'deny';

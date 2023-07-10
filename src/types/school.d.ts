@@ -159,3 +159,14 @@ export interface IMealInfoRow {
    */
   MLSV_TO_YMD?: string;
 }
+
+export interface School {
+  schoolId: string;
+  name: string | null;
+  code: string;
+  defaultName: string;
+  address: string;
+  x: number;
+  y: number;
+  kndsc: string;
+}
