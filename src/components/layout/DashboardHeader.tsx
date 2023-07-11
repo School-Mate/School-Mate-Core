@@ -1,15 +1,23 @@
-import useUser from '@/lib/hooks/useUser';
+import Link from 'next/link';
 
 import NextImage from '@/components/NextImage';
 
-const Header = ({ school }: { school: ISchoolInfoRow }) => {
-  const { user } = useUser();
+import { User, UserSchoolWithUser } from '@/types/user';
 
+interface HeaderProps {
+  user: User;
+  school: UserSchoolWithUser;
+}
+
+const Header: React.FC<HeaderProps> = ({ user, school }) => {
   return (
     <>
       <header className='mx-auto my-12 flex h-16 max-w-[1135px] flex-row items-center justify-between'>
         <div className='flex flex-row items-center justify-center'>
-          <div className='mr-4 flex flex-row items-center justify-center'>
+          <Link
+            className='mr-4 flex flex-row items-center justify-center'
+            href='/'
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src='/svg/Logo.svg'
@@ -34,15 +42,19 @@ const Header = ({ school }: { school: ISchoolInfoRow }) => {
                 }}
                 className='text-3xl font-bold'
               >
-                {school.SCHUL_KND_SC_NM === '고등학교'
-                  ? school.SCHUL_NM?.replace(/고등학교$/, '고')
+                {school.school.kndsc === '고등학교'
+                  ? school.school.name
+                    ? school.school.name
+                    : school.school.defaultName?.replace(/고등학교$/, '고')
                   : ''}
-                {school.SCHUL_KND_SC_NM === '중학교'
-                  ? school.SCHUL_NM?.replace(/중학교$/, '중')
+                {school.school.kndsc === '중학교'
+                  ? school.school.name
+                    ? school.school.name
+                    : school.school.defaultName?.replace(/고등학교$/, '고')
                   : ''}
               </span>
             </div>
-          </div>
+          </Link>
           <input
             className='border-schoolmate-500 focus:border-schoolmate-500 h-[64px] w-[650px] rounded-[58px] border-[2px] px-7 text-2xl focus:outline-none focus:ring-0'
             type='text'
@@ -50,7 +62,7 @@ const Header = ({ school }: { school: ISchoolInfoRow }) => {
           />
         </div>
         <div className='h-[65px]'>
-          {user?.profile ? (
+          {user.profile ? (
             <></>
           ) : (
             <>

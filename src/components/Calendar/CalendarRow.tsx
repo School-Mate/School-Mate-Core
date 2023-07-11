@@ -21,10 +21,13 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
   //first row with empty spaces
   if (!row) {
     for (let i = 0; i < firstDay; i++) {
-      content.push(<td></td>);
+      content.push(<td key={i}></td>);
     }
     content.push(
-      <td className='relative text-center text-gray-800 hover:text-blue-500'>
+      <td
+        className='relative text-center text-gray-800 hover:text-blue-500'
+        key={10}
+      >
         1
       </td>
     );
@@ -35,13 +38,19 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
           {activeDay === i + 1 &&
           new Date().getMonth() === currentMonth &&
           new Date().getFullYear() === currentYear ? (
-            <td className='relative h-4 w-4 text-center text-sm text-gray-800 hover:text-blue-500'>
+            <td
+              className='relative h-4 w-4 text-center text-sm text-gray-800 hover:text-blue-500'
+              key={i}
+            >
               <span className='rounded-full border-2 border-green-400 px-1'>
                 {i + 1}
               </span>
             </td>
           ) : (
-            <td className='relative h-4 w-4 px-1 text-center text-sm text-gray-800 hover:text-blue-500'>
+            <td
+              className='relative h-4 w-4 px-1 text-center text-sm text-gray-800 hover:text-blue-500'
+              key={i}
+            >
               {i + 1}
             </td>
           )}
@@ -59,13 +68,19 @@ const CalendarRow: React.FC<CalendarRowProps> = ({
           {activeDay === i + (7 * row - firstDay) &&
           new Date().getMonth() === currentMonth &&
           new Date().getFullYear() === currentYear ? (
-            <td className='hover:text-schoolmate-500 relative h-4 w-4 text-center text-sm text-gray-800'>
+            <td
+              className='hover:text-schoolmate-500 relative h-4 w-4 text-center text-sm text-gray-800'
+              key={i}
+            >
               <span className='border-schoolmate-400 rounded-full border-2 px-1 text-sm'>
                 {i + (7 * row - firstDay)}
               </span>
             </td>
           ) : (
-            <td className='hover:text-schoolmate-500 relative h-4 w-4 px-1 text-center text-sm text-gray-800'>
+            <td
+              className='hover:text-schoolmate-500 relative h-4 w-4 px-1 text-center text-sm text-gray-800'
+              key={i}
+            >
               {i + (7 * row - firstDay)}
             </td>
           )}

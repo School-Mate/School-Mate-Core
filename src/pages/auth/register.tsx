@@ -344,7 +344,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             완료되었습니다!
           </span>
         </div>
-        <div className='mb-8 mt-8 flex h-[350px] w-full items-center justify-center border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
+        <div className='mb-8 mt-8 flex h-[350px] w-full items-center justify-center border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
           <LottieAnimaition
             className='h-40 w-40'
             loop={false}

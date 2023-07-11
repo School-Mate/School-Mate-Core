@@ -1,15 +1,27 @@
+import Head from 'next/head';
+import React from 'react';
+
 import Header from '@/components/layout/DashboardHeader';
 
-const DashboardLayout = ({
-  children,
-  school,
-}: {
+import { User, UserSchoolWithUser } from '@/types/user';
+
+interface DashboardLayoutProps {
   children: React.ReactNode;
-  school: ISchoolInfoRow;
+  user: User;
+  school: UserSchoolWithUser;
+}
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({
+  children,
+  user,
+  school,
 }) => {
   return (
     <>
-      <Header school={school} />
+      <Head>
+        <meta name='viewport' content='width=1400' />
+      </Head>
+      <Header user={user} school={school} />
       <main>{children}</main>
     </>
   );
