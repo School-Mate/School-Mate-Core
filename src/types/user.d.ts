@@ -15,7 +15,7 @@ export interface User {
   Agreement: Agreement;
   Image: Image[];
   UserSchoolVerify: UserSchoolVerify[];
-  UserSchool: UserSchoolWithUser;
+  UserSchool?: UserSchool;
 }
 
 export interface Agreement {

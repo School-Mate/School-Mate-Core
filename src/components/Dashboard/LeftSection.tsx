@@ -2,7 +2,9 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import * as React from 'react';
 import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
+import useSWR from 'swr';
 
+import { swrfetcher } from '@/lib/client';
 import clsxm from '@/lib/clsxm';
 
 import Advertisement from '@/components/Advertisement';
@@ -16,19 +18,11 @@ import { AskedUser } from '@/types/asked';
 import { Board } from '@/types/board';
 import { Review } from '@/types/review';
 
-interface DashboardLeftSectionProps {
-  articles: Article[];
-  askeds?: AskedUser[];
-  boards?: Board[];
-  reviews: Review[];
-}
-
-const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
-  articles,
-  askeds,
-  boards,
-  reviews,
-}) => {
+const DashboardLeftSection: NextPage = () => {
+  const { data: askeds } = useSWR<AskedUser[]>(`/asked`, swrfetcher);
+  const { data: reviews } = useSWR<Review[]>(`/review`, swrfetcher);
+  const { data: boards } = useSWR<Board[]>(`/board`, swrfetcher);
+  const { data: articles } = useSWR<Article[]>(`/article`, swrfetcher);
   const [askSwiper, setAskSwiper] = React.useState<SwiperClass>();
   const [askedIndex, setAskedIndex] = React.useState<number>(0);
   const [selectedBoard, setSelectedBoard] = React.useState<
@@ -69,7 +63,7 @@ const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
           </div>
           <div className='mt-4 flex flex-row'>
             <div className='mr-8 flex h-[280px] w-full max-w-[474px] flex-col justify-between'>
-              {articles.slice(0, 3).map((article, index) => (
+              {articles?.slice(0, 3).map((article, index) => (
                 <BoardItemButton key={index} article={article} />
               ))}
             </div>
@@ -118,64 +112,71 @@ const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
         <div className='relative flex w-full max-w-[874px] flex-row justify-between rounded-[20px] border-2 border-[#E3E5E8] p-5'>
           {askeds ? (
             <>
-              <button
-                className={clsxm(
-                  'text-xl font-bold',
-                  'hover:text-[#BEBEBE]',
-                  'bottom-[50%] top-[50%] flex -translate-y-1/2 transform flex-row items-center bg-white',
-                  'absolute left-1 z-10 flex h-9 w-9 rounded-full border border-[#BEBEBE]',
-                  askedIndex === 0 ? 'hidden' : 'block'
-                )}
-                onClick={() => {
-                  askSwiper?.slidePrev();
-                }}
-              >
-                <i className='fas fa-chevron-left mx-auto text-lg' />
-              </button>
-              <button
-                className={clsxm(
-                  'text-xl font-bold',
-                  'hover:text-[#BEBEBE]',
-                  'bottom-[50%] top-[50%] flex -translate-y-1/2 transform flex-row items-center bg-white',
-                  'absolute right-1 z-10 flex h-9 w-9 rounded-full border border-[#BEBEBE]'
-                )}
-                onClick={() => {
-                  askSwiper?.slideNext();
-                }}
-              >
-                <i className='fas fa-chevron-right mx-auto text-lg' />
-              </button>
-              <Swiper
-                slidesPerView={3}
-                centeredSlides={false}
-                slidesPerGroupSkip={3}
-                grabCursor={true}
-                keyboard={{
-                  enabled: true,
-                }}
-                navigation={false}
-                pagination={{
-                  clickable: true,
-                }}
-                onSwiper={setAskSwiper}
-                onSlideChange={(swiper) => {
-                  setAskedIndex(swiper.activeIndex);
-                }}
-                spaceBetween={20}
-                loop={true}
-                autoplay={{
-                  delay: 3000,
-                  disableOnInteraction: true,
-                }}
-              >
-                {askeds.map((asked, index) => (
-                  <>
-                    <SwiperSlide key={index}>
-                      <WigetAsked askedUser={asked} key={index} />
-                    </SwiperSlide>
-                  </>
-                ))}
-              </Swiper>
+              {askeds.length < 3 ? (
+                <>
+                  <div className='h-[134px]'></div>
+                </>
+              ) : (
+                <>
+                  <button
+                    className={clsxm(
+                      'text-xl font-bold',
+                      'hover:text-[#BEBEBE]',
+                      'bottom-[50%] top-[50%] flex -translate-y-1/2 transform flex-row items-center bg-white',
+                      'absolute left-1 z-10 flex h-9 w-9 rounded-full border border-[#BEBEBE]',
+                      askedIndex === 0 ? 'hidden' : 'block'
+                    )}
+                    onClick={() => {
+                      askSwiper?.slidePrev();
+                    }}
+                  >
+                    <i className='fas fa-chevron-left mx-auto text-lg' />
+                  </button>
+                  <button
+                    className={clsxm(
+                      'text-xl font-bold',
+                      'hover:text-[#BEBEBE]',
+                      'bottom-[50%] top-[50%] flex -translate-y-1/2 transform flex-row items-center bg-white',
+                      'absolute right-1 z-10 flex h-9 w-9 rounded-full border border-[#BEBEBE]'
+                    )}
+                    onClick={() => {
+                      askSwiper?.slideNext();
+                    }}
+                  >
+                    <i className='fas fa-chevron-right mx-auto text-lg' />
+                  </button>
+                  <Swiper
+                    slidesPerView={3}
+                    slidesPerGroupSkip={3}
+                    grabCursor={true}
+                    keyboard={{
+                      enabled: true,
+                    }}
+                    navigation={false}
+                    pagination={{
+                      clickable: true,
+                    }}
+                    onSwiper={setAskSwiper}
+                    onSlideChange={(swiper) => {
+                      setAskedIndex(swiper.activeIndex);
+                    }}
+                    spaceBetween={20}
+                    loop={true}
+                    autoplay={{
+                      delay: 3000,
+                      disableOnInteraction: true,
+                    }}
+                  >
+                    {askeds.map((asked, index) => (
+                      <>
+                        <SwiperSlide key={index}>
+                          <WigetAsked askedUser={asked} key={index} />
+                        </SwiperSlide>
+                      </>
+                    ))}
+                  </Swiper>
+                </>
+              )}
             </>
           ) : (
             <>
@@ -186,7 +187,7 @@ const DashboardLeftSection: NextPage<DashboardLeftSectionProps> = ({
           )}
         </div>
         <div className='relative flex w-full max-w-[874px] flex-row justify-between rounded-[20px] border-2 border-[#E3E5E8] p-5'>
-          {reviews.map((review, index) => (
+          {reviews?.map((review, index) => (
             <WigetReview review={review} key={index} />
           ))}
         </div>

@@ -4,19 +4,16 @@ import WigetBus from '@/components/Dashboard/Bus';
 import WigetCalendar from '@/components/Dashboard/Calendar';
 import WigetMeal from '@/components/Dashboard/Meal';
 
-import { School } from '@/types/school';
-import { User } from '@/types/user';
+import { User, UserSchoolWithUser } from '@/types/user';
 
 interface DashboardRightSectionProps {
   user: User;
-  school: School;
-  todos: any[];
+  school: UserSchoolWithUser;
 }
 
 const DashboardRightSection: React.FC<DashboardRightSectionProps> = ({
   school,
   user,
-  todos,
 }) => {
   return (
     <>
@@ -39,8 +36,8 @@ const DashboardRightSection: React.FC<DashboardRightSectionProps> = ({
               ]}
             />
             <div className='mt-4 flex flex-row justify-between space-x-5'>
-              <WigetMeal school={school} />
-              <WigetBus school={school} user={user} />
+              <WigetMeal school={school.school} />
+              <WigetBus school={school.school} user={user} />
             </div>
           </div>
         </div>

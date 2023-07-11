@@ -1,4 +1,6 @@
+import cookie from 'cookie';
 import dayjs from 'dayjs';
+import { GetServerSidePropsContext, NextPageContext } from 'next';
 
 export const schoolMateDateFormat = (date: Date) => {
   const todayDate = new Date();
@@ -24,4 +26,12 @@ export const schoolMateDateFormat = (date: Date) => {
   }
 
   return dayjs(date).format('YYYY/MM/DD');
+};
+
+export const cookieParser = (
+  ctx: GetServerSidePropsContext | NextPageContext
+) => {
+  if (!ctx || !ctx.req) return {};
+  const cookies = cookie.parse((ctx.req.headers.cookie as string) || '');
+  return cookies;
 };

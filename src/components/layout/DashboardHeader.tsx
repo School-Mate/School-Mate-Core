@@ -1,17 +1,23 @@
-import useUser from '@/lib/hooks/useUser';
+import Link from 'next/link';
 
 import NextImage from '@/components/NextImage';
 
-import { School } from '@/types/school';
+import { User, UserSchoolWithUser } from '@/types/user';
 
-const Header = ({ school }: { school: School }) => {
-  const { user } = useUser();
+interface HeaderProps {
+  user: User;
+  school: UserSchoolWithUser;
+}
 
+const Header: React.FC<HeaderProps> = ({ user, school }) => {
   return (
     <>
       <header className='mx-auto my-12 flex h-16 max-w-[1135px] flex-row items-center justify-between'>
         <div className='flex flex-row items-center justify-center'>
-          <div className='mr-4 flex flex-row items-center justify-center'>
+          <Link
+            className='mr-4 flex flex-row items-center justify-center'
+            href='/'
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src='/svg/Logo.svg'
@@ -36,19 +42,19 @@ const Header = ({ school }: { school: School }) => {
                 }}
                 className='text-3xl font-bold'
               >
-                {school.kndsc === '고등학교'
-                  ? school.name
-                    ? school.name
-                    : school.defaultName?.replace(/고등학교$/, '고')
+                {school.school.kndsc === '고등학교'
+                  ? school.school.name
+                    ? school.school.name
+                    : school.school.defaultName?.replace(/고등학교$/, '고')
                   : ''}
-                {school.kndsc === '중학교'
-                  ? school.name
-                    ? school.name
-                    : school.defaultName?.replace(/고등학교$/, '고')
+                {school.school.kndsc === '중학교'
+                  ? school.school.name
+                    ? school.school.name
+                    : school.school.defaultName?.replace(/고등학교$/, '고')
                   : ''}
               </span>
             </div>
-          </div>
+          </Link>
           <input
             className='border-schoolmate-500 focus:border-schoolmate-500 h-[64px] w-[650px] rounded-[58px] border-[2px] px-7 text-2xl focus:outline-none focus:ring-0'
             type='text'
@@ -56,7 +62,7 @@ const Header = ({ school }: { school: School }) => {
           />
         </div>
         <div className='h-[65px]'>
-          {user?.profile ? (
+          {user.profile ? (
             <></>
           ) : (
             <>
