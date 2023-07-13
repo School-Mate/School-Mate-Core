@@ -16,7 +16,11 @@ const HomePage: NextPage = () => {
   if (school && user)
     return (
       <DashboardLayout user={user} school={school}>
-        <Seo />
+        <Seo
+          templateTitle={
+            school.school.name ? school.school.name : school.school.defaultName
+          }
+        />
         <div className='mx-auto mt-5 flex min-h-screen max-w-[1280px] flex-row justify-center'>
           <DashboardLeftSection />
           <DashboardRightSection school={school} user={user} />
