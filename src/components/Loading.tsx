@@ -1,12 +1,13 @@
 import LottieAnimaition from '@/components/LottieAnimaition';
 
-const Loading = () => {
+const Loading = ({ className }: { className?: string }) => {
   return (
     <>
-      <div className='h-30 w-30 flex items-center justify-center'>
+      <div className={'flex h-32 w-32 items-center justify-center' + className}>
         <LottieAnimaition
           animation={require('@/lottieFiles/loading.json')}
           className='h-full w-full'
+          speed={2.5}
         />
       </div>
     </>
@@ -27,6 +28,7 @@ export const LoadingScreen = () => {
       >
         <div className='flex h-full items-center justify-center opacity-100'>
           <LottieAnimaition
+            speed={2.5}
             animation={require('@/lottieFiles/loading.json')}
             className='h-64 w-64 p-12'
           />
