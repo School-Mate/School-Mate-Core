@@ -69,27 +69,27 @@ const DashboardLeftSection: NextPage = () => {
             </div>
             {boards ? (
               <>
-                <div className='grid w-[318px] grid-cols-2 rounded-[10px] border py-6'>
-                  <div className='flex flex-col space-y-4 border-r px-4'>
+                <div className='grid w-[318px] grid-cols-2 rounded-[10px] border py-3'>
+                  <div className='flex flex-col space-y-1 border-r px-2'>
                     {boards.slice(0, 6).map((board, index) => (
                       <>
                         <Link
                           href={`/board/${board.id}`}
                           key={index}
-                          className='text-base'
+                          className='rounded-[10px] px-2 py-2 text-base hover:bg-gray-100'
                         >
                           {board.name}
                         </Link>
                       </>
                     ))}
                   </div>
-                  <div className='flex flex-col space-y-4 px-4'>
+                  <div className='flex flex-col space-y-1 border-r px-2'>
                     {boards.slice(6, 12).map((board, index) => (
                       <>
                         <Link
                           href={`/board/${board.id}`}
                           key={index}
-                          className='text-base'
+                          className='rounded-[10px] px-2 py-2 text-base hover:bg-gray-100'
                         >
                           {board.name}
                         </Link>

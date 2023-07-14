@@ -144,6 +144,20 @@ const ArticlePage: NextPage<BoardPageProps> = ({
     }
   };
 
+  const deleteArticleHandler = async () => {
+    const confirm = window.confirm('삭제하시겠습니까?');
+    if (!confirm) return;
+    try {
+      await client.delete(`/board/article/${article.id}`);
+      Toast('게시글이 삭제되었습니다.', 'success');
+      Router.push(`/board/${board.id}`);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        return Toast(err.response?.data.message, 'error');
+      }
+    }
+  };
+
   if (!school) return <LoadingScreen />;
   if (!user) return <LoadingScreen />;
   if (!article) return <LoadingScreen />;
@@ -237,7 +251,10 @@ const ArticlePage: NextPage<BoardPageProps> = ({
                   <div className='mt-auto'>
                     {user.id === article.userId ? (
                       <>
-                        <button className='ml-auto mt-2 text-sm text-[#969696] underline underline-offset-2'>
+                        <button
+                          onClick={deleteArticleHandler}
+                          className='ml-auto mt-2 text-sm text-[#969696] underline underline-offset-2'
+                        >
                           게시글삭제
                         </button>
                       </>

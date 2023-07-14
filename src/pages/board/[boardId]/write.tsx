@@ -156,7 +156,7 @@ const Wrtie: NextPage<BoardPageProps> = ({ error, board, message }) => {
                   
 위와 같은 행위는 이용 규칙과 관련 법률에 제재 받을 수 있습니다.
 `}
-                  className='h-[50vh] w-full resize-none px-4 py-2 outline-none'
+                  className='h-[70vh] w-full resize-none px-4 py-2 outline-none'
                 />
                 {files.length != 0 && (
                   <>
