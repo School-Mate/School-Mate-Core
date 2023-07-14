@@ -13,6 +13,10 @@ export interface Article {
   Board: Board;
   User: User;
   keyOfImages: string[];
+  commentCounts: number;
+  likeCounts: number;
+  disLikeCounts: number;
+  isLiked: boolean;
 }
 
 export interface Board {
@@ -30,6 +34,7 @@ export interface Comment {
   createdAt: Date;
   id: number;
   isAnonymous: boolean;
+  isDeleted: boolean;
   recomments: Recomment[];
   updatedAt: Date;
   userId: string;
@@ -43,6 +48,7 @@ export interface Recomment {
   createdAt: Date;
   id: number;
   isAnonymous: boolean;
+  isDeleted: boolean;
   updatedAt: Date;
   userId: string;
 }
