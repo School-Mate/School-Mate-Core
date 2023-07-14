@@ -8,7 +8,12 @@ export default function useUser({
   redirectTo = '',
   redirectIfFound = false,
 } = {}) {
-  const { data: user, mutate: mutateUser, error } = useSWR<User>('/auth/me');
+  const {
+    data: user,
+    mutate: mutateUser,
+    error,
+    isLoading,
+  } = useSWR<User>('/auth/me');
 
   useEffect(() => {
     // if no redirect needed, just return (example: already on /dashboard)
@@ -30,7 +35,8 @@ export default function useUser({
       user: null,
       mutateUser,
       error,
+      isLoading,
     };
 
-  return { user, mutateUser, error };
+  return { user, mutateUser, error, isLoading };
 }

@@ -1,4 +1,4 @@
-import { ISchoolInfoRow, School } from '@/types/school';
+import { School } from '@/types/school';
 
 export interface User {
   id: string;
@@ -49,7 +49,7 @@ export interface UserSchool {
   dept: string;
   grade: string;
   class: string;
-  school: ISchoolInfoRow;
+  school: School;
 }
 
 export interface SocialLogin {
