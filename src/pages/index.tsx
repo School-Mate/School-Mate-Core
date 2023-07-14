@@ -17,7 +17,7 @@ const HomePage: NextPage = () => {
     return (
       <DashboardLayout user={user} school={school}>
         <Seo />
-        <div className='mx-auto mt-5 flex max-w-[1280px] flex-row justify-center'>
+        <div className='mx-auto mt-5 flex min-h-screen max-w-[1280px] flex-row justify-center'>
           <DashboardLeftSection />
           <DashboardRightSection school={school} user={user} />
         </div>

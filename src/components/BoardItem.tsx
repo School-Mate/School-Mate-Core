@@ -42,17 +42,19 @@ const BoardItemButton = React.forwardRef<HTMLButtonElement, BoardItemProps>(
               <span>{schoolMateDateFormat(article.createdAt)}</span>
               <span className='mx-1 text-[14pt]'>&#183;</span>
               <span>
-                {article.isAnonymous || !article.user
+                {article.isAnonymous || !article.User
                   ? '익명'
-                  : article.user.name}
+                  : article.User.name}
               </span>
-              <span className='mx-2'>{article.board}</span>
+              <span className='mx-2'>{article.Board.name}</span>
             </h3>
           </div>
           <div>
-            {article.titleImage && (
+            {article.images[0] && (
               <NextImage
-                src={article.titleImage}
+                src={
+                  process.env.NEXT_PUBLIC_S3_URL + '/' + article.keyOfImages[0]
+                }
                 alt='image'
                 style={{
                   objectFit: 'cover',

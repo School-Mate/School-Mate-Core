@@ -13,6 +13,8 @@ import '@/styles/schoolmate.css';
 
 import { swrfetcher } from '@/lib/client';
 
+import Footer from '@/components/Footer';
+
 import { User } from '@/types/user';
 
 export const GlobalContext = createContext<GlobalAuth>({
@@ -32,6 +34,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <Component {...pageProps} />
+      <Footer />
       <ToastContainer />
     </SWRConfig>
   );

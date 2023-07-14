@@ -11,7 +11,7 @@ const Error: React.FC<ErrorPageProps> = ({ message, children }) => {
         style={{ fontFamily: 'Noto Sans KR' }}
       >
         <LottieAnimaition
-          className='h-52 w-52'
+          className='-mb-20 -mt-20 h-96 w-96'
           animation={require('@/lottieFiles/error.json')}
         />
         <span className='px-2 text-xl font-bold lg:text-2xl'>{message}</span>

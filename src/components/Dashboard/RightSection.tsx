@@ -1,4 +1,5 @@
 import * as React from 'react';
+import AdSense from 'react-adsense';
 
 import WigetBus from '@/components/Dashboard/Bus';
 import WigetCalendar from '@/components/Dashboard/Calendar';
@@ -38,6 +39,29 @@ const DashboardRightSection: React.FC<DashboardRightSectionProps> = ({
             <div className='mt-4 flex flex-row justify-between space-x-5'>
               <WigetMeal school={school.school} />
               <WigetBus school={school.school} user={user} />
+            </div>
+            <div className='mt-4 h-[330px] w-[330px]'>
+              <div
+                className={`z-0 mx-auto h-full w-full text-center text-white ${
+                  process.env.NODE_ENV === 'production' ? '' : 'bg-black py-12'
+                }`}
+                style={{ width: '330px' }}
+              >
+                {process.env.NODE_ENV === 'production' ? (
+                  <AdSense.Google
+                    style={{
+                      display: 'inline-block',
+                      width: '330px',
+                      height: '100%',
+                    }}
+                    client='ca-pub-2701426579223876'
+                    slot='7698754986'
+                    format=''
+                  />
+                ) : (
+                  'Ads'
+                )}
+              </div>
             </div>
           </div>
         </div>

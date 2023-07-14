@@ -22,7 +22,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <meta name='viewport' content='width=1400' />
       </Head>
       <Header user={user} school={school} />
-      <main>{children}</main>
+      <main className='mb-20'>{children}</main>
     </>
   );
 };
