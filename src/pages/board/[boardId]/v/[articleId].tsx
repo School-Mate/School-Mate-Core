@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { GetServerSideProps, NextPage } from 'next';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import React from 'react';
 import useSWR from 'swr';
 
@@ -23,6 +23,8 @@ import Seo from '@/components/Seo';
 import { Article, Comment, Recomment } from '@/types/article';
 import { Board } from '@/types/board';
 import { Response } from '@/types/client';
+import { Like } from '@/types/like';
+import { User } from '@/types/user';
 
 interface BoardPageProps {
   error: boolean;
@@ -38,6 +40,8 @@ const ArticlePage: NextPage<BoardPageProps> = ({
   article,
 }) => {
   const [commentPage, setCommentPage] = React.useState<number>(1);
+  const [likeLoading, setLikeLoading] = React.useState<boolean>(false);
+  const router = useRouter();
   const [addCommentsLoading, setAddCommentsLoading] =
     React.useState<boolean>(false);
   const { user } = useUser();
@@ -100,8 +104,49 @@ const ArticlePage: NextPage<BoardPageProps> = ({
     }
   };
 
+  const addLike = async () => {
+    try {
+      setLikeLoading(true);
+      const { data } = await client.post<Response<Like>>(
+        `/board/article/${article?.id}/like`
+      );
+      if (!data.data) {
+        return Toast('취소되었습니다.', 'error');
+      }
+      Toast('추천되었습니다.', 'success');
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        return Toast(err.response?.data.message, 'error');
+      }
+    } finally {
+      setLikeLoading(false);
+      router.replace(router.asPath);
+    }
+  };
+
+  const adddisLike = async () => {
+    try {
+      setLikeLoading(true);
+      const { data } = await client.post<Response<Like>>(
+        `/board/article/${article?.id}/disLike`
+      );
+      if (!data.data) {
+        return Toast('취소되었습니다.', 'error');
+      }
+      Toast('비추천되었습니다.', 'success');
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        return Toast(err.response?.data.message, 'error');
+      }
+    } finally {
+      setLikeLoading(false);
+      router.replace(router.asPath);
+    }
+  };
+
   if (!school) return <LoadingScreen />;
   if (!user) return <LoadingScreen />;
+  if (!article) return <LoadingScreen />;
 
   if (error) return <Error message={message} />;
 
@@ -165,19 +210,25 @@ const ArticlePage: NextPage<BoardPageProps> = ({
                     <div className='ml-2 flex flex-row space-x-3'>
                       <div className='text-schoolmate-500 flex flex-row items-center'>
                         <i className='far fa-thumbs-up mr-1' />
-                        <span>10</span>
+                        <span>{article.likeCounts || 0}</span>
                       </div>
                       <div className='flex flex-row items-center text-[#D17E7E]'>
                         <i className='far fa-thumbs-down mr-1' />
-                        <span>10</span>
+                        <span>{article.disLikeCounts || 0}</span>
                       </div>
                     </div>
                     <div className='mt-3 flex flex-row space-x-2'>
-                      <button className='rounded-[10px] border-none bg-[#F4F4F4] px-4 py-2 font-semibold text-[#969292] transition-all hover:bg-gray-200'>
+                      <button
+                        className='rounded-[10px] border-none bg-[#F4F4F4] px-4 py-2 font-semibold text-[#969292] transition-all hover:bg-gray-200'
+                        onClick={addLike}
+                      >
                         <i className='far fa-thumbs-up mr-1 font-light text-[#BBBBBB]' />
                         추천
                       </button>
-                      <button className='rounded-[10px] border-none bg-[#F4F4F4] px-4 py-2 font-semibold text-[#969292] transition-all hover:bg-gray-200'>
+                      <button
+                        className='rounded-[10px] border-none bg-[#F4F4F4] px-4 py-2 font-semibold text-[#969292] transition-all hover:bg-gray-200'
+                        onClick={adddisLike}
+                      >
                         <i className='far fa-thumbs-down mr-1 font-light text-[#BBBBBB]' />
                         비추천
                       </button>
@@ -211,6 +262,8 @@ const ArticlePage: NextPage<BoardPageProps> = ({
                               onSubmit={addComment}
                               key={index}
                               loading={addCommentsLoading}
+                              user={user}
+                              reloadComments={reloadComments}
                             />
                           </>
                         );
@@ -239,7 +292,9 @@ const ArticlePage: NextPage<BoardPageProps> = ({
 
 interface CommentProps {
   comment: Comment;
+  reloadComments: () => void;
   loading: boolean;
+  user?: User;
   onSubmit: (
     comment: string,
     isAnonymous: boolean,
@@ -248,8 +303,30 @@ interface CommentProps {
   ) => void;
 }
 
-const Comment: React.FC<CommentProps> = ({ comment, onSubmit, loading }) => {
+const Comment: React.FC<CommentProps> = ({
+  comment,
+  onSubmit,
+  reloadComments,
+  loading,
+  user,
+}) => {
   const [openRecommnet, setOpenRecomment] = React.useState<boolean>(false);
+
+  const deleteCommentHandler = async () => {
+    const confirm = window.confirm('삭제하시겠습니까?');
+    if (!confirm) return;
+    try {
+      await client.delete(
+        `/board/article/${comment.articleId}/comment/${comment.id}`
+      );
+      Toast('댓글이 삭제되었습니다.', 'success');
+      await reloadComments();
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        return Toast(err.response?.data.message, 'error');
+      }
+    }
+  };
 
   return (
     <>
@@ -261,8 +338,17 @@ const Comment: React.FC<CommentProps> = ({ comment, onSubmit, loading }) => {
       >
         <div className='flex h-full flex-row items-start justify-between'>
           <div className='mt-auto flex h-full flex-col'>
-            <span className='font-semibold'>
-              {comment.isAnonymous ? '익명' : comment.User?.name}
+            <span
+              className={clsxm(
+                'font-semibold',
+                comment.isDeleted ? 'text-gray-400' : ''
+              )}
+            >
+              {comment.isAnonymous
+                ? comment.isDeleted
+                  ? '(삭제됨)'
+                  : '익명'
+                : comment.User?.name}
             </span>
             <span className='text-sm'>{comment.content}</span>
             <span className='mt-auto text-[10pt] text-[#8D8D8D]'>
@@ -270,7 +356,7 @@ const Comment: React.FC<CommentProps> = ({ comment, onSubmit, loading }) => {
             </span>
           </div>
         </div>
-        <div className='mb-auto flex flex-row'>
+        <div className='mb-auto flex flex-row space-x-2'>
           <button
             onClick={() => {
               setOpenRecomment(!openRecommnet);
@@ -279,12 +365,35 @@ const Comment: React.FC<CommentProps> = ({ comment, onSubmit, loading }) => {
           >
             답글
           </button>
+          {user?.id != comment.userId && !comment.isDeleted && (
+            <button
+              onClick={() => {
+                setOpenRecomment(!openRecommnet);
+              }}
+              className='text-sm text-[#969696] underline underline-offset-2'
+            >
+              추천
+            </button>
+          )}
+          {user?.id === comment.userId && !comment.isDeleted && (
+            <button
+              onClick={deleteCommentHandler}
+              className='text-sm text-[#969696] underline underline-offset-2'
+            >
+              삭제
+            </button>
+          )}
         </div>
       </div>
       {comment.recomments.length != 0 && (
         <>
           {comment.recomments.map((recomment, index) => (
-            <ReComment reComment={recomment} key={index} />
+            <ReComment
+              reComment={recomment}
+              key={index}
+              user={user}
+              reloadComments={reloadComments}
+            />
           ))}
         </>
       )}
@@ -377,7 +486,7 @@ const AddComment: React.FC<AddCommetProps> = ({
         >
           {loading ? (
             <>
-              <Loading className='flex h-14 w-14 items-center justify-center' />
+              <Loading className='flex h-10 w-10 items-center justify-center' />
             </>
           ) : (
             <>등록</>
@@ -388,7 +497,27 @@ const AddComment: React.FC<AddCommetProps> = ({
   );
 };
 
-const ReComment: React.FC<{ reComment: Recomment }> = ({ reComment }) => {
+const ReComment: React.FC<{
+  reComment: Recomment;
+  user?: User;
+  reloadComments: () => void;
+}> = ({ reComment, user, reloadComments }) => {
+  const deleteCommentHandler = async () => {
+    const confirm = window.confirm('삭제하시겠습니까?');
+    if (!confirm) return;
+    try {
+      await client.delete(
+        `/board/article/${reComment.articleId}/comment/${reComment.commentId}/recomment/${reComment.id}`
+      );
+      Toast('댓글이 삭제되었습니다.', 'success');
+      reloadComments();
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        return Toast(err.response?.data.message, 'error');
+      }
+    }
+  };
+
   return (
     <>
       <div className='flex flex-row items-center justify-center border-b'>
@@ -406,14 +535,38 @@ const ReComment: React.FC<{ reComment: Recomment }> = ({ reComment }) => {
         >
           <div className='flex h-full flex-row items-start justify-between'>
             <div className='mt-auto flex h-full flex-col'>
-              <span className='font-semibold'>
-                {reComment.isAnonymous ? '익명' : reComment.User?.name}
+              <span
+                className={clsxm(
+                  'font-semibold',
+                  reComment.isDeleted ? 'text-gray-400' : ''
+                )}
+              >
+                {reComment.isAnonymous
+                  ? reComment.isDeleted
+                    ? '(삭제됨)'
+                    : '익명'
+                  : reComment.User?.name}
               </span>
               <span className='text-sm'>{reComment.content}</span>
               <span className='mt-auto text-[10pt] text-[#8D8D8D]'>
                 {dayjs(reComment.createdAt).format('MM/DD HH:mm')}
               </span>
             </div>
+          </div>
+          <div className='mb-auto flex flex-row space-x-2'>
+            {user?.id != reComment.userId && !reComment.isDeleted && (
+              <button className='text-sm text-[#969696] underline underline-offset-2'>
+                추천
+              </button>
+            )}
+            {user?.id === reComment.userId && !reComment.isDeleted && (
+              <button
+                onClick={deleteCommentHandler}
+                className='text-sm text-[#969696] underline underline-offset-2'
+              >
+                삭제
+              </button>
+            )}
           </div>
         </div>
       </div>

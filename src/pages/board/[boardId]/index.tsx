@@ -218,12 +218,22 @@ const ArticleItem: React.FC<{
           </h3>
         </div>
         <div className='my-auto ml-auto flex h-full'>
-          <div className='mr-2 mt-auto'>
+          <div className='mr-2 mt-auto flex flex-row space-x-2'>
             {article.images.length != 0 && (
               <>
                 <span className='mt-auto flex h-full items-center justify-center text-[9pt] font-normal text-[#707070]'>
-                  <i className='fas fa-image mr-1' />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src='/svg/image.svg' className='h-4 w-4' alt='image' />
                   {article.images.length}
+                </span>
+              </>
+            )}
+            {article.commentCounts != 0 && (
+              <>
+                <span className='mt-auto flex h-full items-center justify-center text-[9pt] font-normal text-[#729CBB]'>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src='/svg/Chat.svg' className='h-4 w-4' alt='chat' />
+                  {article.commentCounts}
                 </span>
               </>
             )}
