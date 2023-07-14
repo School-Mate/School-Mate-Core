@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { AxiosError } from 'axios';
+import Router from 'next/router';
+import { useRef, useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import useSWR from 'swr';
 
@@ -19,12 +21,15 @@ import { IClassInfoRow, ISchoolInfoRow } from '@/types/school';
 const SchoolVerify = () => {
   const [step, setStep] = useState<number>(1);
   const [schoolKeyword, setSchoolKeyword] = useState<string>('');
+  const [image, setImage] = useState<File | null>(null);
   const [openSchoolDropdown, setOpenSchoolDropdown] = useState<boolean>(false);
   const [showLoading, setShowLoading] = useState<boolean>(false);
   const [grade, setGrade] = useState<string>('');
   const [classNumber, setClassNumber] = useState<string>('');
   const [department, setDepartment] = useState<string>('');
   const [selectSchool, setSelectSchool] = useState<ISchoolInfoRow>();
+  const [verifyLoading, setVerifyLoading] = useState<boolean>(false);
+  const imageUploadRef = useRef<HTMLInputElement>(null);
   const [selectSchoolDetail, setSelectSchoolDetail] =
     useState<IClassInfoRow[]>();
   const ref = useDetectClickOutside({
@@ -109,6 +114,68 @@ const SchoolVerify = () => {
     if (returnArr.length == 0) return [];
     if (!returnArr[0].name) return [];
     return returnArr;
+  };
+
+  const checkSchool = () => {
+    if (!selectSchool) return Toast('학교를 선택해주세요.', 'error');
+    if (!selectSchoolDetail) return Toast('학교를 선택해주세요.', 'error');
+    if (!grade) return Toast('학년을 선택해주세요.', 'error');
+    if (!classNumber) return Toast('반을 선택해주세요.', 'error');
+
+    if (getSchoolDepartments().length > 0 && !department)
+      return Toast('학과(계열)을 선택해주세요.', 'error');
+
+    handleNextStep();
+  };
+
+  const handleVerify = async () => {
+    if (!image) return Toast('학생증을 첨부해주세요.', 'error');
+    setVerifyLoading(true);
+    let uploadImageId = '';
+
+    try {
+      const formData = new FormData();
+      formData.append('img', image);
+      const { data: uploadImage } = await client.post<Response<string>>(
+        `/image`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            storage: 'schoolverify',
+          },
+        }
+      );
+      uploadImageId = uploadImage.data;
+
+      const { data } = await client.post(`/school/verify`, {
+        imageId: uploadImageId,
+        schoolId: selectSchool?.SD_SCHUL_CODE,
+        grade,
+        class: classNumber,
+        dept: department,
+      });
+
+      Toast(
+        '인증요청이 접수되었습니다! 심사 완료까지 약 1일~2일이 소요됩니다!',
+        'success'
+      );
+
+      await Router.push('/');
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (uploadImageId) {
+          await client.delete(`/image/${uploadImageId}`);
+        }
+        return Toast(error.response?.data.message, 'error');
+      }
+
+      return Toast('학교 인증 요청에 실패했습니다.', 'error');
+    } finally {
+      imageUploadRef.current?.value == '';
+      setImage(null);
+      setVerifyLoading(false);
+    }
   };
 
   const steps: {
@@ -284,9 +351,94 @@ const SchoolVerify = () => {
         <Button
           className='mb-5 flex h-12 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:h-[65px]'
           variant='primary'
-          onClick={handleNextStep}
+          onClick={checkSchool}
         >
           다음
+        </Button>
+      </div>
+    ),
+    2: (
+      <div className='mt-auto flex h-full w-full max-w-[551px] flex-col items-start justify-end px-5 lg:px-0'>
+        <div className='mb-0 mt-6 flex flex-row items-center justify-center px-4 lg:mb-0 lg:mt-0'>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src='/svg/Logo.svg'
+            alt='logo'
+            className='h-[60px] w-[60px] lg:h-[110px] lg:w-[110px]'
+            style={{
+              filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.2))',
+            }}
+          />
+          <span className='font ml-5 w-full text-xl font-bold lg:text-3xl'>
+            학교 인증
+          </span>
+        </div>
+        <div className='mb-8 mt-8 w-full border-b border-t border-[#BABABA] py-4 lg:mb-12'>
+          <div className='flex flex-col px-4'>
+            <div className='flex h-full w-full flex-col items-center justify-center py-3'>
+              <span className='mr-auto text-xl font-bold'>학생증 인증</span>
+              <button
+                onClick={() => {
+                  imageUploadRef.current?.click();
+                }}
+                className='mt-2 flex h-52 w-full flex-col items-center justify-center rounded-[10px] border-4 text-[#E3E3E3]'
+              >
+                {image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    className='h-full w-full object-cover'
+                    src={URL.createObjectURL(image)}
+                    alt='image'
+                  />
+                ) : (
+                  <>
+                    <i className='fas fa-file text-6xl' />
+                    <span className='mt-3 text-xl'>이미지 첨부하기</span>
+                  </>
+                )}
+                <input
+                  className='hidden'
+                  type='file'
+                  ref={imageUploadRef}
+                  accept='image/*'
+                  onChange={(e) => {
+                    if (!e.target.files) return;
+                    setImage(e.target.files[0]);
+                    imageUploadRef.current?.value == '';
+                  }}
+                />
+              </button>
+              <div className='mt-4 flex w-full flex-col'>
+                <span className='font-bold'>[ 인증 가능 서류 ]</span>
+                <span className='ml-2 text-sm'>· 생활기록부</span>
+                <span className='ml-2 text-sm'>· 학생증</span>
+              </div>
+              <div className='mt-2 flex w-full flex-col'>
+                <div className='flex flex-row items-start justify-start text-sm text-[#BEBDBD]'>
+                  <span>1.</span>
+                  <span className='ml-1'>
+                    첨부 이미지는 정보 확인 후 즉시 폐기하며, 주민등록번호가
+                    나올 시 마스킹 후 첨부 부탁드립니다.
+                  </span>
+                </div>
+                <div className='flex flex-row items-start justify-start text-sm text-[#BEBDBD]'>
+                  <span>2.</span>
+                  <span className='ml-1'>
+                    타인을 사칭, 서류 위조, 해킹 등의 여부는 관련 법에 따라 법적
+                    책임이 따를 수 있습니다.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Button
+          className='mb-5 flex h-12 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:h-[65px]'
+          variant='primary'
+          onClick={handleVerify}
+          isLoading={verifyLoading}
+        >
+          완료
         </Button>
       </div>
     ),
