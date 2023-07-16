@@ -293,7 +293,14 @@ const ArticlePage: NextPage<BoardPageProps> = ({
                     </>
                   ) : (
                     <>
-                      <Loading />
+                      <div
+                        className={clsxm(
+                          'flex h-14 w-full flex-row items-center justify-center border-b',
+                          'border-b-0 border-r'
+                        )}
+                      >
+                        <Loading className='mx-auto h-14 w-14' />
+                      </div>
                     </>
                   )}
                 </div>
