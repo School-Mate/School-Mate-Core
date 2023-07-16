@@ -115,10 +115,6 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
     }
   };
 
-  const handleSchoolVerify = async () => {
-    return;
-  };
-
   const handleNextStep = () => {
     setStep((prev) => prev + 1);
   };
@@ -160,7 +156,9 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
         <Button
           className='mb-5 flex h-12 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:h-[65px]'
           variant='primary'
-          onClick={handleSchoolVerify}
+          onClick={() => {
+            Router.push('/auth/verify');
+          }}
         >
           학교 인증하기
         </Button>
