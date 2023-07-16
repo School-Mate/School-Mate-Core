@@ -12,7 +12,7 @@ export default function useUser({
     data: user,
     mutate: mutateUser,
     error,
-    isLoading,
+    isLoading: isLoadingUserLoading,
   } = useSWR<User>('/auth/me');
 
   useEffect(() => {
@@ -35,8 +35,13 @@ export default function useUser({
       user: null,
       mutateUser,
       error,
-      isLoading,
+      isLoading: isLoadingUserLoading,
     };
 
-  return { user, mutateUser, error, isLoading };
+  return {
+    user,
+    mutateUser,
+    error,
+    isLoading: isLoadingUserLoading,
+  };
 }

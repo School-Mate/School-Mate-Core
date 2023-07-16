@@ -11,6 +11,7 @@ export default function useSchool({
   const {
     data: school,
     mutate: mutateSchool,
+    isLoading: isSchoolLoading,
     error,
   } = useSWR<UserSchoolWithUser>('/auth/me/school');
 
@@ -32,9 +33,15 @@ export default function useSchool({
   if (error)
     return {
       school: null,
+      isLoading: isSchoolLoading,
       mutateSchool,
       error,
     };
 
-  return { school, mutateSchool, error };
+  return {
+    school,
+    mutateSchool,
+    error,
+    isLoading: isSchoolLoading,
+  };
 }

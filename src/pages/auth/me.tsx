@@ -2,31 +2,32 @@ import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
 import Router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import useSWR from 'swr';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
+import useSchool from '@/lib/hooks/useSchool';
+import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
 
 import Button from '@/components/buttons/Button';
 import Error from '@/components/Error';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { LoadingScreen } from '@/components/Loading';
+import Login from '@/components/Login';
 import Modal from '@/components/Modal';
 import Seo from '@/components/Seo';
 import Tooltips from '@/components/Tooltips';
 
 import { Response } from '@/types/client';
-import { User, UserSchool } from '@/types/user';
+import { User } from '@/types/user';
 
 interface MyPageProps {
   user: User;
 }
 
 const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
-  const { data: school, isLoading: schoolLoading } =
-    useSWR<UserSchool>('/auth/me/school');
-  const { data: user, mutate: reloadUser } = useSWR<User>('/auth/me');
+  const { user, mutateUser: reloadUser, error } = useUser();
+  const { school, isLoading: schoolLoading, error: schoolError } = useSchool();
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [logoutModal, setLogoutModal] = useState(false);
@@ -111,6 +112,7 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
     }
   };
 
+  if (schoolError || error) return <Login redirectTo='/auth/me' />;
   if (schoolLoading && !school) return <LoadingScreen />;
   if (!user) return <LoadingScreen />;
   if (imageUploading) return <LoadingScreen />;
