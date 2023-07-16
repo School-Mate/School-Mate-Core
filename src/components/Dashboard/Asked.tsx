@@ -11,7 +11,7 @@ interface AskedProps {
 const Asked: React.FC<AskedProps> = ({ askedUser }) => {
   return (
     <>
-      <div className='w-full rounded-[10px] border p-6'>
+      <div className='w-full max-w-[17rem] rounded-[10px] border p-6'>
         <div className='flex flex-row items-center'>
           <NextImage
             src={

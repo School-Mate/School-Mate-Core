@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import * as React from 'react';
-import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react';
+import { SwiperClass } from 'swiper/react';
 import useSWR from 'swr';
 
 import { swrfetcher } from '@/lib/client';
@@ -9,9 +9,11 @@ import clsxm from '@/lib/clsxm';
 
 import Advertisement from '@/components/Advertisement';
 import BoardItemButton from '@/components/BoardItem';
+import Button from '@/components/buttons/Button';
 import WigetAsked from '@/components/Dashboard/Asked';
 import WigetReview from '@/components/Dashboard/Review';
 import Loading from '@/components/Loading';
+import Tooltips from '@/components/Tooltips';
 
 import { Article } from '@/types/article';
 import { AskedUser } from '@/types/asked';
@@ -109,80 +111,71 @@ const DashboardLeftSection: NextPage = () => {
           <div className='my-6 w-full border' />
           <Advertisement />
         </div>
-        <div className='relative flex w-full max-w-[874px] flex-row justify-between rounded-[20px] border-2 border-[#E3E5E8] p-5'>
-          {askeds ? (
-            <>
-              {askeds.length < 3 ? (
+        <div className='max-w-[874px] rounded-[20px] border-2 border-[#E3E5E8]'>
+          <div className='mb-3 mt-4 flex flex-row items-center px-5'>
+            <span className='mr-2 text-xl font-bold'>에스크 추천인</span>
+            <Tooltips
+              tooltip={
                 <>
-                  <div className='h-[134px]'></div>
+                  <div className='flex w-60 flex-col'>
+                    <span className='text-[16pt] font-semibold'>
+                      🏆 에스크 월정액
+                    </span>
+                    <div className='mt-2 flex flex-col text-[12pt] font-light'>
+                      <span>
+                        유료 월정액 유저가{' '}
+                        <span className='underline'>우선순위로</span>
+                      </span>
+                      <span>올라오게 됩니다.</span>
+                    </div>
+                    <Button
+                      className={clsxm(
+                        'ml-auto flex h-[30px] w-20 items-center justify-center',
+                        'border-none bg-sky-500 text-sm font-semibold text-white hover:bg-sky-600 active:bg-sky-700'
+                      )}
+                    >
+                      바로가기
+                    </Button>
+                  </div>
                 </>
-              ) : (
-                <>
-                  <button
-                    className={clsxm(
-                      'text-xl font-bold',
-                      'hover:text-[#BEBEBE]',
-                      'bottom-[50%] top-[50%] flex -translate-y-1/2 transform flex-row items-center bg-white',
-                      'absolute left-1 z-10 flex h-9 w-9 rounded-full border border-[#BEBEBE]',
-                      askedIndex === 0 ? 'hidden' : 'block'
-                    )}
-                    onClick={() => {
-                      askSwiper?.slidePrev();
-                    }}
-                  >
-                    <i className='fas fa-chevron-left mx-auto text-lg' />
-                  </button>
-                  <button
-                    className={clsxm(
-                      'text-xl font-bold',
-                      'hover:text-[#BEBEBE]',
-                      'bottom-[50%] top-[50%] flex -translate-y-1/2 transform flex-row items-center bg-white',
-                      'absolute right-1 z-10 flex h-9 w-9 rounded-full border border-[#BEBEBE]'
-                    )}
-                    onClick={() => {
-                      askSwiper?.slideNext();
-                    }}
-                  >
-                    <i className='fas fa-chevron-right mx-auto text-lg' />
-                  </button>
-                  <Swiper
-                    slidesPerView={3}
-                    slidesPerGroupSkip={3}
-                    grabCursor={true}
-                    keyboard={{
-                      enabled: true,
-                    }}
-                    navigation={false}
-                    pagination={{
-                      clickable: true,
-                    }}
-                    onSwiper={setAskSwiper}
-                    onSlideChange={(swiper) => {
-                      setAskedIndex(swiper.activeIndex);
-                    }}
-                    spaceBetween={20}
-                    loop={true}
-                    autoplay={{
-                      delay: 3000,
-                      disableOnInteraction: true,
-                    }}
-                  >
+              }
+            >
+              <div className={clsxm('flex items-center justify-center')}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src='/svg/Info.svg' alt='info' />
+              </div>
+            </Tooltips>
+          </div>
+          <div className='grid w-full grid-cols-3 gap-x-5 gap-y-3 px-5 pb-5'>
+            {askeds ? (
+              <>
+                {askeds.length == 0 ? (
+                  <>
+                    <div className='h-[280px]'></div>
+                  </>
+                ) : (
+                  <>
                     {askeds.map((asked, index) => (
                       <>
-                        <SwiperSlide key={index}>
-                          <WigetAsked askedUser={asked} key={index} />
-                        </SwiperSlide>
+                        <WigetAsked askedUser={asked} key={index} />
                       </>
                     ))}
-                  </Swiper>
-                </>
-              )}
-            </>
-          ) : (
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <div className='flex h-[280px] w-full flex-col items-center justify-center'>
+                  <Loading />
+                </div>
+              </>
+            )}
+          </div>
+          {askeds && askeds?.length > 6 && (
             <>
-              <div className='flex h-[134px] w-full flex-col items-center justify-center'>
-                <Loading />
-              </div>
+              <button className='h-[60px] w-full border-t font-bold'>
+                펼쳐보기 <i className='fas fa-plus text-schoolmate-500'></i>
+              </button>
             </>
           )}
         </div>
