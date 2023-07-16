@@ -24,6 +24,7 @@
     "dayjs": "^1.11.9",
     "lottie-web": "^5.12.2",
     "next": "^13.4.4",
+    "nextjs-progressbar": "^0.0.16",
     "react": "^18.2.0",
     "react-adsense": "^0.1.0",
     "react-calendar": "^4.3.0",

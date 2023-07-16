@@ -1,4 +1,5 @@
 import { AppProps } from 'next/app';
+import NextNProgress from 'nextjs-progressbar';
 import { ToastContainer } from 'react-toastify';
 import { SWRConfig } from 'swr';
 import 'dayjs/locale/ko';
@@ -24,6 +25,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         },
       }}
     >
+      <NextNProgress
+        color='#87ab69'
+        startPosition={0.3}
+        stopDelayMs={200}
+        height={3}
+        showOnShallow={true}
+      />
       <Component {...pageProps} />
       <Footer />
       <ToastContainer />
