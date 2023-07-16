@@ -1,3 +1,4 @@
+import Router from 'next/router';
 import React from 'react';
 
 import clsxm from '@/lib/clsxm';
@@ -26,6 +27,9 @@ const BoardItemButton = React.forwardRef<HTMLButtonElement, BoardItemProps>(
             'flex flex-row',
             className
           )}
+          onClick={() => {
+            Router.push(`/board/${article.Board.id}/v/${article.id}`);
+          }}
           ref={ref}
           {...rest}
         >

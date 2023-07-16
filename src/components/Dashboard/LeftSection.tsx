@@ -1,7 +1,6 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import * as React from 'react';
-import { SwiperClass } from 'swiper/react';
 import useSWR from 'swr';
 
 import { swrfetcher } from '@/lib/client';
@@ -12,6 +11,7 @@ import BoardItemButton from '@/components/BoardItem';
 import Button from '@/components/buttons/Button';
 import WigetAsked from '@/components/Dashboard/Asked';
 import WigetReview from '@/components/Dashboard/Review';
+import Empty from '@/components/Empty';
 import Loading from '@/components/Loading';
 import Tooltips from '@/components/Tooltips';
 
@@ -24,9 +24,7 @@ const DashboardLeftSection: NextPage = () => {
   const { data: askeds } = useSWR<AskedUser[]>(`/asked`, swrfetcher);
   const { data: reviews } = useSWR<Review[]>(`/review`, swrfetcher);
   const { data: boards } = useSWR<Board[]>(`/board`, swrfetcher);
-  const { data: articles } = useSWR<Article[]>(`/article`, swrfetcher);
-  const [askSwiper, setAskSwiper] = React.useState<SwiperClass>();
-  const [askedIndex, setAskedIndex] = React.useState<number>(0);
+  const { data: articles } = useSWR<Article[]>(`/board/articles`, swrfetcher);
   const [selectedBoard, setSelectedBoard] = React.useState<
     'board' | 'asked' | 'planner'
   >('board');
@@ -65,9 +63,29 @@ const DashboardLeftSection: NextPage = () => {
           </div>
           <div className='mt-4 flex flex-row'>
             <div className='mr-8 flex h-[280px] w-full max-w-[474px] flex-col justify-between'>
-              {articles?.slice(0, 3).map((article, index) => (
-                <BoardItemButton key={index} article={article} />
-              ))}
+              {articles ? (
+                <>
+                  {articles.length == 0 ? (
+                    <>
+                      <div className='h-[280px]'>
+                        <Empty />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {articles.slice(0, 3).map((article, index) => (
+                        <BoardItemButton key={index} article={article} />
+                      ))}
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className='flex h-[280px] w-full flex-col items-center justify-center'>
+                    <Loading />
+                  </div>
+                </>
+              )}
             </div>
             {boards ? (
               <>
