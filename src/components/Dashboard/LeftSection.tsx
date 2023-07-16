@@ -10,7 +10,6 @@ import Advertisement from '@/components/Advertisement';
 import BoardItemButton from '@/components/BoardItem';
 import Button from '@/components/buttons/Button';
 import WigetAsked from '@/components/Dashboard/Asked';
-import WigetReview from '@/components/Dashboard/Review';
 import Empty from '@/components/Empty';
 import Loading from '@/components/Loading';
 import Tooltips from '@/components/Tooltips';
@@ -170,31 +169,36 @@ const DashboardLeftSection: NextPage = () => {
               </div>
             </Tooltips>
           </div>
-          <div className='grid w-full grid-cols-3 gap-x-5 gap-y-3 px-5 pb-5'>
-            {askeds ? (
-              <>
-                {askeds.length == 0 ? (
-                  <>
-                    <div className='h-[280px]'></div>
-                  </>
-                ) : (
-                  <>
+          {askeds ? (
+            <>
+              {askeds.length === 0 ? (
+                <>
+                  <div className='flex h-[280px] w-full items-center justify-center'>
+                    <Empty
+                      className='-mb-10 h-56 w-56 text-lg'
+                      textClassName='text-xl'
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className='grid w-full grid-cols-3 gap-x-5 gap-y-3 px-5 pb-5'>
                     {askeds.map((asked, index) => (
                       <>
                         <WigetAsked askedUser={asked} key={index} />
                       </>
                     ))}
-                  </>
-                )}
-              </>
-            ) : (
-              <>
-                <div className='flex h-[280px] w-full flex-col items-center justify-center'>
-                  <Loading />
-                </div>
-              </>
-            )}
-          </div>
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <div className='flex h-[280px] w-full flex-col items-center justify-center'>
+                <Loading />
+              </div>
+            </>
+          )}
           {askeds && askeds?.length > 6 && (
             <>
               <button className='h-[60px] w-full border-t font-bold'>
@@ -203,11 +207,11 @@ const DashboardLeftSection: NextPage = () => {
             </>
           )}
         </div>
-        <div className='relative flex w-full max-w-[874px] flex-row justify-between rounded-[20px] border-2 border-[#E3E5E8] p-5'>
+        {/* <div className='relative flex w-full max-w-[874px] flex-row justify-between rounded-[20px] border-2 border-[#E3E5E8] p-5'>
           {reviews?.map((review, index) => (
             <WigetReview review={review} key={index} />
           ))}
-        </div>
+        </div> */}
       </div>
     </>
   );
