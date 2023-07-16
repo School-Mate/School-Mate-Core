@@ -8,7 +8,10 @@ const nextConfig = {
 
   // Uncoment to add domain whitelist
   images: {
-    domains: ['schoolmate-project.s3.ap-northeast-2.amazonaws.com'],
+    domains: [
+      'schoolmate-project.s3.ap-northeast-2.amazonaws.com',
+      'd184yr88ghlmna.cloudfront.net',
+    ],
   },
 
   // SVGR
