@@ -86,7 +86,7 @@ const DashboardLeftSection: NextPage = () => {
                     ))}
                   </div>
                   <div className='flex flex-col space-y-1 border-r px-2'>
-                    {boards.slice(6, 12).map((board, index) => (
+                    {boards.slice(6, 11).map((board, index) => (
                       <>
                         <Link
                           href={`/board/${board.id}`}
@@ -97,6 +97,12 @@ const DashboardLeftSection: NextPage = () => {
                         </Link>
                       </>
                     ))}
+                    <Link
+                      href='/board'
+                      className='text-schoolmate-500 rounded-[10px] px-2 py-2 text-base font-bold hover:bg-gray-100'
+                    >
+                      더보기
+                    </Link>
                   </div>
                 </div>
               </>
@@ -142,7 +148,7 @@ const DashboardLeftSection: NextPage = () => {
             >
               <div className={clsxm('flex items-center justify-center')}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src='/svg/Info.svg' alt='info' />
+                <img src='/svg/Info.svg' className='h-5 w-5' alt='info' />
               </div>
             </Tooltips>
           </div>
