@@ -3,4 +3,5 @@ export interface Board {
   boardId: number;
   name: string;
   userId: string;
+  default: boolean;
 }
