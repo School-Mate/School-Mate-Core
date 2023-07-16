@@ -16,7 +16,7 @@ const Asked: React.FC<AskedProps> = ({ askedUser }) => {
           <NextImage
             src={
               askedUser.user.profile
-                ? askedUser.user.profile
+                ? process.env.NEXT_PUBLIC_S3_URL + '/' + askedUser.user.profile
                 : '/images/profile.jpg'
             }
             className='h-[50px] w-[50px] overflow-hidden rounded-full'
