@@ -35,3 +35,9 @@ export const cookieParser = (
   const cookies = cookie.parse((ctx.req.headers.cookie as string) || '');
   return cookies;
 };
+
+export const passwordCheck = (password: string): boolean => {
+  const passwordRegex =
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
+  return passwordRegex.test(password);
+};

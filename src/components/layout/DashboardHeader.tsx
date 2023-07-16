@@ -63,16 +63,29 @@ const Header: React.FC<HeaderProps> = ({ user, school }) => {
         </div>
         <div className='h-[65px]'>
           {user.profile ? (
-            <></>
+            <>
+              <Link href='/auth/me'>
+                <NextImage
+                  src={process.env.NEXT_PUBLIC_S3_URL + '/' + user.profile}
+                  alt='profile'
+                  width={65}
+                  height={65}
+                  className='h-[65px] w-[65px] overflow-hidden rounded-full'
+                  imgClassName='h-[65px] w-[65px] object-cover'
+                />
+              </Link>
+            </>
           ) : (
             <>
-              <NextImage
-                src='/images/profile.jpg'
-                alt='profile'
-                width={65}
-                height={65}
-                className='h-[65px] w-[65px] overflow-hidden rounded-full'
-              />
+              <Link href='/auth/me'>
+                <NextImage
+                  src='/images/profile.jpg'
+                  alt='profile'
+                  width={65}
+                  height={65}
+                  className='h-[65px] w-[65px] overflow-hidden rounded-full'
+                />
+              </Link>
             </>
           )}
         </div>
