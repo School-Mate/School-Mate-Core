@@ -1,5 +1,4 @@
 import { AppProps } from 'next/app';
-import { createContext } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { SWRConfig } from 'swr';
 import 'dayjs/locale/ko';
@@ -14,14 +13,6 @@ import '@/styles/schoolmate.css';
 import { swrfetcher } from '@/lib/client';
 
 import Footer from '@/components/Footer';
-
-import { User } from '@/types/user';
-
-export const GlobalContext = createContext<GlobalAuth>({
-  isSchoolSelected: false,
-  isVerifySchool: false,
-  user: {} as User,
-});
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -39,11 +30,4 @@ function MyApp({ Component, pageProps }: AppProps) {
     </SWRConfig>
   );
 }
-
-interface GlobalAuth {
-  isSchoolSelected: boolean;
-  isVerifySchool: boolean;
-  user: User;
-}
-
 export default MyApp;
