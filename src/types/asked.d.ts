@@ -31,3 +31,9 @@ export interface AskedQuestionWithMe {
   successCount: number;
   pendingCount: number;
 }
+
+export interface AskedQuestionWithPage {
+  user: AskedUser;
+  askeds: AskedQuestion[];
+  pages: number;
+}

@@ -34,12 +34,18 @@ const Asked: NextPage = () => {
   const [asked, setAsked] = useState<AskedQuestionWithMe>();
   const [answerType, setAnswerType] = useState<'deny' | 'accept'>();
   const [loadingAsked, setLoadingAsked] = useState<boolean>(false);
+  const [loadingFirstAsked, setLoadingFirstAsked] = useState<boolean>(true);
   const [askedMessage, setAskedMessage] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [ref, inView] = useInView();
   const refEditFeed = useDetectClickOutside({
     onTriggered: () => setEnableEditFeed(false),
   });
+
+  useEffect(() => {
+    console.log(2123);
+    fetchAsked();
+  }, [page]);
 
   useEffect(() => {
     setAnswerType(undefined);
@@ -58,13 +64,9 @@ const Asked: NextPage = () => {
     }
   }, [inView, loadingAsked]);
 
-  useEffect(() => {
-    fetchAsked();
-  }, [page]);
-
   const fetchAsked = async () => {
+    setLoadingAsked(true);
     try {
-      setLoadingAsked(true);
       const { data } = await client.get<Response<AskedQuestionWithMe>>(
         `/auth/me/asked?page=${page}`
       );
@@ -90,6 +92,7 @@ const Asked: NextPage = () => {
       }
     } finally {
       setLoadingAsked(false);
+      setLoadingFirstAsked(false);
     }
   };
 
@@ -164,9 +167,11 @@ const Asked: NextPage = () => {
     ) as AskedQuestion;
   };
 
-  if (isSchoolLoding || isUserLoading || !asked) return <LoadingScreen />;
+  if (isSchoolLoding || isUserLoading || loadingFirstAsked)
+    return <LoadingScreen />;
   if (!user) return <Login redirectTo='/asked/me' />;
   if (!school) return <Error message='학교 정보를 불러오는데 실패했습니다.' />;
+  if (!asked) return <Error message='에스크 정보를 불러오는데 실패했습니다.' />;
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import { GetServerSideProps, NextPage } from 'next';
 import React, { useEffect, useRef, useState } from 'react';
-import useSWR from 'swr';
+import { useInView } from 'react-intersection-observer';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
@@ -12,20 +12,18 @@ import Toast from '@/lib/toast';
 import Checkbox from '@/components/CheckBox';
 import Error from '@/components/Error';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { LoadingScreen } from '@/components/Loading';
+import Loading, { LoadingScreen } from '@/components/Loading';
 import Login from '@/components/Login';
 import Seo from '@/components/Seo';
 
-import { AskedQuestion, AskedUser } from '@/types/asked';
+import { AskedQuestion, AskedQuestionWithPage, AskedUser } from '@/types/asked';
 import { Response } from '@/types/client';
 import dayjs from 'dayjs';
+import Router from 'next/router';
 
 interface AskedProps {
   error: boolean;
-  asked: {
-    user: AskedUser;
-    askeds: AskedQuestion[];
-  };
+  asked: AskedQuestionWithPage;
   message: string;
 }
 
@@ -35,26 +33,20 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
   const askedsEl = useRef<HTMLDivElement>(null);
   const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
   const [askedMessage, setAskedMessage] = useState<string>('');
-  const {
-    data: asked,
-    mutate: reloadAsked,
-    isLoading: loadingAsked,
-    error: askedError,
-  } = useSWR<{
+  const [loadingAsked, setLoadingAsked] = useState<boolean>(false);
+  const [autoScrollLock, setAutoScrollLock] = useState<boolean>(false);
+  const [asked, setAsked] = useState<{
     user: AskedUser;
-    askeds: AskedQuestion[];
-  }>(
-    `/asked/${
-      askedData?.user.customId
-        ? askedData.user.customId
-        : askedData?.user.userId
-    }`
-  );
+    pages: number;
+  } | null>(askedData);
+  const [askeds, setAskeds] = useState<AskedQuestion[]>(askedData.askeds);
+  const [page, setPage] = useState<number>(1);
+  const [ref, inView] = useInView();
+
   const scrollToBottom = () => {
     if (askedsEl.current) {
       askedsEl.current.scrollTo({
         top: askedsEl.current.scrollHeight,
-        behavior: 'smooth',
       });
     }
   };
@@ -67,10 +59,9 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
         question: askedMessage,
         isAnonymous: isAnonymous,
       });
-
-      reloadAsked();
-      scrollToBottom();
-      Toast('질문을 성공적으로 보냈습니다.', 'success');
+      Router.reload();
+      setAskedMessage('');
+      Toast('질문을 성공적으로 추가되었습니다!', 'success');
     } catch (e) {
       if (e instanceof AxiosError) {
         return Toast(e.response?.data.message, 'error');
@@ -79,16 +70,47 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
   };
 
   useEffect(() => {
-    reloadAsked(askedData, false);
-  }, []);
+    if (asked?.pages === page) return;
+    if (inView && !loadingAsked) {
+      setPage((prevState) => prevState + 1);
+    }
+  }, [inView, loadingAsked]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [asked]);
+    if (page === 1) return;
+    fetchAsked();
+  }, [page]);
 
-  if (error || askedError) return <Error message={message} />;
+  useEffect(() => {
+    if (autoScrollLock) return;
+    scrollToBottom();
+  });
+
+  const fetchAsked = async () => {
+    try {
+      setLoadingAsked(true);
+      const { data } = await client.get<Response<AskedQuestionWithPage>>(
+        `/asked/${
+          askedData?.user.customId
+            ? askedData.user.customId
+            : askedData?.user.userId
+        }?page=${page}`
+      );
+
+      setAutoScrollLock(true);
+      setAsked(data.data);
+      setAskeds((prevState) => [...data.data.askeds, ...prevState]);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        Toast(err.response?.data.message, 'error');
+      }
+    } finally {
+      setLoadingAsked(false);
+    }
+  };
+
+  if (error) return <Error message={message} />;
   if (isSchoolLoding || isUserLoading) return <LoadingScreen />;
-  if (loadingAsked) return <LoadingScreen />;
   if (!asked || !askedData)
     return <Error message='에스크 정보를 불러오는데 실패했습니다.' />;
   if (!user)
@@ -152,7 +174,13 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
                 className='mb-5 flex max-h-[60vh] flex-col space-y-5 overflow-y-scroll'
                 ref={askedsEl}
               >
-                {asked.askeds.map((asked, index) => (
+                <div ref={ref} className='w-full' />
+                {loadingAsked && (
+                  <div className='flex h-full w-full flex-col items-center'>
+                    <Loading />
+                  </div>
+                )}
+                {askeds.map((asked, index) => (
                   <AskedUsers asked={asked} key={index} />
                 ))}
               </div>
@@ -211,10 +239,11 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
 
 const AskedUsers: React.FC<{
   asked: AskedQuestion;
-}> = ({ asked }) => {
+  lastRef?: React.Ref<HTMLDivElement>;
+}> = ({ asked, lastRef }) => {
   return (
     <>
-      <div className='flex h-full w-full flex-col items-center'>
+      <div className='flex h-full w-full flex-col items-center' ref={lastRef}>
         <div className='relative flex h-full w-full flex-row items-center'>
           <div className='ml-3 max-w-xl break-words rounded-[10px] border-2 bg-white p-4 text-lg'>
             {asked.question}
