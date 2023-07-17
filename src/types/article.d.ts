@@ -17,6 +17,7 @@ export interface Article {
   likeCounts: number;
   disLikeCounts: number;
   isLiked: boolean;
+  isMe: boolean;
 }
 
 export interface Board {
@@ -38,6 +39,7 @@ export interface Comment {
   recomments: Recomment[];
   updatedAt: Date;
   userId: string;
+  isMe: boolean;
 }
 
 export interface Recomment {
@@ -51,4 +53,5 @@ export interface Recomment {
   isDeleted: boolean;
   updatedAt: Date;
   userId: string;
+  isMe: boolean;
 }

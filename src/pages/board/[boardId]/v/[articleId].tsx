@@ -249,7 +249,7 @@ const ArticlePage: NextPage<BoardPageProps> = ({
                     </div>
                   </div>
                   <div className='mt-auto'>
-                    {user.id === article.userId ? (
+                    {article.isMe ? (
                       <>
                         <button
                           onClick={deleteArticleHandler}
@@ -399,7 +399,7 @@ const Comment: React.FC<CommentProps> = ({
               추천
             </button>
           )}
-          {user?.id === comment.userId && !comment.isDeleted && (
+          {comment.isMe && !comment.isDeleted && (
             <button
               onClick={deleteCommentHandler}
               className='text-sm text-[#969696] underline underline-offset-2'
@@ -510,7 +510,9 @@ const AddComment: React.FC<AddCommetProps> = ({
         >
           {loading ? (
             <>
-              <Loading className='flex h-10 w-10 items-center justify-center' />
+              <div className='overflow-hidden'>
+                <Loading className='flex h-11 w-11 items-center justify-center' />
+              </div>
             </>
           ) : (
             <>등록</>
