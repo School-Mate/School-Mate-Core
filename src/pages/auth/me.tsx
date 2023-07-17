@@ -276,7 +276,7 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
             onClick={() => {
               setLogoutModal(true);
             }}
-            className='hover:bg-schoolmate-500 mt-5 flex h-[60px] w-full items-center justify-center rounded-[10px] border border-[#D8D8D8] font-bold text-[#939393] hover:text-white'
+            className='hover:bg-schoolmate-500 mt-5 flex h-[60px] w-full items-center justify-center rounded-[15px] border border-[#D8D8D8] font-bold text-[#939393] hover:text-white'
             variant='outline'
           >
             로그아웃

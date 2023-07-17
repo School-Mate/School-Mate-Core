@@ -17,13 +17,11 @@ import Tooltips from '@/components/Tooltips';
 import { Article } from '@/types/article';
 import { AskedUser } from '@/types/asked';
 import { Board } from '@/types/board';
-import { Review } from '@/types/review';
 
 const DashboardLeftSection: NextPage = () => {
   const { data: askeds } = useSWR<AskedUser[]>(`/asked`, swrfetcher);
-  const { data: reviews } = useSWR<Review[]>(`/review`, swrfetcher);
   const { data: boards } = useSWR<Board[]>(`/board`, swrfetcher);
-  const { data: articles } = useSWR<Article[]>(`/board/articles`, swrfetcher);
+  const { data: articles } = useSWR<Article[]>(`/board/suggest`, swrfetcher);
   const [selectedBoard, setSelectedBoard] = React.useState<
     'board' | 'asked' | 'planner'
   >('board');
