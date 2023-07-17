@@ -45,6 +45,8 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [logoutModal, setLogoutModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedNickname, setEditedNickname] = useState(user?.name || '');
   const [openEditUserCustomId, setOpenEditUserCustomId] = useState(false);
   const [editUserCustomIdLoading, setEditUserCustomIdLoading] = useState(false);
   const [editUserCustomId, setEditUserCustomId] = useState<string>();
@@ -168,6 +170,20 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
     }
   };
 
+  const updateNickname = async (nickname: string) => {
+    if (!nickname) return Toast('닉네임을 입력해주세요', 'error');
+
+    try {
+      await client.patch(`/auth/me/nickname`, { "nickname": nickname });
+    } catch (e) {
+      return Toast('닉네임 변경에 실패했습니다', 'error');
+    }
+  }
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditedNickname(e.target.value);
+  }
+
   if (schoolError || error) return <Login redirectTo='/auth/me' />;
   if (schoolLoading && !school) return <LoadingScreen />;
   if (loadingAsked || loadingUser) return <LoadingScreen />;
@@ -189,9 +205,8 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
                   className='relative h-28 w-28 rounded-[20px] border border-[#D8D8D8]'
                   style={{
                     backgroundImage: user.profile
-                      ? `url(${
-                          process.env.NEXT_PUBLIC_S3_URL + '/' + user.profile
-                        })`
+                      ? `url(${process.env.NEXT_PUBLIC_S3_URL + '/' + user.profile
+                      })`
                       : `url(/svg/CloverGray.svg)`,
                     backgroundColor: '#F1F1F1',
                     backgroundSize: user.profile ? 'cover' : '50px 50px',
@@ -232,12 +247,28 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
                 <div className='flex w-full flex-row items-center border-b pb-2'>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src='/svg/User.svg' alt='user' className='h-6 w-6' />
-                  <span className='ml-2 text-[#989898]'>{user.name}</span>
+                  {isEditing ? (
+                    <input
+                      value={editedNickname}
+                      className='ml-2 text-[#000000]'
+                      onChange={handleEditChange}
+                      autoFocus
+                    />
+                  ) : (
+                    <span className='ml-2 text-[#989898]'>{user.name}</span>
+                  )}
                   <button
                     className='ml-auto h-7 w-16 rounded-[5px] border border-[#D8D8D8] bg-[#F9F9F9] text-[#9A9A9A] hover:text-[#636363]'
-                    // onClick={() => {
-                    //   window.location.href = '/auth/me/edit/name';
-                    // }}
+                    onClick={() => {
+                      if (isEditing) {
+                        updateNickname(editedNickname);
+                        user.name = editedNickname;
+                        setIsEditing(false);
+                      } else {
+                        setEditedNickname(user.name);
+                        setIsEditing(true);
+                      }
+                    }}
                   >
                     수정
                   </button>
@@ -303,9 +334,9 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
                   </span>
                   <button
                     className='ml-auto h-7 w-16 rounded-[5px] border border-[#D8D8D8] bg-[#F9F9F9] text-[#9A9A9A] hover:text-[#636363]'
-                    // onClick={() => {
-                    //   window.location.href = '/auth/me/edit/name';
-                    // }}
+                  // onClick={() => {
+                  //   window.location.href = '/auth/me/edit/name';
+                  // }}
                   >
                     수정
                   </button>
@@ -388,7 +419,7 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
             로그아웃
           </Button>
         </div>
-      </DashboardLayout>
+      </DashboardLayout >
 
       <Modal
         isOpen={logoutModal}
