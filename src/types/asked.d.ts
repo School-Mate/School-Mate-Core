@@ -26,4 +26,8 @@ export interface AskedQuestion {
 export interface AskedQuestionWithMe {
   user: AskedUser;
   askeds: AskedQuestion[];
+  pages: number;
+  deniedCount: number;
+  successCount: number;
+  pendingCount: number;
 }
