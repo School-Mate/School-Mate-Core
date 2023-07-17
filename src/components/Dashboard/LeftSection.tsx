@@ -18,6 +18,7 @@ import { Article } from '@/types/article';
 import { AskedQuestionWithMe, AskedUser } from '@/types/asked';
 import { Board } from '@/types/board';
 import Router from 'next/router';
+import Toast from '@/lib/toast';
 
 const DashboardLeftSection: NextPage = () => {
   const { data: askeds } = useSWR<AskedUser[]>(`/asked`, swrfetcher);
@@ -30,6 +31,18 @@ const DashboardLeftSection: NextPage = () => {
   const [selectedBoard, setSelectedBoard] = React.useState<
     'board' | 'asked' | 'planner'
   >('board');
+
+  const copyAskedLink = () => {
+    if (!myAsked?.user)
+      return Toast('에스크 정보를 불러오는데 실패했습니다.', 'error');
+    navigator.clipboard.writeText(
+      window.location.host +
+        '/asked/' +
+        (myAsked.user.customId ? myAsked.user.customId : myAsked.user.userId)
+    );
+
+    Toast('에스크 링크를 복사했습니다.', 'success');
+  };
 
   const DashboardSelectItem: {
     [key: string]: React.ReactNode;
@@ -200,7 +213,7 @@ const DashboardLeftSection: NextPage = () => {
               className='flex h-10 w-[230px] items-center justify-center rounded-[10px] font-bold'
               variant='primary'
               onClick={() => {
-                Router.push('/asked');
+                copyAskedLink();
               }}
             >
               <img src='/svg/Share.svg' className='mr-1 h-5 w-5' alt='share' />

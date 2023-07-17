@@ -3,6 +3,7 @@ import { NextPage } from 'next';
 import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
+import { useInView } from 'react-intersection-observer';
 import useSWR from 'swr';
 
 import client from '@/lib/client';
@@ -15,7 +16,7 @@ import Button from '@/components/buttons/Button';
 import Empty from '@/components/Empty';
 import Error from '@/components/Error';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { LoadingScreen } from '@/components/Loading';
+import Loading, { LoadingScreen } from '@/components/Loading';
 import Login from '@/components/Login';
 import Seo from '@/components/Seo';
 
@@ -30,13 +31,12 @@ const Asked: NextPage = () => {
   const [enableEditFeed, setEnableEditFeed] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [selectedAsked, setSelectedAsked] = useState<string>();
+  const [asked, setAsked] = useState<AskedQuestionWithMe>();
   const [answerType, setAnswerType] = useState<'deny' | 'accept'>();
+  const [loadingAsked, setLoadingAsked] = useState<boolean>(false);
   const [askedMessage, setAskedMessage] = useState<string>('');
-  const {
-    data: asked,
-    isLoading: loadingAsked,
-    mutate: reloadAsked,
-  } = useSWR<AskedQuestionWithMe>(`/auth/me/asked`);
+  const [page, setPage] = useState<number>(1);
+  const [ref, inView] = useInView();
   const refEditFeed = useDetectClickOutside({
     onTriggered: () => setEnableEditFeed(false),
   });
@@ -46,10 +46,52 @@ const Asked: NextPage = () => {
   }, [selectedAsked]);
 
   useEffect(() => {
-    if (asked) {
-      setSelectedAsked(asked.askeds[0].id);
-    }
+    if (!asked) return;
+    if (page != 1) return;
+    setSelectedAsked(asked.askeds[0].id);
   }, [asked]);
+
+  useEffect(() => {
+    if (asked?.pages === page) return;
+    if (inView && !loadingAsked) {
+      setPage((prevState) => prevState + 1);
+    }
+  }, [inView, loadingAsked]);
+
+  useEffect(() => {
+    fetchAsked();
+  }, [page]);
+
+  const fetchAsked = async () => {
+    try {
+      setLoadingAsked(true);
+      const { data } = await client.get<Response<AskedQuestionWithMe>>(
+        `/auth/me/asked?page=${page}`
+      );
+
+      if (data.data.pages === 0) {
+        setAsked(data.data);
+        return;
+      }
+
+      setAsked((prevState) => {
+        if (prevState) {
+          return {
+            ...data.data,
+            askeds: [...prevState.askeds, ...data.data.askeds],
+          };
+        } else {
+          return data.data;
+        }
+      });
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        Toast(err.response?.data.message, 'error');
+      }
+    } finally {
+      setLoadingAsked(false);
+    }
+  };
 
   const changeStatusMessage = async () => {
     try {
@@ -122,81 +164,82 @@ const Asked: NextPage = () => {
     ) as AskedQuestion;
   };
 
-  if (isSchoolLoding || isUserLoading || loadingAsked) return <LoadingScreen />;
+  if (isSchoolLoding || isUserLoading || !asked) return <LoadingScreen />;
   if (!user) return <Login redirectTo='/asked/me' />;
   if (!school) return <Error message='학교 정보를 불러오는데 실패했습니다.' />;
-  if (!asked) return <Error message='에스크 정보를 불러오는데 실패했습니다.' />;
 
   return (
     <>
       <Seo templateTitle={asked.user.user.name + '님의 에스크'} />
       <DashboardLayout user={user} school={school}>
         <div className='mx-auto mt-5 flex h-full min-h-[86vh] max-w-[1280px] flex-col justify-center'>
-          <div className='flex h-60 w-full flex-col rounded-[20px] border p-9'>
-            <div className='flex flex-row items-center'>
+          <div className='flex h-40 w-full flex-row items-center justify-between rounded-[20px] border p-9'>
+            <div className='flex flex-col'>
+              <div className='flex flex-row items-center'>
+                <div
+                  className='relative h-[70px] w-[70px] rounded-full border border-[#D8D8D8]'
+                  style={{
+                    backgroundImage: user.profile
+                      ? `url(${
+                          process.env.NEXT_PUBLIC_S3_URL + '/' + user.profile
+                        })`
+                      : `url(/svg/CloverGray.svg)`,
+                    backgroundColor: '#F1F1F1',
+                    backgroundSize: user.profile ? 'cover' : '40px 40px',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                  }}
+                />
+                <div className='ml-3 flex max-w-[148px] flex-col whitespace-nowrap'>
+                  <h1 className='w-full truncate overflow-ellipsis text-xl font-bold'>
+                    {asked.user.user.name}
+                  </h1>
+                  <h2 className='-mt-1 truncate overflow-ellipsis text-sm font-normal text-[#707070]'>
+                    @
+                    {asked.user.customId
+                      ? asked.user.customId
+                      : asked.user.user.name}
+                  </h2>
+                </div>
+              </div>
               <div
-                className='relative h-[70px] w-[70px] rounded-full border border-[#D8D8D8]'
-                style={{
-                  backgroundImage: user.profile
-                    ? `url(${
-                        process.env.NEXT_PUBLIC_S3_URL + '/' + user.profile
-                      })`
-                    : `url(/svg/CloverGray.svg)`,
-                  backgroundColor: '#F1F1F1',
-                  backgroundSize: user.profile ? 'cover' : '40px 40px',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center',
+                className={clsxm(
+                  'mt-4 overflow-hidden text-ellipsis whitespace-nowrap text-[11pt] leading-[18px] text-[#707070]',
+                  !enableEditFeed ? 'px-2' : ''
+                )}
+                onClick={() => {
+                  setEnableEditFeed(true);
                 }}
-              />
-              <div className='ml-3 flex max-w-[148px] flex-col whitespace-nowrap'>
-                <h1 className='w-full truncate overflow-ellipsis text-xl font-bold'>
-                  {asked.user.user.name}
-                </h1>
-                <h2 className='-mt-1 truncate overflow-ellipsis text-sm font-normal text-[#707070]'>
-                  @
-                  {asked.user.customId
-                    ? asked.user.customId
-                    : asked.user.user.name}
-                </h2>
+                ref={refEditFeed}
+              >
+                {enableEditFeed ? (
+                  <>
+                    <input
+                      placeholder='피드를 입력해주세요'
+                      className='focus:ring-none w-full rounded-[10px] px-2 focus:border-[#BABABA] focus:outline-none focus:ring-0'
+                      type='text'
+                      maxLength={30}
+                      autoFocus
+                      onChange={(e) => {
+                        setStatusMessage(e.target.value);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          changeStatusMessage();
+                        }
+                      }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    {asked.user.statusMessage
+                      ? asked.user.statusMessage
+                      : '피드를 입력해주세요'}
+                  </>
+                )}
               </div>
             </div>
-            <div
-              className={clsxm(
-                'mt-4 overflow-hidden text-ellipsis whitespace-nowrap text-[11pt] leading-[18px] text-[#707070]',
-                !enableEditFeed ? 'px-2' : ''
-              )}
-              onClick={() => {
-                setEnableEditFeed(true);
-              }}
-              ref={refEditFeed}
-            >
-              {enableEditFeed ? (
-                <>
-                  <input
-                    placeholder='피드를 입력해주세요'
-                    className='focus:ring-none w-full rounded-[10px] px-2 focus:border-[#BABABA] focus:outline-none focus:ring-0'
-                    type='text'
-                    maxLength={30}
-                    autoFocus
-                    onChange={(e) => {
-                      setStatusMessage(e.target.value);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        changeStatusMessage();
-                      }
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  {asked.user.statusMessage
-                    ? asked.user.statusMessage
-                    : '피드를 입력해주세요'}
-                </>
-              )}
-            </div>
-            <div className='mt-auto flex flex-row space-x-4'>
+            <div className='flex flex-col space-y-2'>
               <Button
                 className='flex w-52 items-center justify-center rounded-[10px]'
                 variant='outline'
@@ -234,15 +277,23 @@ const Asked: NextPage = () => {
               </>
             ) : (
               <>
-                <div className='flex w-[443px] flex-col space-y-1'>
-                  {asked.askeds.map((asked, index) => (
+                <div className='flex h-[60vh] w-[443px] flex-col space-y-1 overflow-y-scroll'>
+                  {asked.askeds.map((askedItem, index) => (
                     <AskedUsers
                       key={index}
-                      asked={asked}
-                      isSelect={asked.id === selectedAsked}
+                      asked={askedItem}
+                      isSelect={askedItem.id === selectedAsked}
                       onClick={setSelectedAsked}
+                      lastRef={
+                        asked.askeds.length - 1 === index ? ref : undefined
+                      }
                     />
                   ))}
+                  {loadingAsked && (
+                    <div className='flex w-full items-center justify-center'>
+                      <Loading />
+                    </div>
+                  )}
                 </div>
                 <div
                   className={clsxm(
@@ -352,7 +403,7 @@ const Asked: NextPage = () => {
                             ) : (
                               <>
                                 <div className='absolute flex h-full w-full items-center justify-center rounded-[10px] border-[2px] border-none bg-[#F4F4F4] px-3 text-lg focus:outline-none focus:ring-0 focus:ring-[#BABABA]'>
-                                  <span>이미 처리된 답변입니다!</span>
+                                  <span>이미 처리된 답변입니다</span>
                                 </div>
                               </>
                             )}
@@ -375,10 +426,12 @@ const AskedUsers: React.FC<{
   asked: AskedQuestion;
   onClick: (askedId: string) => void;
   isSelect?: boolean;
-}> = ({ asked, onClick, isSelect }) => {
+  lastRef?: React.Ref<HTMLDivElement>;
+}> = ({ asked, onClick, isSelect, lastRef }) => {
   return (
     <>
       <div
+        ref={lastRef}
         className={clsxm(
           'flex w-full cursor-pointer flex-row rounded-[10px] p-5',
           isSelect ? 'bg-[#F5F5F5]' : ''
