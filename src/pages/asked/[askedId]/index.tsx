@@ -52,7 +52,10 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
   );
   const scrollToBottom = () => {
     if (askedsEl.current) {
-      askedsEl.current.scrollTop = askedsEl.current.scrollHeight;
+      askedsEl.current.scrollTo({
+        top: askedsEl.current.scrollHeight,
+        behavior: 'smooth',
+      });
     }
   };
 
@@ -81,7 +84,7 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [askedsEl, asked]);
+  }, [asked]);
 
   if (error || askedError) return <Error message={message} />;
   if (isSchoolLoding || isUserLoading) return <LoadingScreen />;
@@ -212,22 +215,24 @@ const AskedUsers: React.FC<{
   return (
     <>
       <div className='flex h-full w-full flex-col items-center'>
-        <div className='flex h-full w-full flex-row items-center'>
+        <div className='relative flex h-full w-full flex-row items-center'>
           <div className='ml-3 max-w-xl break-words rounded-[10px] border-2 bg-white p-4 text-lg'>
             {asked.question}
           </div>
           <span className='ml-2 mt-auto text-sm font-light'>
             {dayjs(asked.createdAt).format('YYYY.MM.DD')}
           </span>
+          <div className='bg-schoolmate-500 absolute -left-2 mx-2 flex h-[95%] w-1 flex-row rounded-[88px]' />
         </div>
         {asked.answer && (
-          <div className='flex h-full w-full flex-row items-center'>
+          <div className='relative flex h-full w-full flex-row items-center'>
             <span className='ml-auto mt-auto text-sm font-light'>
               {dayjs(asked.answerTimeAt).format('YYYY.MM.DD')}
             </span>
-            <div className='ml-3 max-w-3xl rounded-[10px] bg-[#F5F5F5] p-4 text-lg'>
+            <div className='ml-3 mr-3 max-w-3xl rounded-[10px] bg-[#F5F5F5] p-4 text-lg'>
               {asked.answer}
             </div>
+            <div className='absolute -right-2 mx-2 flex h-[95%] w-1 flex-row rounded-[88px] bg-[#FFDB5A]' />
           </div>
         )}
       </div>

@@ -45,6 +45,12 @@ const Asked: NextPage = () => {
     setAnswerType(undefined);
   }, [selectedAsked]);
 
+  useEffect(() => {
+    if (asked) {
+      setSelectedAsked(asked.askeds[0].id);
+    }
+  }, [asked]);
+
   const changeStatusMessage = async () => {
     try {
       const { data } = await client.post<Response<AskedUser>>(
@@ -244,11 +250,11 @@ const Asked: NextPage = () => {
                     !getSeletedAsked() ? 'items-center justify-center' : ''
                   )}
                 >
-                  <div className='my-4 flex w-full flex-col items-center justify-center'>
+                  <div className='my-4 flex w-full flex-col items-center justify-center px-4'>
                     {getSeletedAsked() ? (
                       <>
                         <div className='flex h-full w-full flex-col'>
-                          <div className='flex h-full w-full flex-row items-center'>
+                          <div className='relative flex h-full w-full flex-row items-center'>
                             <div className='max-w-xl break-words rounded-[10px] border-2 bg-white p-4 text-base'>
                               {getSeletedAsked().question}
                             </div>
@@ -257,10 +263,11 @@ const Asked: NextPage = () => {
                                 'YYYY.MM.DD'
                               )}
                             </span>
+                            <div className='bg-schoolmate-500 absolute -left-5 mx-2 flex h-[95%] w-1 flex-row rounded-[88px]' />
                           </div>
 
                           {getSeletedAsked().answer && (
-                            <div className='mt-3 flex h-full w-full flex-row items-center'>
+                            <div className='relative mt-3 flex h-full w-full flex-row items-center'>
                               <span className='ml-auto mr-2 mt-auto text-sm font-light'>
                                 {dayjs(getSeletedAsked().answerTimeAt).format(
                                   'YYYY.MM.DD'
@@ -269,6 +276,7 @@ const Asked: NextPage = () => {
                               <div className='max-w-3xl rounded-[10px] bg-[#F5F5F5] p-4 text-base'>
                                 {getSeletedAsked().answer}
                               </div>
+                              <div className='absolute -right-5 mx-2 flex h-[95%] w-1 flex-row rounded-[88px] bg-[#FFDB5A]' />
                             </div>
                           )}
                         </div>
