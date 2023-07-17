@@ -1,6 +1,8 @@
 import * as React from 'react';
 
 import UnstyledLink from '@/components/links/UnstyledLink';
+import NextImage from '@/components/NextImage';
+import Link from 'next/link';
 
 const links = [
   { href: '/', label: 'Route 1' },
@@ -9,21 +11,22 @@ const links = [
 
 export default function Header() {
   return (
-    <header className='sticky top-0 z-50 bg-white'>
+    <header className='sticky top-0 z-50 border-b bg-white'>
       <div className='layout flex h-14 items-center justify-between'>
-        <UnstyledLink href='/' className='font-bold hover:text-gray-600'>
-          Home
-        </UnstyledLink>
-        <nav>
-          <ul className='flex items-center justify-between space-x-4'>
-            {links.map(({ href, label }) => (
-              <li key={`${href}${label}`}>
-                <UnstyledLink href={href} className='hover:text-gray-600'>
-                  {label}
-                </UnstyledLink>
-              </li>
-            ))}
-          </ul>
+        <Link href='/' className='flex cursor-pointer flex-row items-center'>
+          <NextImage
+            src='/svg/Logo.svg'
+            alt='logo'
+            width={40}
+            height={40}
+            className='cursor-pointer drop-shadow-xl'
+          />
+          <span className='ml-3 text-xl font-semibold'>schoolmate</span>
+        </Link>
+        <nav className='flex flex-row items-center space-x-6 text-[#939393]'>
+          {links.map(({ href, label }) => (
+            <a>{label}</a>
+          ))}
         </nav>
       </div>
     </header>
