@@ -14,11 +14,11 @@ const WigetCalendar: React.FC<{ todos: any[] }> = ({ todos }) => {
             <h4 className='text-lg'>{dayjs().format('dddd')}</h4>
             <h3 className='text-4xl'>{dayjs().format('D')}</h3>
           </div>
-          <div className='mb-2 mt-auto flex h-[90px] flex-col justify-between'>
+          {/* <div className='mb-2 mt-auto flex h-[90px] flex-col justify-between'>
             {todos.map((todo, index) => (
               <TodoList todo={todo} key={index} />
             ))}
-          </div>
+          </div> */}
         </div>
         <div className='flex h-full w-full flex-col justify-between'>
           <h5 className='text-lg font-bold'>{dayjs().format('M')}월</h5>
