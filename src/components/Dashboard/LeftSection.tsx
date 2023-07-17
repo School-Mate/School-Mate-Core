@@ -15,16 +15,215 @@ import Loading from '@/components/Loading';
 import Tooltips from '@/components/Tooltips';
 
 import { Article } from '@/types/article';
-import { AskedUser } from '@/types/asked';
+import { AskedQuestionWithMe, AskedUser } from '@/types/asked';
 import { Board } from '@/types/board';
+import Router from 'next/router';
+import Toast from '@/lib/toast';
 
 const DashboardLeftSection: NextPage = () => {
   const { data: askeds } = useSWR<AskedUser[]>(`/asked`, swrfetcher);
   const { data: boards } = useSWR<Board[]>(`/board`, swrfetcher);
   const { data: articles } = useSWR<Article[]>(`/board/suggest`, swrfetcher);
+  const { data: myAsked } = useSWR<AskedQuestionWithMe>(
+    `/auth/me/asked`,
+    swrfetcher
+  );
   const [selectedBoard, setSelectedBoard] = React.useState<
     'board' | 'asked' | 'planner'
   >('board');
+
+  const copyAskedLink = () => {
+    if (!myAsked?.user)
+      return Toast('에스크 정보를 불러오는데 실패했습니다.', 'error');
+    navigator.clipboard.writeText(
+      window.location.host +
+        '/asked/' +
+        (myAsked.user.customId ? myAsked.user.customId : myAsked.user.userId)
+    );
+
+    Toast('에스크 링크를 복사했습니다.', 'success');
+  };
+
+  const DashboardSelectItem: {
+    [key: string]: React.ReactNode;
+  } = {
+    board: (
+      <>
+        <div className='mr-8 flex h-[286px] w-full max-w-[474px] flex-col justify-between'>
+          {articles ? (
+            <>
+              {articles.length == 0 ? (
+                <>
+                  <div className='h-[280px] overflow-hidden'>
+                    <Empty className='h-60 w-60' textClassName='text-lg mt-5' />
+                  </div>
+                </>
+              ) : (
+                <>
+                  {articles.slice(0, 3).map((article, index) => (
+                    <BoardItemButton key={index} article={article} />
+                  ))}
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <div className='flex h-[286px] w-full flex-col items-center justify-center'>
+                <Loading />
+              </div>
+            </>
+          )}
+        </div>
+        {boards ? (
+          <>
+            <div className='grid w-[318px] grid-cols-2 rounded-[10px] border py-3'>
+              <div className='flex flex-col space-y-1 border-r px-2'>
+                {boards.slice(0, 6).map((board, index) => (
+                  <>
+                    <Link
+                      href={`/board/${board.id}`}
+                      key={index}
+                      className='rounded-[10px] px-2 py-2 text-base hover:bg-gray-100'
+                    >
+                      {board.name}
+                    </Link>
+                  </>
+                ))}
+              </div>
+              <div className='flex flex-col space-y-1 border-r px-2'>
+                {boards.slice(6, 11).map((board, index) => (
+                  <>
+                    <Link
+                      href={`/board/${board.id}`}
+                      key={index}
+                      className='rounded-[10px] px-2 py-2 text-base hover:bg-gray-100'
+                    >
+                      {board.name}
+                    </Link>
+                  </>
+                ))}
+                <Link
+                  href='/board'
+                  className='text-schoolmate-500 rounded-[10px] px-2 py-2 text-base font-bold hover:bg-gray-100'
+                >
+                  더보기
+                </Link>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className='flex w-[318px] items-center justify-center rounded-[10px] border py-6'>
+              <Loading />
+            </div>
+          </>
+        )}
+      </>
+    ),
+    asked: (
+      <>
+        <div className='flex h-[286px] w-full flex-col justify-between rounded-[10px] border p-10'>
+          <div className='flex flex-row'>
+            <div className='flex w-96 flex-col'>
+              <div className='flex flex-row'>
+                <div
+                  className='relative h-20 w-20 rounded-full border border-[#D8D8D8]'
+                  style={{
+                    backgroundImage: myAsked?.user.user.profile
+                      ? `url(${
+                          process.env.NEXT_PUBLIC_S3_URL +
+                          '/' +
+                          myAsked?.user.user.profile
+                        })`
+                      : `url(/svg/CloverGray.svg)`,
+                    backgroundColor: '#F1F1F1',
+                    backgroundSize: myAsked?.user.user.profile
+                      ? 'cover'
+                      : '50px 50px',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                  }}
+                />
+                <div className='ml-2 flex flex-col justify-center'>
+                  <span className='ml-3 text-xl font-bold'>
+                    {myAsked?.user.user.name}
+                  </span>
+                  <span className='ml-3 text-sm font-normal text-[#707070]'>
+                    @
+                    {myAsked?.user.customId
+                      ? myAsked?.user.customId
+                      : myAsked?.user.user.name}
+                  </span>
+                </div>
+              </div>
+              <span className='ml-2 mt-4 overflow-clip text-ellipsis whitespace-nowrap'>
+                {myAsked?.user.statusMessage
+                  ? myAsked?.user.statusMessage
+                  : '피드를 입력해주세요!'}
+              </span>
+            </div>
+            <div className='ml-5 flex w-[400px] flex-row items-center justify-between rounded-[10px] bg-[#F9F9F9] p-5'>
+              <div className='flex flex-col items-center justify-center'>
+                <span className='mb-2 text-lg font-bold text-black'>
+                  {myAsked?.pendingCount}
+                </span>
+                <span className='text-lg text-[#A5A5A5]'>새 질문</span>
+              </div>
+              <div className='h-full max-h-20 w-[1px] bg-[#D8D8D8]' />
+              <div className='flex flex-col items-center justify-center'>
+                <span className='mb-2 text-lg font-bold text-black'>
+                  {myAsked?.successCount}
+                </span>
+                <span className='text-lg text-[#A5A5A5]'>답변완료</span>
+              </div>
+              <div className='h-full max-h-20 w-[1px] bg-[#D8D8D8]' />
+              <div className='flex flex-col items-center justify-center'>
+                <span className='mb-2 text-lg font-bold text-black'>
+                  {myAsked?.deniedCount}
+                </span>
+                <span className='text-lg text-[#A5A5A5]'>거절질문</span>
+              </div>
+            </div>
+          </div>
+          <div className='flex w-full flex-row justify-between'>
+            <Button
+              variant='outline'
+              className='flex h-10 w-[230px] items-center justify-center rounded-[10px] font-bold'
+              onClick={() => {
+                Router.push('/asked/me');
+              }}
+            >
+              <img
+                src='/svg/ChatAdd.svg'
+                className='mr-1 h-5 w-5'
+                alt='chat-add'
+              />
+              에스크
+            </Button>
+            <Button
+              variant='outline'
+              className='flex h-10 w-[230px] items-center justify-center rounded-[10px] font-bold'
+              onClick={() => {
+                Router.push('/auth/me');
+              }}
+            >
+              프로필 수정
+            </Button>
+            <Button
+              className='flex h-10 w-[230px] items-center justify-center rounded-[10px] font-bold'
+              variant='primary'
+              onClick={() => {
+                copyAskedLink();
+              }}
+            >
+              <img src='/svg/Share.svg' className='mr-1 h-5 w-5' alt='share' />
+              공유하기
+            </Button>
+          </div>
+        </div>
+      </>
+    ),
+  };
 
   return (
     <>
@@ -48,7 +247,7 @@ const DashboardLeftSection: NextPage = () => {
             >
               에스크
             </SelectBoardButton>
-            <span className='mx-3 text-xl font-bold text-[#BEBEBE]'>/</span>
+            {/* <span className='mx-3 text-xl font-bold text-[#BEBEBE]'>/</span>
             <SelectBoardButton
               isSelected={selectedBoard === 'planner'}
               onClick={() => {
@@ -56,78 +255,10 @@ const DashboardLeftSection: NextPage = () => {
               }}
             >
               플래너
-            </SelectBoardButton>
+            </SelectBoardButton> */}
           </div>
           <div className='mt-4 flex flex-row'>
-            <div className='mr-8 flex h-[280px] w-full max-w-[474px] flex-col justify-between'>
-              {articles ? (
-                <>
-                  {articles.length == 0 ? (
-                    <>
-                      <div className='h-[280px]'>
-                        <Empty />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {articles.slice(0, 3).map((article, index) => (
-                        <BoardItemButton key={index} article={article} />
-                      ))}
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  <div className='flex h-[280px] w-full flex-col items-center justify-center'>
-                    <Loading />
-                  </div>
-                </>
-              )}
-            </div>
-            {boards ? (
-              <>
-                <div className='grid w-[318px] grid-cols-2 rounded-[10px] border py-3'>
-                  <div className='flex flex-col space-y-1 border-r px-2'>
-                    {boards.slice(0, 6).map((board, index) => (
-                      <>
-                        <Link
-                          href={`/board/${board.id}`}
-                          key={index}
-                          className='rounded-[10px] px-2 py-2 text-base hover:bg-gray-100'
-                        >
-                          {board.name}
-                        </Link>
-                      </>
-                    ))}
-                  </div>
-                  <div className='flex flex-col space-y-1 border-r px-2'>
-                    {boards.slice(6, 11).map((board, index) => (
-                      <>
-                        <Link
-                          href={`/board/${board.id}`}
-                          key={index}
-                          className='rounded-[10px] px-2 py-2 text-base hover:bg-gray-100'
-                        >
-                          {board.name}
-                        </Link>
-                      </>
-                    ))}
-                    <Link
-                      href='/board'
-                      className='text-schoolmate-500 rounded-[10px] px-2 py-2 text-base font-bold hover:bg-gray-100'
-                    >
-                      더보기
-                    </Link>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className='flex w-[318px] items-center justify-center rounded-[10px] border py-6'>
-                  <Loading />
-                </div>
-              </>
-            )}
+            {DashboardSelectItem[selectedBoard]}
           </div>
           <div className='my-6 w-full border' />
           <Advertisement />

@@ -14,6 +14,7 @@ import '@/styles/schoolmate.css';
 import { swrfetcher } from '@/lib/client';
 
 import Footer from '@/components/Footer';
+import React from 'react';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

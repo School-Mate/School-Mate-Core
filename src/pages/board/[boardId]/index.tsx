@@ -107,7 +107,7 @@ const Board: NextPage<BoardPageProps> = ({ error, board, message }) => {
                           href={`/board/${boardsBoard.id}`}
                           key={index}
                           className={clsxm(
-                            'flex items-center rounded-[10px] px-2 py-2 text-base hover:bg-gray-100',
+                            'flex w-32 items-center rounded-[10px] px-2 py-2 text-base hover:bg-gray-100',
                             boardsBoard.id === board.id && 'bg-gray-100'
                           )}
                         >
@@ -115,8 +115,8 @@ const Board: NextPage<BoardPageProps> = ({ error, board, message }) => {
                         </Link>
                       ))}
                     <Link
+                      className='text-schoolmate-500 flex w-32 items-center rounded-[10px] px-2 py-2 text-base font-bold hover:bg-gray-100'
                       href='/board'
-                      className='text-schoolmate-500 flex items-center rounded-[10px] px-2 py-2 text-base font-bold hover:bg-gray-100'
                     >
                       더보기
                     </Link>

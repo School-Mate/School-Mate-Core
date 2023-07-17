@@ -2,6 +2,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
 import Router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
+import useSWR from 'swr';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
@@ -20,19 +21,41 @@ import Tooltips from '@/components/Tooltips';
 
 import { Response } from '@/types/client';
 import { User } from '@/types/user';
+import { AskedQuestionWithMe } from '@/types/asked';
+import { useDetectClickOutside } from 'react-detect-click-outside';
+import { AxiosError } from 'axios';
 
 interface MyPageProps {
   user: User;
 }
 
 const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
-  const { user, mutateUser: reloadUser, error } = useUser();
+  const {
+    user,
+    mutateUser: reloadUser,
+    error,
+    isLoading: loadingUser,
+  } = useUser();
   const { school, isLoading: schoolLoading, error: schoolError } = useSchool();
+  const {
+    data: askedUser,
+    isLoading: loadingAsked,
+    mutate: reloadAsked,
+  } = useSWR<AskedQuestionWithMe>('/auth/me/asked');
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [logoutModal, setLogoutModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedNickname, setEditedNickname] = useState(user?.name || '');
+  const [openEditUserCustomId, setOpenEditUserCustomId] = useState(false);
+  const [editUserCustomIdLoading, setEditUserCustomIdLoading] = useState(false);
+  const [editUserCustomId, setEditUserCustomId] = useState<string>();
+  const refIdInput = useDetectClickOutside({
+    onTriggered: () => {
+      setOpenEditUserCustomId(false);
+      setEditUserCustomId(undefined);
+    },
+  });
 
   useEffect(() => {
     reloadUser(userDataServerSide, false);
@@ -44,6 +67,39 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
       Router.push('/');
     } catch (e) {
       Toast('로그아웃에 실패했습니다', 'error');
+    }
+  };
+
+  const updateUserId = async () => {
+    if (!editUserCustomId) {
+      return Toast('사용할 커스텀 아이디를 입력해주세요', 'error');
+    }
+
+    if (!/^[a-zA-Z0-9]*$/.test(editUserCustomId)) {
+      return Toast('커스텀 아이디는 영어와 숫자만 가능합니다', 'error');
+    }
+
+    if (editUserCustomId.length > 20) {
+      return Toast('커스텀 아이디는 20자 이하만 가능합니다', 'error');
+    }
+
+    try {
+      setEditUserCustomIdLoading(true);
+
+      await client.patch<Response<User>>(`/auth/me/asked`, {
+        customId: editUserCustomId,
+      });
+
+      await reloadUser();
+      await reloadAsked();
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        return Toast(e.response?.data.message, 'error');
+      }
+    } finally {
+      setEditUserCustomIdLoading(false);
+      setOpenEditUserCustomId(false);
+      setEditUserCustomId(undefined);
     }
   };
 
@@ -130,7 +186,9 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
 
   if (schoolError || error) return <Login redirectTo='/auth/me' />;
   if (schoolLoading && !school) return <LoadingScreen />;
-  if (!user) return <LoadingScreen />;
+  if (loadingAsked || loadingUser) return <LoadingScreen />;
+  if (!user || !askedUser)
+    return <Error message='유저 정보를 찾을 수 없습니다' />;
   if (imageUploading) return <LoadingScreen />;
   if (!school) return <Error message='학교 정보를 찾을 수 없습니다' />;
 
@@ -142,9 +200,9 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
           <div className='flex w-full flex-col rounded-[20px] border-2 border-[#E3E5E8] p-5'>
             <span className='text-xl font-bold'>내 정보</span>
             <div className='mt-2 flex flex-row items-center'>
-              <div className='flex w-20 flex-col'>
+              <div className='flex w-28 flex-col'>
                 <div
-                  className='relative h-20 w-20 rounded-[20px] border border-[#D8D8D8]'
+                  className='relative h-28 w-28 rounded-[20px] border border-[#D8D8D8]'
                   style={{
                     backgroundImage: user.profile
                       ? `url(${process.env.NEXT_PUBLIC_S3_URL + '/' + user.profile
@@ -213,6 +271,54 @@ const MyPage: NextPage<MyPageProps> = ({ user: userDataServerSide }) => {
                     }}
                   >
                     수정
+                  </button>
+                </div>
+                <div
+                  className='mt-2 flex w-full flex-row items-center border-b pb-2'
+                  ref={refIdInput}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src='/svg/Email.svg' alt='email' className='h-6 w-6' />
+                  {openEditUserCustomId ? (
+                    <>
+                      <input
+                        type='text'
+                        className='ml-2 h-6 w-72 ring-0 focus:outline-none focus:ring-0 active:border-none'
+                        placeholder='커스텀 아이디를 입력해주세요 (영어, 숫자)'
+                        maxLength={20}
+                        value={editUserCustomId}
+                        autoFocus
+                        onChange={(e) => {
+                          setEditUserCustomId(e.target.value);
+                        }}
+                        disabled={editUserCustomIdLoading}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <span className='ml-2 text-[#989898]'>
+                        {askedUser.user.customId ||
+                          '유저 아이디를 설쟁해주세요'}
+                      </span>
+                    </>
+                  )}
+                  <button
+                    className='ml-auto h-7 w-16 rounded-[5px] border border-[#D8D8D8] bg-[#F9F9F9] text-[#9A9A9A] hover:text-[#636363]'
+                    onClick={
+                      openEditUserCustomId
+                        ? () => {
+                            updateUserId();
+                          }
+                        : () => {
+                            setOpenEditUserCustomId(true);
+                          }
+                    }
+                  >
+                    {editUserCustomIdLoading ? (
+                      <i className='fas fa-spinner fa-spin' />
+                    ) : (
+                      <>{openEditUserCustomId ? '저장' : '수정'}</>
+                    )}
                   </button>
                 </div>
                 <div className='mt-2 flex w-full flex-row items-center border-b pb-2'>

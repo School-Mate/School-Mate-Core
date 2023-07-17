@@ -3,6 +3,7 @@ import Link from 'next/link';
 import NextImage from '@/components/NextImage';
 
 import { User, UserSchoolWithUser } from '@/types/user';
+import { useState } from 'react';
 
 interface HeaderProps {
   user: User;
@@ -10,6 +11,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ user, school }) => {
+  const [showInfo, setShowInfo] = useState<boolean>(false);
   return (
     <>
       <header className='mx-auto my-12 flex h-16 max-w-[1135px] flex-row items-center justify-between'>
@@ -61,33 +63,20 @@ const Header: React.FC<HeaderProps> = ({ user, school }) => {
             placeholder='검색어를 입력해주세요.'
           />
         </div>
-        <div className='h-[65px]'>
-          {user.profile ? (
-            <>
-              <Link href='/auth/me'>
-                <NextImage
-                  src={process.env.NEXT_PUBLIC_S3_URL + '/' + user.profile}
-                  alt='profile'
-                  width={65}
-                  height={65}
-                  className='h-[65px] w-[65px] overflow-hidden rounded-full'
-                  imgClassName='h-[65px] w-[65px] object-cover'
-                />
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link href='/auth/me'>
-                <NextImage
-                  src='/images/profile.jpg'
-                  alt='profile'
-                  width={65}
-                  height={65}
-                  className='h-[65px] w-[65px] overflow-hidden rounded-full'
-                />
-              </Link>
-            </>
-          )}
+        <div
+          className='border-schoolmate-500 ml-2 h-[60px] w-[60px] cursor-pointer rounded-[20px] border-2 p-3'
+          onMouseEnter={() => {
+            setShowInfo(true);
+          }}
+        >
+          <img
+            src='/svg/User.svg'
+            alt='user'
+            className='mx-auto h-full w-full'
+            style={{
+              filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.2))',
+            }}
+          />
         </div>
       </header>
     </>

@@ -1,4 +1,4 @@
-import { User } from '@/types/user';
+import { Process, User } from '@/types/user';
 
 export interface AskedUser {
   userId: string;
@@ -7,4 +7,33 @@ export interface AskedUser {
   receiveAnonymous: boolean;
   receiveOtherSchool: boolean;
   user: User;
+}
+
+export interface AskedQuestion {
+  id: string;
+  userId: string;
+  askedUserId: string;
+  process: Process;
+  question: string;
+  answer?: string;
+  isAnonymous: boolean;
+  AskedUser: AskedUser;
+  QuestionUser: User;
+  createdAt: Date;
+  answerTimeAt?: Date;
+}
+
+export interface AskedQuestionWithMe {
+  user: AskedUser;
+  askeds: AskedQuestion[];
+  pages: number;
+  deniedCount: number;
+  successCount: number;
+  pendingCount: number;
+}
+
+export interface AskedQuestionWithPage {
+  user: AskedUser;
+  askeds: AskedQuestion[];
+  pages: number;
 }
