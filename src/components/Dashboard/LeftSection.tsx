@@ -48,7 +48,7 @@ const DashboardLeftSection: NextPage = () => {
             >
               에스크
             </SelectBoardButton>
-            <span className='mx-3 text-xl font-bold text-[#BEBEBE]'>/</span>
+            {/* <span className='mx-3 text-xl font-bold text-[#BEBEBE]'>/</span>
             <SelectBoardButton
               isSelected={selectedBoard === 'planner'}
               onClick={() => {
@@ -56,7 +56,7 @@ const DashboardLeftSection: NextPage = () => {
               }}
             >
               플래너
-            </SelectBoardButton>
+            </SelectBoardButton> */}
           </div>
           <div className='mt-4 flex flex-row'>
             <div className='mr-8 flex h-[280px] w-full max-w-[474px] flex-col justify-between'>
@@ -64,8 +64,11 @@ const DashboardLeftSection: NextPage = () => {
                 <>
                   {articles.length == 0 ? (
                     <>
-                      <div className='h-[280px]'>
-                        <Empty />
+                      <div className='h-[280px] overflow-hidden'>
+                        <Empty
+                          className='h-60 w-60'
+                          textClassName='text-lg mt-5'
+                        />
                       </div>
                     </>
                   ) : (

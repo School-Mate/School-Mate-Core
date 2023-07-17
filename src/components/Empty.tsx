@@ -5,9 +5,14 @@ import LottieAnimaition from '@/components/LottieAnimaition';
 interface EmptyProps {
   className?: string;
   textClassName?: string;
+  text?: string;
 }
 
-const Empty: React.FC<EmptyProps> = ({ className, textClassName }) => {
+const Empty: React.FC<EmptyProps> = ({
+  className,
+  textClassName,
+  text = '오..이런! 아무것도 없네요ㅠ.ㅠ',
+}) => {
   return (
     <>
       <div className={clsxm('h-full w-full')}>
@@ -19,7 +24,7 @@ const Empty: React.FC<EmptyProps> = ({ className, textClassName }) => {
           <h1
             className={clsxm('text-center text-2xl font-bold', textClassName)}
           >
-            오..이런! 아무것도 없네요ㅠ.ㅠ
+            {text}
           </h1>
         </div>
       </div>

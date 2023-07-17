@@ -65,6 +65,6 @@ export type UserSchoolWithUser = UserSchool & {
 };
 
 export type UserLoginProviderType = 'id' | 'social';
-export type Process = 'pending' | 'success' | 'deny';
+export type Process = 'pending' | 'success' | 'denied';
 export type SocialLoginProvider = 'kakao' | 'google';
 export type Provider = 'social' | 'id';
