@@ -4,6 +4,7 @@ import AdSense from 'react-adsense';
 import WigetBus from '@/components/Dashboard/Bus';
 import WigetCalendar from '@/components/Dashboard/Calendar';
 import WigetMeal from '@/components/Dashboard/Meal';
+import WidgetTimeTable from '@/components/Dashboard/Timetable';
 
 import { User, UserSchoolWithUser } from '@/types/user';
 
@@ -40,11 +41,13 @@ const DashboardRightSection: React.FC<DashboardRightSectionProps> = ({
               <WigetMeal school={school.school} />
               <WigetBus school={school.school} user={user} />
             </div>
+            <div className='mt-4 flex flex-col'>
+              <WidgetTimeTable userSchool={school} />
+            </div>
             <div className='mt-4 h-[330px] w-[330px]'>
               <div
-                className={`z-0 mx-auto h-full w-full text-center text-white ${
-                  process.env.NODE_ENV === 'production' ? '' : 'bg-black py-12'
-                }`}
+                className={`z-0 mx-auto h-full w-full text-center text-white ${process.env.NODE_ENV === 'production' ? '' : 'bg-black py-12'
+                  }`}
                 style={{ width: '330px' }}
               >
                 {process.env.NODE_ENV === 'production' ? (
