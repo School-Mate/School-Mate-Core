@@ -1,0 +1,21 @@
+<svg width="134" height="146" viewBox="0 0 134 146" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 54H134V132C134 139.732 127.732 146 120 146H14C6.26801 146 0 139.732 0 132V54Z" fill="#E8ECED"/>
+<rect y="83" width="134" height="28" fill="#F5F5F5"/>
+<rect x="28" y="90" width="14" height="14" fill="#C4CED3"/>
+<rect x="49" y="90" width="14" height="14" fill="#C4CED3"/>
+<rect x="70" y="90" width="14" height="14" fill="#FF7676"/>
+<rect x="91" y="90" width="14" height="14" fill="#C4CED3"/>
+<rect x="28" y="69" width="14" height="14" fill="#C4CED3"/>
+<rect x="49" y="69" width="14" height="14" fill="#C4CED3"/>
+<rect x="70" y="69" width="14" height="14" fill="#C4CED3"/>
+<rect x="91" y="69" width="14" height="14" fill="#C4CED3"/>
+<rect x="28" y="111" width="14" height="14" fill="#C4CED3"/>
+<rect x="49" y="111" width="14" height="14" fill="#C4CED3"/>
+<rect x="70" y="111" width="14" height="14" fill="#C4CED3"/>
+<rect x="91" y="111" width="14" height="14" fill="#C4CED3"/>
+<path d="M0 26C0 18.268 6.26801 12 14 12H120C127.732 12 134 18.268 134 26V54H0V26Z" fill="#FF7676"/>
+<circle cx="35" cy="27" r="10" fill="#BB5D5D"/>
+<circle cx="98" cy="27" r="10" fill="#BB5D5D"/>
+<rect x="28" width="14" height="33" rx="7" fill="#D9D9D9"/>
+<rect x="91" width="14" height="33" rx="7" fill="#D9D9D9"/>
+</svg>
