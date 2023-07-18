@@ -54,6 +54,7 @@ const Asked: NextPage = () => {
   useEffect(() => {
     if (!asked) return;
     if (page != 1) return;
+    if (asked.askeds.length === 0) return;
     setSelectedAsked(asked.askeds[0].id);
   }, [asked]);
 
