@@ -7,6 +7,7 @@ import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
 import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
+import { passwordCheck as passCheck } from '@/lib/utils';
 
 import Button from '@/components/buttons/Button';
 import Input from '@/components/Input';
@@ -78,6 +79,13 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
     if (!phoneVerified) {
       Toast('전화번호 인증이 진행되지 않았습니다.', 'error');
       return;
+    }
+
+    if (passCheck(password)) {
+      return Toast(
+        '최소 8자, 하나 이상의 문자, 숫자, 특수문자를 포함해주세요',
+        'error'
+      );
     }
 
     if (password !== passwordCheck) {
@@ -260,8 +268,8 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             회원가입
           </span>
         </div>
-        <div className='mb-8 mt-8 h-[350px] w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
-          <div className={clsxm('mb-5 flex flex-col')}>
+        <div className='mb-8 mt-8 h-[360px] w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
+          <div className={clsxm('mb-6 flex flex-col')}>
             <div className='mb-1 flex flex-row items-center'>
               <span className='text-sm font-bold lg:text-lg'>이름</span>
             </div>
@@ -281,13 +289,13 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
           <div
             className={clsxm(
               'flex flex-col',
-              !userError ? 'hidden' : 'mb-5 block'
+              !userError ? 'hidden' : 'mb-6 block'
             )}
           >
             <div className='mb-1 flex flex-row items-center'>
               <span className='text-sm font-bold lg:text-lg'>비밀번호</span>
             </div>
-            <div className='flex flex-row'>
+            <div className='relative flex flex-row'>
               <Input
                 className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] lg:h-[48px]'
                 type='password'
@@ -297,12 +305,17 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
                   setPassword(e.target.value);
                 }}
               />
+              {!passCheck(password) && (
+                <span className='absolute bottom-[-22px] left-0 text-sm text-red-500'>
+                  8자 이상, 한개의 문자, 숫자, 특수문자를 포함해주세요
+                </span>
+              )}
             </div>
           </div>
           <div
             className={clsxm(
               'flex flex-col',
-              !userError ? 'hidden' : 'mb-5 block'
+              !userError ? 'hidden' : 'mb-6 block'
             )}
           >
             <div className='mb-1 flex flex-row items-center'>
@@ -310,7 +323,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
                 비밀번호 확인
               </span>
             </div>
-            <div className='flex flex-row'>
+            <div className='relative flex flex-row'>
               <Input
                 className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] lg:h-[48px]'
                 type='password'
@@ -320,6 +333,11 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
                   setPasswordCheck(e.target.value);
                 }}
               />
+              {password != passwordCheck && (
+                <span className='absolute bottom-[-22px] left-0 text-sm text-red-500'>
+                  비밀번호와 비밀번호 확인이 일치하지 않습니다.
+                </span>
+              )}
             </div>
           </div>
         </div>
