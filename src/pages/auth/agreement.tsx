@@ -1,6 +1,8 @@
 import Router from 'next/router';
 import { useState } from 'react';
 
+import Toast from '@/lib/toast';
+
 import Button from '@/components/buttons/Button';
 import Checkbox from '@/components/CheckBox';
 import Layout from '@/components/layout/Layout';
@@ -41,6 +43,8 @@ const LoginAgreement = () => {
     if (type === 'agreemanet') {
       handleAgreementAll();
     } else if (type === 'next') {
+      if (!agreementAge || !agreementTos || !agreementPrivacy)
+        return Toast('필수 약관에 동의해주세요.', 'error');
       Router.push(`/auth/register?marketing=${agreementAds ? 'Y' : 'N'}`);
     }
   };

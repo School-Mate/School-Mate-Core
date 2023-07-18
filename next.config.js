@@ -12,6 +12,7 @@ const nextConfig = {
       'schoolmate-project.s3.ap-northeast-2.amazonaws.com',
       'd184yr88ghlmna.cloudfront.net',
     ],
+    dangerouslyAllowSVG: true,
   },
 
   // SVGR
