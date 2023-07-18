@@ -207,6 +207,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
                 type='text'
                 autoFocus
                 value={phone}
+                disabled={phoneToken ? true : false}
                 placeholder='전화번호를 입력해주세요'
                 onChange={(e) => {
                   setPhone(
