@@ -50,7 +50,7 @@ const Asked: React.FC<AskedProps> = ({ askedUser }) => {
           </div>
         </div>
         <p className='mt-4 overflow-hidden text-ellipsis whitespace-nowrap text-[11pt] leading-[18px]'>
-          {askedUser.statusMessage}
+          {askedUser.statusMessage || '안녕하세요!'}
         </p>
       </div>
     </>
