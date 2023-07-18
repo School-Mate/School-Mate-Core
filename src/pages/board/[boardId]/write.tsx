@@ -18,8 +18,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import Loading, { LoadingScreen } from '@/components/Loading';
 import Seo from '@/components/Seo';
 
-import { Article } from '@/types/article';
-import { Board } from '@/types/board';
+import { Article, Board } from '@/types/article';
 import { Response } from '@/types/client';
 
 interface BoardPageProps {
