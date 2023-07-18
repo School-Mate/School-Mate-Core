@@ -116,7 +116,7 @@ const Wrtie: NextPage<BoardPageProps> = ({ error, board, message }) => {
       <Seo templateTitle={board.name} />
       <DashboardLayout user={user} school={school}>
         <div className='mx-auto mt-5 flex max-w-[1280px] flex-row justify-center'>
-          <div className='flex w-full max-w-[874px] flex-col rounded-[20px] border-2 border-[#E3E5E8] p-7'>
+          <div className='flex h-full w-full max-w-[874px] flex-col rounded-[20px] border-2 border-[#E3E5E8] p-7'>
             <div className='text-schoolmate-400 border-schoolmate-400 mb-5 flex flex-row border-b-2 pb-3'>
               <h1
                 className='cursor-pointer text-3xl font-bold'
@@ -169,17 +169,23 @@ const Wrtie: NextPage<BoardPageProps> = ({ error, board, message }) => {
                           alt='file'
                         />
                       ))}
-                      <div
-                        className='h-full w-32 cursor-pointer'
-                        onClick={() => {
-                          if (!imageRef.current) return;
-                          imageRef.current.click();
-                        }}
-                      >
-                        <div className='flex h-full w-full items-center justify-center rounded-[10px] border-2 border-[#E3E5E8]'>
-                          <i className='fas fa-plus text-4xl text-gray-400' />
-                        </div>
-                      </div>
+                      {files.length >= 4 ? (
+                        <></>
+                      ) : (
+                        <>
+                          <div
+                            className='h-full w-32 cursor-pointer'
+                            onClick={() => {
+                              if (!imageRef.current) return;
+                              imageRef.current.click();
+                            }}
+                          >
+                            <div className='flex h-full w-full items-center justify-center rounded-[10px] border-2 border-[#E3E5E8]'>
+                              <i className='fas fa-plus text-4xl text-gray-400' />
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </>
                 )}
@@ -192,20 +198,31 @@ const Wrtie: NextPage<BoardPageProps> = ({ error, board, message }) => {
                       ref={imageRef}
                       onChange={(e) => {
                         if (!e.target.files) return;
+                        if (files.length > 4)
+                          return Toast(
+                            '이미지는 최대 4개까지 업로드 가능합니다.',
+                            'error'
+                          );
                         setFiles([...files, ...Array.from(e.target.files)]);
                         imageRef.current!.value = '';
                       }}
                     />
-                    <button
-                      className='ml-4 flex items-center rounded-md py-2 text-gray-400'
-                      onClick={() => {
-                        if (!imageRef.current) return;
-                        imageRef.current.click();
-                      }}
-                    >
-                      <i className='fas fa-paperclip mr-3 text-2xl' />
-                      첨부파일
-                    </button>
+                    {files.length >= 4 ? (
+                      <></>
+                    ) : (
+                      <>
+                        <button
+                          className='ml-4 flex items-center rounded-md py-2 text-gray-400'
+                          onClick={() => {
+                            if (!imageRef.current) return;
+                            imageRef.current.click();
+                          }}
+                        >
+                          <i className='fas fa-paperclip mr-3 text-2xl' />
+                          첨부파일
+                        </button>
+                      </>
+                    )}
                   </div>
                   <div className='flex flex-row'>
                     <div className='flex flex-row items-center justify-center px-4 py-2 text-sm text-gray-400'>

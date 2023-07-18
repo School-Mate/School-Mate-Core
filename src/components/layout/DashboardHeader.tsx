@@ -3,6 +3,7 @@ import Router from 'next/router';
 import { useState } from 'react';
 
 import { User, UserSchoolWithUser } from '@/types/user';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 
 interface HeaderProps {
   user: User;
@@ -22,6 +23,11 @@ const Header: React.FC<HeaderProps> = ({ user, school }) => {
       Router.push(`/search?keyword=${searchKeyword}`);
     }
   }
+
+  const refUser = useDetectClickOutside({
+    onTriggered: () => setShowInfo(false),
+  });
+
 
   return (
     <>
@@ -78,10 +84,13 @@ const Header: React.FC<HeaderProps> = ({ user, school }) => {
           />
         </div>
         <div
-          className='border-schoolmate-500 ml-2 h-[60px] w-[60px] cursor-pointer rounded-[20px] border-2 p-3'
-          onMouseEnter={() => {
-            setShowInfo(true);
+          className='border-schoolmate-500 relative ml-2 h-[60px] w-[60px] cursor-pointer rounded-[20px] border-2 p-3'
+          onFocus={() => setShowInfo(true)}
+          onClick={() => {
+            setShowInfo(!showInfo);
           }}
+          onBlur={() => setShowInfo(false)}
+          ref={refUser}
         >
           <img
             src='/svg/User.svg'
@@ -91,6 +100,41 @@ const Header: React.FC<HeaderProps> = ({ user, school }) => {
               filter: 'drop-shadow(0px 0px 12px rgba(0, 0, 0, 0.2))',
             }}
           />
+
+          {showInfo && (
+            <div className='absolute -bottom-[80px] right-0 flex w-40 flex-col rounded-[10px] border bg-white drop-shadow-lg transition-all'>
+              <Link
+                className='flex h-9 flex-row items-center rounded-t-[10px] px-3 py-1 text-sm hover:bg-gray-100'
+                href='/auth/me'
+              >
+                <img
+                  src='/svg/User.svg'
+                  alt='user'
+                  className='mr-2 h-6 w-6'
+                  style={{
+                    filter:
+                      'invert(60%) sepia(62%) saturate(0%) hue-rotate(273deg) brightness(95%) contrast(88%)',
+                  }}
+                />
+                내 정보
+              </Link>
+              <Link
+                className='text- flex h-9 flex-row items-center rounded-b-[10px] px-3 py-1 text-sm hover:bg-gray-100'
+                href='/asked/me'
+              >
+                <img
+                  src='/svg/ChatAdd.svg'
+                  alt='ChatAdd'
+                  className='mr-2 h-6 w-6'
+                  style={{
+                    filter:
+                      'invert(60%) sepia(62%) saturate(0%) hue-rotate(273deg) brightness(95%) contrast(88%)',
+                  }}
+                />
+                에스크
+              </Link>
+            </div>
+          )}
         </div>
       </header>
     </>
