@@ -1,21 +1,23 @@
-import DashboardRightSection from '@/components/Dashboard/RightSection';
-import Input from '@/components/Input';
-import Loading, { LoadingScreen } from '@/components/Loading';
-import Seo from '@/components/Seo';
-import Button from '@/components/buttons/Button';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import { AxiosError } from 'axios';
+import Link from 'next/link';
+import Router from 'next/router';
+import React from 'react';
+import useSWR from 'swr';
+
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
 import useSchool from '@/lib/hooks/useSchool';
 import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
-import { Board } from '@/types/board';
-import { AxiosError } from 'axios';
-import Link from 'next/link';
-import Router from 'next/router';
-import React from 'react';
 
-import useSWR from 'swr';
+import Button from '@/components/buttons/Button';
+import DashboardRightSection from '@/components/Dashboard/RightSection';
+import Input from '@/components/Input';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import Loading, { LoadingScreen } from '@/components/Loading';
+import Seo from '@/components/Seo';
+
+import { Board } from '@/types/article';
 
 const RequestBoard = () => {
   const { user } = useUser();

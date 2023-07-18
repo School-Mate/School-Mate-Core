@@ -20,8 +20,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import Loading, { LoadingScreen } from '@/components/Loading';
 import Seo from '@/components/Seo';
 
-import { Article, Comment, Recomment } from '@/types/article';
-import { Board } from '@/types/board';
+import { Article, Board, Comment, Recomment } from '@/types/article';
 import { Response } from '@/types/client';
 import { Like } from '@/types/like';
 import { User } from '@/types/user';

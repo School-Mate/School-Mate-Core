@@ -1,10 +1,12 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
+import Router from 'next/router';
 import * as React from 'react';
 import useSWR from 'swr';
 
 import { swrfetcher } from '@/lib/client';
 import clsxm from '@/lib/clsxm';
+import Toast from '@/lib/toast';
 
 import Advertisement from '@/components/Advertisement';
 import BoardItemButton from '@/components/BoardItem';
@@ -14,11 +16,8 @@ import Empty from '@/components/Empty';
 import Loading from '@/components/Loading';
 import Tooltips from '@/components/Tooltips';
 
-import { Article } from '@/types/article';
+import { Article, Board } from '@/types/article';
 import { AskedQuestionWithMe, AskedUser } from '@/types/asked';
-import { Board } from '@/types/board';
-import Router from 'next/router';
-import Toast from '@/lib/toast';
 
 const DashboardLeftSection: NextPage = () => {
   const { data: askeds } = useSWR<AskedUser[]>(`/asked`, swrfetcher);
