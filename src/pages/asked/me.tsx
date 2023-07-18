@@ -43,7 +43,7 @@ const Asked: NextPage = () => {
   });
 
   useEffect(() => {
-    console.log(2123);
+    if (asked?.pages === 0) return;
     fetchAsked();
   }, [page]);
 

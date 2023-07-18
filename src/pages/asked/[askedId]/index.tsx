@@ -78,6 +78,7 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
 
   useEffect(() => {
     if (page === 1) return;
+    if (asked?.pages === 0) return;
     fetchAsked();
   }, [page]);
 
