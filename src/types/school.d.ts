@@ -222,18 +222,57 @@ interface IClassInfoRow {
   LOAD_DTM?: string;
 }
 
-interface ITimeTableInfoRow {
-  ATPT_OFCDC_SC_CODE: string;
-  ATPT_OFCDC_SC_NM: string;
-  SD_SCHUL_CODE: string;
-  SCHUL_NM: string;
-  AY: string;
-  SEM: string;
-  ALL_TI_YMD: string;
-  DGHT_CRSE_SC_NM: string;
-  GRADE: string;
-  CLASS_NM: string;
+interface ITimetableRow {
+  /**
+   * 시도교육청코드
+   */
+  ATPT_OFCDC_SC_CODE?: string;
+  /**
+   * 시도교육청명
+   */
+  ATPT_OFCDC_SC_NM?: string;
+  /**
+   * 표준학교코드
+   */
+  SD_SCHUL_CODE?: string;
+  /**
+   * 학교명
+   */
+  SCHUL_NM?: string;
+  /**
+   * 학년도
+   */
+  AY?: string;
+  /**
+   * 학기
+   */
+  SEM?: string;
+  /**
+   * 시간표일자
+   */
+  ALL_TI_YMD?: string;
+  /**
+   * 주야과정명
+   */
+  DGHT_CRSE_SC_NM?: string;
+  /**
+   * 학년
+   */
+  GRADE?: string;
+  /**
+   * 반명
+   */
+  CLASS_NM?: string;
+  /**
+   * 교시
+   */
   PERIO: string;
-  ITRT_CNTNT: string;
-  LOAD_DTM: string;
+  /**
+   * 수업내용
+   */
+  ITRT_CNTNT?: string;
+  /**
+   * 적재일시
+   */
+  LOAD_DTM?: string;
 }
