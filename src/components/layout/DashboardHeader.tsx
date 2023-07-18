@@ -1,9 +1,8 @@
 import Link from 'next/link';
-
-import NextImage from '@/components/NextImage';
+import Router from 'next/router';
+import { useState } from 'react';
 
 import { User, UserSchoolWithUser } from '@/types/user';
-import { useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 
 interface HeaderProps {
@@ -13,9 +12,22 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ user, school }) => {
   const [showInfo, setShowInfo] = useState<boolean>(false);
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
+
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value);
+  }
+
+  const handleOnEnter = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      Router.push(`/search?keyword=${searchKeyword}`);
+    }
+  }
+
   const refUser = useDetectClickOutside({
     onTriggered: () => setShowInfo(false),
   });
+
 
   return (
     <>
@@ -66,6 +78,9 @@ const Header: React.FC<HeaderProps> = ({ user, school }) => {
             className='border-schoolmate-500 focus:border-schoolmate-500 h-[64px] w-[650px] rounded-[58px] border-[2px] px-7 text-2xl focus:outline-none focus:ring-0'
             type='text'
             placeholder='검색어를 입력해주세요.'
+            value={searchKeyword}
+            onChange={handleKeywordChange}
+            onKeyDown={handleOnEnter}
           />
         </div>
         <div

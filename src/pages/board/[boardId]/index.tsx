@@ -19,8 +19,7 @@ import Loading, { LoadingScreen } from '@/components/Loading';
 import NextImage from '@/components/NextImage';
 import Seo from '@/components/Seo';
 
-import { Article } from '@/types/article';
-import { Board } from '@/types/board';
+import { Article, Board } from '@/types/article';
 import { Response } from '@/types/client';
 
 interface BoardPageProps {
@@ -163,12 +162,12 @@ const Board: NextPage<BoardPageProps> = ({ error, board, message }) => {
                           article={article}
                           className={clsxm(
                             index === 0 &&
-                              'rounded-t-[10px] border-l border-r border-t pt-3',
+                            'rounded-t-[10px] border-l border-r border-t pt-3',
                             index === articles.articles.length - 1 &&
-                              'mb-5 rounded-b-[10px] border-b border-l border-r pb-3',
+                            'mb-5 rounded-b-[10px] border-b border-l border-r pb-3',
                             index !== 0 &&
-                              index !== articles.articles.length - 1 &&
-                              'border-l border-r pb-3 pt-3',
+                            index !== articles.articles.length - 1 &&
+                            'border-l border-r pb-3 pt-3',
                             'border-b'
                           )}
                         />
@@ -251,7 +250,7 @@ const Board: NextPage<BoardPageProps> = ({ error, board, message }) => {
   );
 };
 
-const ArticleItem: React.FC<{
+export const ArticleItem: React.FC<{
   article: Article;
   board: Board;
   className?: string;
@@ -301,7 +300,7 @@ const ArticleItem: React.FC<{
             )}
             {article.commentCounts > 0 && (
               <>
-                <span className='font95BB72-normal mt-auto flex h-full items-center justify-center text-[9pt] text-[#729CBB]'>
+                <span className='font-normal mt-auto flex h-full items-center justify-center text-[9pt] text-[#729CBB]'>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src='/svg/Chat.svg' className='h-4 w-4' alt='chat' />
                   {article.commentCounts}
