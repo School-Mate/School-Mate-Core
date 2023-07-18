@@ -33,7 +33,7 @@ const Calendar: React.FC = () => {
     <div className='bg-white'>
       <div className='w-full rounded'>
         <div>
-          <table className='w-full dark:text-white'>
+          <table className='w-full'>
             <thead>
               <tr>
                 <th className='text-sm text-[#FC3E3E]'>일</th>
