@@ -42,7 +42,7 @@ const WigetMeal: React.FC<WigetMealProps> = ({ school }) => {
         </h2>
         <div className='mt-1 flex h-[100px] flex-col items-center justify-center px-5 text-center text-sm'>
           {!mealDataError && !mealData ? (
-            <Loading className='h-24 w-24' />
+            <Loading className='h-[80px] w-[80px]' />
           ) : (
             <>
               {mealDataError || !mealData ? (
