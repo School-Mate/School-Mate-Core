@@ -53,7 +53,7 @@ const WidgetTimeTable: React.FC<WidgetTimeTableProps> = ({
                         index === timeTableData.length - 1 ? 'border-none' : ''
                       )}
                     >
-                      <p className='flex h-full w-16 items-center justify-center border-r pr-5 text-base'>
+                      <p className='flex h-full w-[4.5rem] items-center justify-center border-r pr-5 text-base'>
                         {timeTable.PERIO}교시
                       </p>
                       <p className='my-auto flex w-60 items-center justify-start text-ellipsis whitespace-nowrap pl-5 text-base'>
