@@ -355,12 +355,12 @@ const Comment: React.FC<CommentProps> = ({
     <>
       <div
         className={clsxm(
-          'flex h-[85px] w-full items-center justify-between px-4 py-2',
+          'flex min-h-[85px] w-full items-center justify-between px-4 py-2',
           openRecommnet ? 'border-b-0' : 'border-b'
         )}
       >
-        <div className='flex h-full flex-row items-start justify-between'>
-          <div className='mt-auto flex h-full flex-col'>
+        <div className='flex h-full w-full flex-row items-start justify-between'>
+          <div className='mt-auto flex h-full w-full flex-col'>
             <span
               className={clsxm(
                 'font-semibold',
@@ -373,7 +373,9 @@ const Comment: React.FC<CommentProps> = ({
                   : '익명'
                 : comment.User?.name}
             </span>
-            <span className='text-sm'>{comment.content}</span>
+            <span className='w-full max-w-2xl whitespace-break-spaces break-words text-sm'>
+              {comment.content}
+            </span>
             <span className='mt-auto text-[10pt] text-[#8D8D8D]'>
               {dayjs(comment.createdAt).format('MM/DD HH:mm')}
             </span>
@@ -384,24 +386,24 @@ const Comment: React.FC<CommentProps> = ({
             onClick={() => {
               setOpenRecomment(!openRecommnet);
             }}
-            className='text-sm text-[#969696] underline underline-offset-2'
+            className='w-7 text-sm text-[#969696] underline underline-offset-2'
           >
             답글
           </button>
-          {user?.id != comment.userId && !comment.isDeleted && (
+          {/* {!comment.isMe && !comment.isDeleted && (
             <button
               onClick={() => {
                 setOpenRecomment(!openRecommnet);
               }}
-              className='text-sm text-[#969696] underline underline-offset-2'
+              className='w-7 text-sm text-[#969696] underline underline-offset-2'
             >
               추천
             </button>
-          )}
+          )} */}
           {comment.isMe && !comment.isDeleted && (
             <button
               onClick={deleteCommentHandler}
-              className='text-sm text-[#969696] underline underline-offset-2'
+              className='w-7 text-sm text-[#969696] underline underline-offset-2'
             >
               삭제
             </button>
@@ -510,7 +512,7 @@ const AddComment: React.FC<AddCommetProps> = ({
           {loading ? (
             <>
               <div className='overflow-hidden'>
-                <Loading className='flex h-11 w-11 items-center justify-center' />
+                <Loading className='flex h-[55px] w-[55px] items-center justify-center' />
               </div>
             </>
           ) : (
@@ -554,7 +556,7 @@ const ReComment: React.FC<{
         />
         <div
           className={clsxm(
-            'flex h-[85px] w-full items-center justify-between px-4 py-2',
+            'flex min-h-[85px] w-full items-center justify-between px-4 py-2',
             'bg-[#F8F8F8]'
           )}
         >
@@ -572,22 +574,24 @@ const ReComment: React.FC<{
                     : '익명'
                   : reComment.User?.name}
               </span>
-              <span className='text-sm'>{reComment.content}</span>
+              <span className='w-fit whitespace-break-spaces break-words text-sm'>
+                {reComment.content}
+              </span>
               <span className='mt-auto text-[10pt] text-[#8D8D8D]'>
                 {dayjs(reComment.createdAt).format('MM/DD HH:mm')}
               </span>
             </div>
           </div>
           <div className='mb-auto flex flex-row space-x-2'>
-            {user?.id != reComment.userId && !reComment.isDeleted && (
+            {/* {!reComment.isMe && !reComment.isDeleted && (
               <button className='text-sm text-[#969696] underline underline-offset-2'>
                 추천
               </button>
-            )}
-            {user?.id === reComment.userId && !reComment.isDeleted && (
+            )} */}
+            {reComment.isMe && !reComment.isDeleted && (
               <button
                 onClick={deleteCommentHandler}
-                className='text-sm text-[#969696] underline underline-offset-2'
+                className='w-7 text-sm text-[#969696] underline underline-offset-2'
               >
                 삭제
               </button>

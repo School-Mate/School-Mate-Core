@@ -1,5 +1,7 @@
 import { AxiosError } from 'axios';
+import dayjs from 'dayjs';
 import { GetServerSideProps, NextPage } from 'next';
+import Router from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -18,8 +20,6 @@ import Seo from '@/components/Seo';
 
 import { AskedQuestion, AskedQuestionWithPage, AskedUser } from '@/types/asked';
 import { Response } from '@/types/client';
-import dayjs from 'dayjs';
-import Router from 'next/router';
 
 interface AskedProps {
   error: boolean;
@@ -136,13 +136,17 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
               <div
                 className='relative h-[70px] w-[70px] rounded-full border border-[#D8D8D8]'
                 style={{
-                  backgroundImage: user.profile
+                  backgroundImage: asked.user.user.profile
                     ? `url(${
-                        process.env.NEXT_PUBLIC_S3_URL + '/' + user.profile
+                        process.env.NEXT_PUBLIC_S3_URL +
+                        '/' +
+                        asked.user.user.profile
                       })`
                     : `url(/svg/CloverGray.svg)`,
                   backgroundColor: '#F1F1F1',
-                  backgroundSize: user.profile ? 'cover' : '40px 40px',
+                  backgroundSize: asked.user.user.profile
+                    ? 'cover'
+                    : '40px 40px',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',
                 }}

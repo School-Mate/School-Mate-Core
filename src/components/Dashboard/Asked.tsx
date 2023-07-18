@@ -1,8 +1,6 @@
 import Router from 'next/router';
 import React from 'react';
 
-import NextImage from '@/components/NextImage';
-
 import { AskedUser } from '@/types/asked';
 
 interface AskedProps {
@@ -23,22 +21,21 @@ const Asked: React.FC<AskedProps> = ({ askedUser }) => {
         }}
       >
         <div className='flex flex-row items-center'>
-          <NextImage
-            src={
-              askedUser.user.profile
-                ? process.env.NEXT_PUBLIC_S3_URL + '/' + askedUser.user.profile
-                : '/images/profile.jpg'
-            }
-            className='h-[50px] w-[50px] overflow-hidden rounded-full'
-            width={50}
-            height={50}
-            useSkeleton={true}
-            alt='profile'
+          <div
+            className='relative h-[55px] w-[55px] rounded-full border border-[#D8D8D8]'
             style={{
-              objectFit: 'cover',
-              objectPosition: 'center',
+              backgroundImage: askedUser.user.profile
+                ? `url(${
+                    process.env.NEXT_PUBLIC_S3_URL +
+                    '/' +
+                    askedUser.user.profile
+                  })`
+                : `url(/svg/CloverGray.svg)`,
+              backgroundColor: '#F1F1F1',
+              backgroundSize: askedUser.user.profile ? 'cover' : '30px 30px',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
             }}
-            imgClassName='h-full'
           />
           <div className='ml-3 flex max-w-[148px] flex-col whitespace-nowrap'>
             <h1 className='w-full truncate overflow-ellipsis text-lg font-bold'>
@@ -50,7 +47,7 @@ const Asked: React.FC<AskedProps> = ({ askedUser }) => {
           </div>
         </div>
         <p className='mt-4 overflow-hidden text-ellipsis whitespace-nowrap text-[11pt] leading-[18px]'>
-          {askedUser.statusMessage}
+          {askedUser.statusMessage || '안녕하세요!'}
         </p>
       </div>
     </>
