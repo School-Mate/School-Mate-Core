@@ -282,7 +282,7 @@ const DashboardLeftSection: NextPage = () => {
                     </div>
                     <Button
                       className={clsxm(
-                        'ml-auto flex h-[30px] w-20 items-center justify-center',
+                        'ml-auto flex h-[30px] w-24 items-center justify-center',
                         'border-none bg-sky-500 text-sm font-semibold text-white hover:bg-sky-600 active:bg-sky-700'
                       )}
                     >
