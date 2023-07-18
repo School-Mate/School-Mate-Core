@@ -26,6 +26,7 @@ export interface Board {
   name: string;
   description: string;
   noticeId: number | null;
+  default: boolean;
 }
 
 export interface Comment {
