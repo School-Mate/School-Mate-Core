@@ -1,16 +1,17 @@
 import { AxiosError } from 'axios';
+import dayjs from 'dayjs';
 import { NextPage } from 'next';
 import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useInView } from 'react-intersection-observer';
-import useSWR from 'swr';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
 import useSchool from '@/lib/hooks/useSchool';
 import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
+import { schoolMateDateFormat } from '@/lib/utils';
 
 import Button from '@/components/buttons/Button';
 import Empty from '@/components/Empty';
@@ -22,8 +23,6 @@ import Seo from '@/components/Seo';
 
 import { AskedQuestion, AskedQuestionWithMe, AskedUser } from '@/types/asked';
 import { Response } from '@/types/client';
-import { schoolMateDateFormat } from '@/lib/utils';
-import dayjs from 'dayjs';
 
 const Asked: NextPage = () => {
   const { user, isLoading: isUserLoading } = useUser();
@@ -264,7 +263,7 @@ const Asked: NextPage = () => {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src='/svg/share.svg'
+                  src='/svg/ShareIcon.svg'
                   className='mr-1'
                   width={20}
                   height={20}

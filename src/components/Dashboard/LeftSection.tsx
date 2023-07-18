@@ -215,7 +215,12 @@ const DashboardLeftSection: NextPage = () => {
                 copyAskedLink();
               }}
             >
-              <img src='/svg/Share.svg' className='mr-1 h-5 w-5' alt='share' />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src='/svg/ShareIcon.svg'
+                className='mr-1 h-5 w-5'
+                alt='share'
+              />
               공유하기
             </Button>
           </div>
