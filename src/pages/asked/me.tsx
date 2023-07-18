@@ -163,7 +163,7 @@ const Asked: NextPage = () => {
 
   const getSeletedAsked = (): AskedQuestion => {
     return asked?.askeds.find(
-      (asked) => asked.id === selectedAsked
+      (asked) => asked?.id === selectedAsked
     ) as AskedQuestion;
   };
 
@@ -307,7 +307,7 @@ const Asked: NextPage = () => {
                   )}
                 >
                   <div className='my-4 flex w-full flex-col items-center justify-center px-4'>
-                    {getSeletedAsked() ? (
+                    {selectedAsked && getSeletedAsked() ? (
                       <>
                         <div className='flex h-full w-full flex-col'>
                           <div className='relative flex h-full w-full flex-row items-center'>
@@ -343,7 +343,7 @@ const Asked: NextPage = () => {
                       </>
                     )}
                   </div>
-                  {getSeletedAsked() && (
+                  {selectedAsked && getSeletedAsked() && (
                     <>
                       <div className='relative h-14 w-full'>
                         {answerType ? (
