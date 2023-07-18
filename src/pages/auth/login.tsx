@@ -141,8 +141,8 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
     <Layout>
       <Seo templateTitle='로그인' />
 
-      <main className='background flex h-full min-h-[100vh] w-full min-w-[100vw] items-center justify-center'>
-        <div className='my-8 flex min-h-[85vh] w-[90vw] flex-col items-center justify-center rounded-[31px] bg-white py-10 lg:max-h-[909px] lg:min-h-[75vh] lg:max-w-[644px]'>
+      <main className='background flex h-[95vh] w-full min-w-[100vw] items-center justify-center'>
+        <div className='my-8 flex max-h-[90vh] min-h-[80vh] w-[90vw] max-w-[644px] flex-col items-center justify-center rounded-[31px] bg-white py-10'>
           <div className='w-full px-5 lg:w-[384px] lg:px-0'>
             <Logo className='mt-7' />
             <div className='mt-10 flex flex-col lg:mt-10'>
@@ -182,7 +182,7 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
               로그인
             </Button>
           </div>
-          <div className='mb-20 mt-5 flex w-full flex-row items-center justify-between px-5 lg:w-[375px] lg:px-0'>
+          <div className='mb-auto mt-5 flex w-full flex-row items-center justify-between px-5 lg:w-[375px] lg:px-0'>
             <div className='flex flex-row items-center justify-center'>
               <Checkbox
                 id='remember-me'
