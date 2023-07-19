@@ -81,7 +81,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
       return;
     }
 
-    if (passCheck(password)) {
+    if (!passCheck(password)) {
       return Toast(
         '최소 8자, 하나 이상의 문자, 숫자, 특수문자를 포함해주세요',
         'error'
