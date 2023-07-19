@@ -81,16 +81,18 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
       return;
     }
 
-    if (!passCheck(password)) {
-      return Toast(
-        '최소 8자, 하나 이상의 문자, 숫자, 특수문자를 포함해주세요',
-        'error'
-      );
-    }
+    if (user?.provider != 'social') {
+      if (!passCheck(password)) {
+        return Toast(
+          '최소 8자, 하나 이상의 문자, 숫자, 특수문자를 포함해주세요',
+          'error'
+        );
+      }
 
-    if (password !== passwordCheck) {
-      Toast('비밀번호가 일치하지 않습니다.', 'error');
-      return;
+      if (password !== passwordCheck) {
+        Toast('비밀번호가 일치하지 않습니다.', 'error');
+        return;
+      }
     }
 
     try {
