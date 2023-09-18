@@ -44,7 +44,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         type='button'
         disabled={disabled}
         className={clsxm(
-          'inline-flex items-center rounded border font-medium',
+          'inline-flex items-center rounded border',
           'focus:outline-none focus-visible:ring-0',
           'focus:border-schoolmate-300 focus:ring-schoolmate-300"',
           'shadow-sm',
