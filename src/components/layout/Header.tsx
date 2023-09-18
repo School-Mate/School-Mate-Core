@@ -1,8 +1,7 @@
+import Link from 'next/link';
 import * as React from 'react';
 
-import UnstyledLink from '@/components/links/UnstyledLink';
 import NextImage from '@/components/NextImage';
-import Link from 'next/link';
 
 const links = [
   { href: '/', label: 'Route 1' },
@@ -36,7 +35,7 @@ export default function Header() {
         <nav className='flex flex-row items-center space-x-6'>
           <Link href='/auth/login'>로그인</Link>
           <Link
-            href='/auth/register'
+            href='/auth/agreement'
             className='bg-schoolmate-500 rounded-[5px] px-5 py-1.5 font-bold text-white'
           >
             스쿨메이트 회원가입
