@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <footer className='flex h-[150px] items-center justify-center border-t border-[#D8D8D8] bg-[#f9f9f9]'>
-      <div className='flex flex-row items-center space-x-6 text-[#939393]'>
+    <footer className='flex h-full min-h-[150px] items-center justify-center border-t border-[#D8D8D8] bg-[#f9f9f9]'>
+      <div className='flex flex-col items-center space-y-2 py-10 text-[#939393] lg:flex-row lg:space-x-6 lg:py-0'>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src='/svg/LogoGray.svg' alt='logo' className='h-12 w-12' />
         <div className='flex flex-row'>
