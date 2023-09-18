@@ -10,7 +10,7 @@ import Toast from '@/lib/toast';
 
 import Button from '@/components/buttons/Button';
 import Checkbox from '@/components/CheckBox';
-import Layout from '@/components/layout/Layout';
+import LoginLayout from '@/components/layout/LoginLayout';
 import Logo from '@/components/Logo';
 import Seo from '@/components/Seo';
 
@@ -138,109 +138,106 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
   };
 
   return (
-    <Layout>
+    <>
       <Seo templateTitle='로그인' />
-
-      <main className='background flex h-[95vh] w-full min-w-[100vw] items-center justify-center'>
-        <div className='my-8 flex max-h-[90vh] min-h-[80vh] w-[90vw] max-w-[644px] flex-col items-center justify-center rounded-[31px] bg-white py-10'>
-          <div className='w-full px-5 lg:w-[384px] lg:px-0'>
-            <Logo className='mt-7' />
-            <div className='mt-10 flex flex-col lg:mt-10'>
-              <span className='mb-1 text-sm lg:text-lg'>전화번호</span>
-              <input
-                className='mt-1 h-10 rounded-[10px] border-[2px] border-[#BABABA] px-3 focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[57px]'
-                type='text'
-                value={phone}
-                placeholder='010-1234-0000'
-                onChange={(e) => {
-                  setPhone(
-                    e.target.value
-                      ?.replace(/[^0-9]/g, '')
-                      .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3')
-                      .replace(/(-{1,2})$/g, '')
-                  );
-                }}
-              />
-            </div>
-            <div className='mt-2 flex flex-col lg:mt-4'>
-              <span className='mb-1 text-sm lg:text-lg'>비밀번호</span>
-              <input
-                className='mt-1 h-10 rounded-[10px] border-[2px] border-[#BABABA] px-3 focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-[57px]'
-                type='password'
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-              />
-            </div>
-
-            <Button
-              className='mt-8 flex h-10 w-full items-center justify-center rounded-[10px] lg:mt-12 lg:h-[65px]'
-              variant='primary'
-              onClick={handleLogin}
-            >
-              로그인
-            </Button>
-          </div>
-          <div className='mb-auto mt-5 flex w-full flex-row items-center justify-between px-5 lg:w-[375px] lg:px-0'>
-            <div className='flex flex-row items-center justify-center'>
-              <Checkbox
-                id='remember-me'
-                className='h-[13px] w-[13px] rounded-[2px] border-[2px] lg:h-[18px] lg:w-[18px]'
-              />
-              <label htmlFor='remember-me' className='ml-2'>
-                로그인 유지
-              </label>
-            </div>
-            <Link href='/password' className='text-sm lg:text-base'>
-              비밀번호 찾기
-              <i className='fa-solid fa-chevron-right ml-1 text-[10px] lg:text-sm' />
-            </Link>
-          </div>
-          <div className='mt-5 w-full px-5 lg:mt-6 lg:w-[384px] lg:px-0'>
-            <button
-              className='flex h-10 w-full flex-row items-center justify-center rounded-[10px] bg-[#FEE500] lg:h-[65px] lg:w-[384px] lg:px-0'
-              onClick={() => {
-                handleOpenPopup('kakao');
+      <LoginLayout>
+        <div className='mx-auto mt-auto w-full lg:w-[375px]'>
+          <Logo className='mb-auto' />
+          <div className='mt-10 flex flex-col lg:mt-10'>
+            <span className='mb-1 text-sm lg:text-base'>전화번호</span>
+            <input
+              className='h-10 rounded-[10px] border-[2px] border-[#BABABA] px-3 focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-12'
+              type='text'
+              value={phone}
+              placeholder='010-1234-0000'
+              onChange={(e) => {
+                setPhone(
+                  e.target.value
+                    ?.replace(/[^0-9]/g, '')
+                    .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, '$1-$2-$3')
+                    .replace(/(-{1,2})$/g, '')
+                );
               }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className='mr-1 h-[30px] w-[30px] lg:h-[36px] lg:w-[36px]'
-                src='/images/kakao.png'
-                alt='kakao'
-              />
-              <span>카카오로 시작하기</span>
-            </button>
-            <button
-              className='mt-4 flex h-10 w-full flex-row items-center justify-center rounded-[10px] border-2 border-[#BABABA] lg:h-[65px] lg:w-[384px]'
-              onClick={() => {
-                handleOpenPopup('google');
+            />
+          </div>
+          <div className='mt-2 flex flex-col lg:mt-4'>
+            <span className='mb-1 text-sm lg:text-base'>비밀번호</span>
+            <input
+              className='h-10 rounded-[10px] border-[2px] border-[#BABABA] px-3 focus:border-[#BABABA] focus:outline-none focus:ring-0 focus:ring-[#BABABA] lg:h-12'
+              type='password'
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
               }}
+            />
+          </div>
+
+          <Button
+            className='mt-8 flex h-10 w-full items-center justify-center rounded-[10px] lg:mt-10 lg:h-12'
+            variant='primary'
+            onClick={handleLogin}
+          >
+            로그인
+          </Button>
+        </div>
+        <div className='mx-auto mb-auto mt-5 flex w-full flex-row items-center justify-between lg:w-[375px]'>
+          <div className='flex flex-row items-center justify-center'>
+            <Checkbox
+              id='remember-me'
+              className='h-[13px] w-[13px] rounded-[2px] border-[2px] lg:h-[18px] lg:w-[18px]'
+            />
+            <label htmlFor='remember-me' className='ml-2'>
+              로그인 유지
+            </label>
+          </div>
+          <Link href='/password' className='text-sm lg:text-base'>
+            비밀번호 찾기
+            <i className='fa-solid fa-chevron-right ml-1 text-[10px] lg:text-sm' />
+          </Link>
+        </div>
+        <div className='mx-auto my-auto mt-5 w-full lg:mt-6 lg:w-[384px]'>
+          <button
+            className='flex h-10 w-full flex-row items-center justify-center rounded-[10px] bg-[#FEE500] lg:h-12 lg:w-[384px]'
+            onClick={() => {
+              handleOpenPopup('kakao');
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className='mr-1 h-[30px] w-[30px] lg:h-[36px] lg:w-[36px]'
+              src='/images/kakao.png'
+              alt='kakao'
+            />
+            <span>카카오로 시작하기</span>
+          </button>
+          <button
+            className='mt-4 flex h-10 w-full flex-row items-center justify-center rounded-[10px] border-2 border-[#BABABA] lg:h-12 lg:w-[384px]'
+            onClick={() => {
+              handleOpenPopup('google');
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className='mr-2 h-[20px] w-[20px] lg:h-[26px] lg:w-[26px]'
+              src='/images/google.png'
+              alt='google'
+            />
+            <span>Google로 시작하기</span>
+          </button>
+          <div className='mt-4 flex flex-row items-center justify-center'>
+            <span className='mr-1 text-[10pt] lg:mr-2 lg:text-base'>
+              아직 스쿨메이트 회원이 아니세요?
+            </span>
+            <button
+              className='text-[10pt] underline underline-offset-2 lg:text-base'
+              onClick={handleLogoutAndRegister}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className='mr-2 h-[20px] w-[20px] lg:h-[26px] lg:w-[26px]'
-                src='/images/google.png'
-                alt='google'
-              />
-              <span>Google로 시작하기</span>
+              회원가입하기
             </button>
-            <div className='mt-4 flex flex-row items-center justify-center'>
-              <span className='mr-1 text-sm lg:mr-2 lg:text-base'>
-                아직 스쿨메이트 회원이 아니세요?
-              </span>
-              <button
-                className='text-sm underline underline-offset-2 lg:text-base'
-                onClick={handleLogoutAndRegister}
-              >
-                회원가입하기
-              </button>
-            </div>
           </div>
         </div>
-      </main>
-    </Layout>
+      </LoginLayout>
+    </>
   );
 };
 

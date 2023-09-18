@@ -11,7 +11,7 @@ import { passwordCheck as passCheck } from '@/lib/utils';
 
 import Button from '@/components/buttons/Button';
 import Input from '@/components/Input';
-import Layout from '@/components/layout/Layout';
+import LoginLayout from '@/components/layout/LoginLayout';
 import LottieAnimaition from '@/components/LottieAnimaition';
 import Seo from '@/components/Seo';
 
@@ -134,7 +134,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
   } = {
     1: (
       <Button
-        className='mb-5 flex h-12 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:h-[65px]'
+        className='mb-5 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:h-[65px]'
         variant='primary'
         isLoading={phoneToken ? phoneVerifying : messageSending}
         onClick={phoneToken ? handleVerifyPhoneToken : handleSendPhoneToken}
@@ -144,7 +144,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
     ),
     2: (
       <Button
-        className='mb-5 flex h-12 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:h-[65px]'
+        className='mb-5 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:h-[65px]'
         variant='primary'
         isLoading={registeing}
         onClick={handleRegister}
@@ -153,9 +153,9 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
       </Button>
     ),
     3: (
-      <div className='flex w-full flex-row space-x-5'>
+      <>
         <Button
-          className='mb-5 flex h-12 w-[40%] items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:h-[65px]'
+          className='mb-5 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:h-[65px]'
           variant='outline'
           onClick={() => {
             Router.push('/');
@@ -164,7 +164,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
           메인
         </Button>
         <Button
-          className='mb-5 flex h-12 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:h-[65px]'
+          className='mb-5 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:h-[65px]'
           variant='primary'
           onClick={() => {
             Router.push('/auth/verify');
@@ -172,7 +172,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
         >
           학교 인증하기
         </Button>
-      </div>
+      </>
     ),
   };
 
@@ -180,8 +180,8 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
     [key: number]: React.ReactNode;
   } = {
     1: (
-      <div className='mt-auto flex h-full w-full max-w-[551px] flex-col items-start justify-end px-5 lg:px-0'>
-        <div className='mb-0 mt-6 flex flex-row items-center justify-center px-4 lg:mb-0 lg:mt-0'>
+      <>
+        <div className='mb-auto flex flex-row items-center justify-center px-5 pt-20'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src='/svg/Logo.svg'
@@ -195,17 +195,18 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             본인인증
           </span>
         </div>
-        <div className='mb-8 mt-8 h-[350px] w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
+        <div className='mt-auto flex flex-col'>
+          <hr className='my-8 border-[#BABABA] ' />
           <div className='flex flex-col'>
             <div className='mb-2 flex flex-row items-center'>
-              <span className='text-sm font-bold lg:text-lg'>전화번호</span>
-              <span className='ml-2 text-base font-bold text-[#BABABA] lg:text-lg'>
+              <span className='text-sm font-bold lg:text-base'>전화번호</span>
+              <span className='ml-2 text-sm font-bold text-[#BABABA] lg:text-base'>
                 (-를 제외한 번호 입력)
               </span>
             </div>
             <div className='flex flex-row'>
               <Input
-                className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] lg:h-[48px]'
+                className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] font-mono lg:h-[48px]'
                 type='text'
                 autoFocus
                 value={phone}
@@ -233,7 +234,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
           </div>
           <div className='mb-auto mt-4 flex flex-col'>
             <div className='mb-2 flex flex-row items-center'>
-              <span className='text-sm font-bold lg:text-lg'>
+              <span className='text-sm font-bold lg:text-base'>
                 인증 번호 입력
               </span>
             </div>
@@ -242,22 +243,24 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
                 ref={phoneVerifyCodeRef}
                 disabled={phoneToken ? false : true}
                 placeholder='인증번호를 입력해주세요'
-                className='mr-2 h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] lg:h-[48px]'
+                className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] lg:h-[48px]'
                 type='text'
                 onChange={(e) => {
                   setPhoneVerifyCode(e.target.value);
                 }}
               />
-              <div className='w-32' />
             </div>
           </div>
+          <hr className='my-8 border-[#BABABA] ' />
         </div>
-        {stepButtonList[step]}
-      </div>
+        <div className='mb-4 flex flex-row space-x-2 lg:space-x-9'>
+          {stepButtonList[step]}
+        </div>
+      </>
     ),
     2: (
-      <div className='mt-auto flex h-full w-full max-w-[551px] flex-col items-start justify-end px-5 lg:px-0'>
-        <div className='mb-0 mt-6 flex flex-row items-center justify-center px-4 lg:mb-0 lg:mt-0'>
+      <>
+        <div className='mb-auto flex flex-row items-center justify-center px-5 pt-20'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src='/svg/Logo.svg'
@@ -271,20 +274,22 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             회원가입
           </span>
         </div>
-        <div className='mb-8 mt-8 h-[360px] w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
-          <div className={clsxm('mb-6 flex flex-col')}>
+        <div className='mt-auto flex flex-col'>
+          <hr className='my-8 border-[#BABABA] ' />
+          <div className={clsxm('flex flex-col', userError ? 'mb-5' : '')}>
             <div className='mb-1 flex flex-row items-center'>
-              <span className='text-sm font-bold lg:text-lg'>이름</span>
+              <span className='text-sm font-bold lg:text-base'>이름</span>
             </div>
             <div className='flex flex-row'>
               <Input
-                className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] lg:h-[48px]'
+                className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] font-mono lg:h-[48px]'
                 type='name'
                 autoFocus
                 value={name}
                 onChange={(e) => {
                   setName(e.target.value);
                 }}
+                defaultValue={user?.name}
                 placeholder='이름을 입력해주세요'
               />
             </div>
@@ -292,43 +297,38 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
           <div
             className={clsxm(
               'flex flex-col',
-              !userError ? 'hidden' : 'mb-6 block'
+              !userError ? 'hidden' : 'mb-5 block'
             )}
           >
             <div className='mb-1 flex flex-row items-center'>
-              <span className='text-sm font-bold lg:text-lg'>비밀번호</span>
+              <span className='text-sm font-bold lg:text-base'>비밀번호</span>
             </div>
             <div className='relative flex flex-row'>
               <Input
-                className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] lg:h-[48px]'
+                className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] font-mono lg:h-[48px]'
                 type='password'
                 value={password}
-                placeholder='비밀번호를 입력해주세요'
+                placeholder='8자 이상, 한개의 문자, 숫자, 특수문자를 포함해주세요'
                 onChange={(e) => {
                   setPassword(e.target.value);
                 }}
               />
-              {!passCheck(password) && (
-                <span className='absolute bottom-[-22px] left-0 text-sm text-red-500'>
-                  8자 이상, 한개의 문자, 숫자, 특수문자를 포함해주세요
-                </span>
-              )}
             </div>
           </div>
           <div
             className={clsxm(
               'flex flex-col',
-              !userError ? 'hidden' : 'mb-6 block'
+              !userError ? 'hidden' : 'mb-5 block'
             )}
           >
             <div className='mb-1 flex flex-row items-center'>
-              <span className='text-sm font-bold lg:text-lg'>
+              <span className='text-sm font-bold lg:text-base'>
                 비밀번호 확인
               </span>
             </div>
-            <div className='relative flex flex-row'>
+            <div className='relative flex flex-col'>
               <Input
-                className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] lg:h-[48px]'
+                className='h-10 w-full rounded-[10px] border-[2px] border-[#BABABA] font-mono lg:h-[48px]'
                 type='password'
                 placeholder='비밀번호를 입력해주세요'
                 value={passwordCheck}
@@ -337,19 +337,22 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
                 }}
               />
               {password != passwordCheck && (
-                <span className='absolute bottom-[-22px] left-0 text-sm text-red-500'>
-                  비밀번호와 비밀번호 확인이 일치하지 않습니다.
+                <span className='absolute left-0 top-10 mt-1 text-sm text-red-500 lg:top-12'>
+                  비밀번호가 일치하지 않습니다.
                 </span>
               )}
             </div>
           </div>
+          <hr className='my-8 border-[#BABABA] ' />
         </div>
-        {stepButtonList[step]}
-      </div>
+        <div className='mb-4 flex flex-row space-x-2 lg:space-x-9'>
+          {stepButtonList[step]}
+        </div>
+      </>
     ),
     3: (
-      <div className='mt-auto flex h-full w-full max-w-[551px] flex-col items-start justify-end px-5 lg:px-0'>
-        <div className='mb-0 mt-6 flex flex-row items-center justify-center px-4 lg:mb-0 lg:mt-0'>
+      <>
+        <div className='mb-auto flex flex-row items-center justify-center px-5 pt-20'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src='/svg/Logo.svg'
@@ -363,27 +366,25 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
             완료되었습니다!
           </span>
         </div>
-        <div className='mb-8 mt-8 flex h-[350px] w-full items-center justify-center border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
+        <div className='flex h-[350px] w-full flex-col items-center justify-center pt-8 lg:mb-12 lg:max-h-[400px]'>
           <LottieAnimaition
             className='h-40 w-40'
             loop={false}
             animation={require('../../lottieFiles/success.json')}
           />
         </div>
-        {stepButtonList[step]}
-      </div>
+        <div className='mb-4 flex w-full flex-row space-x-2'>
+          {stepButtonList[step]}
+        </div>
+      </>
     ),
   };
 
   return (
-    <Layout>
+    <>
       <Seo templateTitle='회원가입' />
-      <main className='background flex min-h-[100vh] w-[100vw] items-center justify-center'>
-        <div className='my-10 flex min-h-[90vh] w-[90vw] flex-col items-center rounded-[31px] bg-white lg:max-h-[909px] lg:max-w-[644px]'>
-          {stepList[step]}
-        </div>
-      </main>
-    </Layout>
+      <LoginLayout>{stepList[step]}</LoginLayout>
+    </>
   );
 };
 
