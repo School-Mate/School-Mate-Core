@@ -1,8 +1,10 @@
+import Link from 'next/link';
 import React from 'react';
 
 const Logo: React.FC<{ className?: string }> = ({ className }) => {
   return (
-    <div
+    <Link
+      href='/'
       className={`flex h-14 flex-row items-center justify-center ${
         className ? className : ''
       }`}
@@ -24,7 +26,7 @@ const Logo: React.FC<{ className?: string }> = ({ className }) => {
       >
         schoolmate
       </span>
-    </div>
+    </Link>
   );
 };
 
