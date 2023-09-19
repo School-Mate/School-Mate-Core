@@ -75,7 +75,7 @@ const DashboardLeftSection: NextPage = () => {
         </div>
         {boards ? (
           <>
-            <div className='grid w-[318px] grid-cols-2 rounded-[10px] border py-3'>
+            <div className='grid min-w-[318px] grid-cols-2 rounded-[10px] border py-3'>
               <div className='flex flex-col space-y-1 border-r px-2'>
                 {boards.slice(0, 6).map((board, index) => (
                   <>
@@ -89,7 +89,7 @@ const DashboardLeftSection: NextPage = () => {
                   </>
                 ))}
               </div>
-              <div className='flex flex-col space-y-1 border-r px-2'>
+              <div className='flex flex-col space-y-1 px-2'>
                 {boards.slice(6, 11).map((board, index) => (
                   <>
                     <Link
@@ -261,7 +261,7 @@ const DashboardLeftSection: NextPage = () => {
               플래너
             </SelectBoardButton> */}
           </div>
-          <div className='mt-4 flex flex-row'>
+          <div className='mt-4 flex w-[810px] flex-row'>
             {DashboardSelectItem[selectedBoard]}
           </div>
           <div className='my-6 w-full border' />
