@@ -11,7 +11,7 @@ import Toast from '@/lib/toast';
 import Button from '@/components/buttons/Button';
 import Dropdown from '@/components/Dropdown';
 import Input from '@/components/Input';
-import Layout from '@/components/layout/Layout';
+import LoginLayout from '@/components/layout/LoginLayout';
 import { LoadingScreen } from '@/components/Loading';
 import Seo from '@/components/Seo';
 
@@ -447,14 +447,8 @@ const SchoolVerify = () => {
   return (
     <>
       {showLoading && <LoadingScreen />}
-      <Layout>
-        <Seo templateTitle='학교인증' />
-        <main className='background flex min-h-[100vh] w-[100vw] items-center justify-center'>
-          <div className='my-10 flex max-h-[909px] min-h-[90vh] w-[90vw] max-w-[644px] flex-col items-center rounded-[31px] bg-white'>
-            {steps[step]}
-          </div>
-        </main>
-      </Layout>
+      <Seo templateTitle='학교인증' />
+      <LoginLayout>{steps[step]}</LoginLayout>
     </>
   );
 };
