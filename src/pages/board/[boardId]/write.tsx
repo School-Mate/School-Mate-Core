@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
+import useFetch from '@/lib/hooks/useFetch';
 import useSchool from '@/lib/hooks/useSchool';
 import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
@@ -18,7 +19,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import Loading, { LoadingScreen } from '@/components/Loading';
 import Seo from '@/components/Seo';
 
-import { Article, Board } from '@/types/article';
+import { Board } from '@/types/article';
 import { Response } from '@/types/client';
 
 interface BoardPageProps {
@@ -34,6 +35,30 @@ const Wrtie: NextPage<BoardPageProps> = ({ error, board, message }) => {
   const imageRef = useRef<HTMLInputElement>(null);
   const [content, setContent] = useState<string>('');
   const [title, setTitle] = useState<string>('');
+  const { triggerFetch: uploadArticle } = useFetch(
+    `/board/${board.id}`,
+    'POST',
+    {
+      successToast: {
+        message: '게시글이 작성되었습니다',
+      },
+      pendingToast: {
+        message: '게시글을 작성하고 있어요',
+      },
+      failureToast: {
+        fallback: {
+          message: '게시글 작성에 실패했습니다.',
+        },
+      },
+      onSuccess: (status, message, response) => {
+        Router.push(`/board/${board.id}/v/${response.id}`);
+        setIsWriting(false);
+      },
+      onError: () => {
+        setIsWriting(false);
+      },
+    }
+  );
   const { user } = useUser();
   const { school } = useSchool();
 
@@ -68,17 +93,16 @@ const Wrtie: NextPage<BoardPageProps> = ({ error, board, message }) => {
         }
       }
 
-      const { data: article } = await client.post<Response<Article>>(
-        `/board/${board.id}`,
-        {
-          title,
-          content,
-          isAnonymous,
-          images: uploadImages,
-        }
-      );
-
-      Router.push(`/board/${board.id}/v/${article.data.id}`);
+      await uploadArticle({
+        fetchInit: {
+          data: {
+            title,
+            content,
+            isAnonymous,
+            images: uploadImages,
+          },
+        },
+      });
     } catch (err) {
       if (err instanceof AxiosError) {
         for await (const image of uploadImages) {
