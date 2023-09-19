@@ -182,8 +182,8 @@ const SchoolVerify = () => {
     [key: number]: React.ReactNode;
   } = {
     1: (
-      <div className='mt-auto flex h-full w-full max-w-[551px] flex-col items-start justify-end px-5 lg:px-0'>
-        <div className='mb-0 mt-6 flex flex-row items-center justify-center px-4 lg:mb-0 lg:mt-0'>
+      <>
+        <div className='mb-auto flex flex-row items-center justify-center px-5 pt-20'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src='/svg/Logo.svg'
@@ -194,20 +194,21 @@ const SchoolVerify = () => {
             }}
           />
           <span className='font ml-5 w-full text-xl font-bold lg:text-3xl'>
-            학교 인증
+            학교인증
           </span>
         </div>
         <span className='-mb-5 ml-auto'>
           필수입력<span className='text-red-500'>*</span>
         </span>
-        <div className='mb-8 mt-8 h-[350px] w-full border-b border-t border-[#BABABA] pt-8 lg:mb-12 lg:max-h-[400px]'>
-          <div className='flex flex-col space-y-5'>
-            <div className='flex flex-row items-center justify-between'>
+        <div className='min-h-[400px] w-full'>
+          <hr className='my-8 border-[#BABABA] ' />
+          <div className='flex flex-col space-y-2 lg:space-y-5'>
+            <div className='flex flex-col justify-between lg:flex-row lg:items-center'>
               <div className='flex flex-row'>
-                <span className='text-xl font-bold'>학교</span>
+                <span className='text-sm font-bold lg:text-lg'>학교</span>
                 <span className='text-red-500'>*</span>
               </div>
-              <div className='relative w-80'>
+              <div className='relative mt-1 w-full lg:mt-0 lg:w-80'>
                 {selectSchool ? (
                   <>
                     <Button
@@ -293,12 +294,12 @@ const SchoolVerify = () => {
             </div>
             {selectSchoolDetail && (
               <>
-                <div className='flex flex-row items-center justify-between'>
+                <div className='flex flex-col justify-between lg:flex-row lg:items-center'>
                   <div className='flex flex-row'>
-                    <span className='text-xl font-bold'>학년</span>
+                    <span className='text-sm font-bold lg:text-lg'>학년</span>
                     <span className='text-red-500'>*</span>
                   </div>
-                  <div className='relative w-80'>
+                  <div className='relative mt-1 w-full lg:mt-0 lg:w-80'>
                     <Dropdown
                       items={getSchoolGrades()}
                       selectCallback={(item) => {
@@ -310,12 +311,12 @@ const SchoolVerify = () => {
               </>
             )}
             {selectSchoolDetail && grade && (
-              <div className='flex flex-row items-center justify-between'>
+              <div className='flex flex-col justify-between lg:flex-row lg:items-center'>
                 <div className='flex flex-row'>
-                  <span className='text-xl font-bold'>반</span>
+                  <span className='text-sm font-bold lg:text-lg'>반</span>
                   <span className='text-red-500'>*</span>
                 </div>
-                <div className='relative w-80'>
+                <div className='relative mt-1 w-full lg:mt-0 lg:w-80'>
                   <Dropdown
                     items={getSchoolClasses()}
                     selectCallback={(item) => {
@@ -330,12 +331,14 @@ const SchoolVerify = () => {
               grade &&
               classNumber &&
               getSchoolDepartments().length > 0 && (
-                <div className='flex flex-row items-center justify-between'>
+                <div className='flex flex-col justify-between lg:flex-row lg:items-center'>
                   <div className='flex flex-row'>
-                    <span className='text-xl font-bold'>학과(계열)</span>
+                    <span className='text-sm font-bold lg:text-lg'>
+                      학과(계열)
+                    </span>
                     <span className='text-red-500'>*</span>
                   </div>
-                  <div className='relative w-80'>
+                  <div className='relative mt-1 w-full lg:mt-0 lg:w-80'>
                     <Dropdown
                       items={getSchoolDepartments()}
                       selectCallback={(item) => {
@@ -347,19 +350,22 @@ const SchoolVerify = () => {
                 </div>
               )}
           </div>
+          <hr className='my-8 border-[#BABABA] ' />
         </div>
-        <Button
-          className='mb-5 flex h-12 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:h-[65px]'
-          variant='primary'
-          onClick={checkSchool}
-        >
-          다음
-        </Button>
-      </div>
+        <div className='mb-4 flex w-full flex-row space-x-2'>
+          <Button
+            className='mb-5 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:h-[65px]'
+            variant='primary'
+            onClick={checkSchool}
+          >
+            다음
+          </Button>
+        </div>
+      </>
     ),
     2: (
-      <div className='mt-auto flex h-full w-full max-w-[551px] flex-col items-start justify-end px-5 lg:px-0'>
-        <div className='mb-0 mt-6 flex flex-row items-center justify-center px-4 lg:mb-0 lg:mt-0'>
+      <>
+        <div className='mb-auto flex flex-row items-center justify-center px-5 pt-20'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src='/svg/Logo.svg'
@@ -370,77 +376,80 @@ const SchoolVerify = () => {
             }}
           />
           <span className='font ml-5 w-full text-xl font-bold lg:text-3xl'>
-            학교 인증
+            학교인증
           </span>
         </div>
-        <div className='mb-8 mt-8 w-full border-b border-t border-[#BABABA] py-4 lg:mb-12'>
-          <div className='flex flex-col px-4'>
-            <div className='flex h-full w-full flex-col items-center justify-center py-3'>
-              <span className='mr-auto text-xl font-bold'>학생증 인증</span>
-              <button
-                onClick={() => {
-                  imageUploadRef.current?.click();
-                }}
-                className='mt-2 flex h-52 w-full flex-col items-center justify-center rounded-[10px] border-4 text-[#E3E3E3]'
-              >
-                {image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    className='h-full w-full object-cover'
-                    src={URL.createObjectURL(image)}
-                    alt='image'
-                  />
-                ) : (
-                  <>
-                    <i className='fas fa-file text-6xl' />
-                    <span className='mt-3 text-xl'>이미지 첨부하기</span>
-                  </>
-                )}
-                <input
-                  className='hidden'
-                  type='file'
-                  ref={imageUploadRef}
-                  accept='image/*'
-                  onChange={(e) => {
-                    if (!e.target.files) return;
-                    setImage(e.target.files[0]);
-                    imageUploadRef.current?.value == '';
-                  }}
+        <div className='flex flex-col'>
+          <hr className='my-8 border-[#BABABA] ' />
+
+          <div className='flex h-full w-full flex-col items-center justify-center'>
+            <span className='mr-auto text-xl font-bold'>학생증 인증</span>
+            <button
+              onClick={() => {
+                imageUploadRef.current?.click();
+              }}
+              className='mt-2 flex h-52 w-full flex-col items-center justify-center rounded-[10px] border-4 text-[#E3E3E3]'
+            >
+              {image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className='h-full w-full object-cover'
+                  src={URL.createObjectURL(image)}
+                  alt='image'
                 />
-              </button>
-              <div className='mt-4 flex w-full flex-col'>
-                <span className='font-bold'>[ 인증 가능 서류 ]</span>
-                <span className='ml-2 text-sm'>· 생활기록부</span>
-                <span className='ml-2 text-sm'>· 학생증</span>
+              ) : (
+                <>
+                  <i className='fas fa-file text-6xl' />
+                  <span className='mt-3 text-xl'>이미지 첨부하기</span>
+                </>
+              )}
+              <input
+                className='hidden'
+                type='file'
+                ref={imageUploadRef}
+                accept='image/*'
+                onChange={(e) => {
+                  if (!e.target.files) return;
+                  setImage(e.target.files[0]);
+                  imageUploadRef.current?.value == '';
+                }}
+              />
+            </button>
+            <div className='mt-4 flex w-full flex-col'>
+              <span className='font-bold'>[ 인증 가능 서류 ]</span>
+              <span className='ml-2 text-sm'>· 생활기록부</span>
+              <span className='ml-2 text-sm'>· 학생증</span>
+            </div>
+            <div className='mt-2 flex w-full flex-col'>
+              <div className='flex flex-row items-start justify-start text-sm text-[#BEBDBD]'>
+                <span>1.</span>
+                <span className='ml-1'>
+                  첨부 이미지는 정보 확인 후 즉시 폐기하며, 주민등록번호가 나올
+                  시 마스킹 후 첨부 부탁드립니다.
+                </span>
               </div>
-              <div className='mt-2 flex w-full flex-col'>
-                <div className='flex flex-row items-start justify-start text-sm text-[#BEBDBD]'>
-                  <span>1.</span>
-                  <span className='ml-1'>
-                    첨부 이미지는 정보 확인 후 즉시 폐기하며, 주민등록번호가
-                    나올 시 마스킹 후 첨부 부탁드립니다.
-                  </span>
-                </div>
-                <div className='flex flex-row items-start justify-start text-sm text-[#BEBDBD]'>
-                  <span>2.</span>
-                  <span className='ml-1'>
-                    타인을 사칭, 서류 위조, 해킹 등의 여부는 관련 법에 따라 법적
-                    책임이 따를 수 있습니다.
-                  </span>
-                </div>
+              <div className='flex flex-row items-start justify-start text-sm text-[#BEBDBD]'>
+                <span>2.</span>
+                <span className='ml-1'>
+                  타인을 사칭, 서류 위조, 해킹 등의 여부는 관련 법에 따라 법적
+                  책임이 따를 수 있습니다.
+                </span>
               </div>
             </div>
           </div>
+          <hr className='my-8 border-[#BABABA] ' />
         </div>
-        <Button
-          className='mb-5 flex h-12 w-full items-center justify-center rounded-[10px] font-bold lg:mb-10 lg:h-[65px]'
-          variant='primary'
-          onClick={handleVerify}
-          isLoading={verifyLoading}
-        >
-          완료
-        </Button>
-      </div>
+        <div className='mb-4 flex w-full flex-row space-x-2'>
+          <Button
+            className='mb-5 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:h-[65px]'
+            variant='primary'
+            onClick={handleVerify}
+            isLoading={verifyLoading}
+          >
+            완료
+          </Button>
+        </div>
+      </>
     ),
   };
 
