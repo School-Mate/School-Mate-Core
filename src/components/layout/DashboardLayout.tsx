@@ -3,17 +3,15 @@ import React from 'react';
 
 import Header from '@/components/layout/DashboardHeader';
 
-import { User, UserSchoolWithUser } from '@/types/user';
+import { UserSchoolWithUser } from '@/types/user';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  user: User;
   school: UserSchoolWithUser;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
-  user,
   school,
 }) => {
   return (
@@ -21,7 +19,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <Head>
         <meta name='viewport' content='width=1400' />
       </Head>
-      <Header user={user} school={school} />
+      <Header school={school} />
       <main className='mb-20'>{children}</main>
     </>
   );

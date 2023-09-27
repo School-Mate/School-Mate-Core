@@ -2,14 +2,13 @@ import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { NextPage } from 'next';
 import Router from 'next/router';
+import { Session } from 'next-auth';
 import React, { useEffect, useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useInView } from 'react-intersection-observer';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
-import useSchool from '@/lib/hooks/useSchool';
-import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
 import { schoolMateDateFormat } from '@/lib/utils';
 
@@ -18,15 +17,20 @@ import Empty from '@/components/Empty';
 import Error from '@/components/Error';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Loading, { LoadingScreen } from '@/components/Loading';
-import Login from '@/components/Login';
 import Seo from '@/components/Seo';
 
 import { AskedQuestion, AskedQuestionWithMe, AskedUser } from '@/types/asked';
 import { Response } from '@/types/client';
 
-const Asked: NextPage = () => {
-  const { user, isLoading: isUserLoading } = useUser();
-  const { school, isLoading: isSchoolLoding } = useSchool();
+interface AskedProps {
+  session: Session;
+}
+
+const Asked: NextPage<AskedProps> = ({
+  session: {
+    user: { user },
+  },
+}) => {
   const [enableEditFeed, setEnableEditFeed] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [selectedAsked, setSelectedAsked] = useState<string>();
@@ -167,16 +171,13 @@ const Asked: NextPage = () => {
     ) as AskedQuestion;
   };
 
-  if (isSchoolLoding || isUserLoading || loadingFirstAsked)
-    return <LoadingScreen />;
-  if (!user) return <Login redirectTo='/asked/me' />;
-  if (!school) return <Error message='학교 정보를 불러오는데 실패했습니다.' />;
+  if (loadingFirstAsked) return <LoadingScreen />;
   if (!asked) return <Error message='에스크 정보를 불러오는데 실패했습니다.' />;
 
   return (
     <>
       <Seo templateTitle={asked.user.user.name + '님의 에스크'} />
-      <DashboardLayout user={user} school={school}>
+      <DashboardLayout school={user.UserSchool}>
         <div className='mx-auto mt-5 flex h-full min-h-[86vh] max-w-[1280px] flex-col justify-center'>
           <div className='flex h-40 w-full flex-row items-center justify-between rounded-[20px] border p-9'>
             <div className='flex flex-col'>

@@ -2,20 +2,20 @@ import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { GetServerSideProps, NextPage } from 'next';
 import Router from 'next/router';
+import { Session } from 'next-auth';
+import { getSession } from 'next-auth/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
-import useSchool from '@/lib/hooks/useSchool';
-import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
+import { authRedirectUrlGenerator } from '@/lib/utils';
 
 import Checkbox from '@/components/CheckBox';
 import Error from '@/components/Error';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import Loading, { LoadingScreen } from '@/components/Loading';
-import Login from '@/components/Login';
+import Loading from '@/components/Loading';
 import Seo from '@/components/Seo';
 
 import { AskedQuestion, AskedQuestionWithPage, AskedUser } from '@/types/asked';
@@ -25,11 +25,17 @@ interface AskedProps {
   error: boolean;
   asked: AskedQuestionWithPage;
   message: string;
+  session: Session;
 }
 
-const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
-  const { user, isLoading: isUserLoading } = useUser();
-  const { school, isLoading: isSchoolLoding } = useSchool();
+const Asked: NextPage<AskedProps> = ({
+  error,
+  asked: askedData,
+  message,
+  session: {
+    user: { user },
+  },
+}) => {
   const askedsEl = useRef<HTMLDivElement>(null);
   const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
   const [askedMessage, setAskedMessage] = useState<string>('');
@@ -111,25 +117,13 @@ const Asked: NextPage<AskedProps> = ({ error, asked: askedData, message }) => {
   };
 
   if (error) return <Error message={message} />;
-  if (isSchoolLoding || isUserLoading) return <LoadingScreen />;
   if (!asked || !askedData)
     return <Error message='에스크 정보를 불러오는데 실패했습니다.' />;
-  if (!user)
-    return (
-      <Login
-        redirectTo={`/asked/${
-          askedData.user.customId
-            ? askedData.user.customId
-            : askedData.user.userId
-        }`}
-      />
-    );
-  if (!school) return <Error message='학교 정보를 불러오는데 실패했습니다.' />;
 
   return (
     <>
       <Seo templateTitle={asked.user.user.name + '님의 에스크'} />
-      <DashboardLayout user={user} school={school}>
+      <DashboardLayout school={user.UserSchool}>
         <div className='mx-auto mt-5 flex h-full min-h-[86vh] max-w-[1280px] flex-col justify-center'>
           <div className='flex h-40 w-full flex-col rounded-[20px] border p-6'>
             <div className='flex flex-row items-center'>
@@ -276,16 +270,26 @@ const AskedUsers: React.FC<{
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const {
-    req: { cookies },
     query: { askedId },
   } = ctx;
+  const session = await getSession(ctx);
+  const accessToken = session?.user.token.accessToken;
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: authRedirectUrlGenerator(ctx.req.url as string),
+        permanent: false,
+      },
+    };
+  }
 
   try {
     const { data: askedData } = await client.get<Response<AskedUser>>(
       `/asked/${askedId}`,
       {
         headers: {
-          Authorization: 'Bearer ' + cookies.Authorization,
+          Authorization: 'Bearer ' + accessToken,
         },
       }
     );
@@ -297,31 +301,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         message: null,
       },
     };
-  } catch (err) {
-    if (err instanceof AxiosError) {
-      if (err.response?.status === 401) {
-        return {
-          redirect: {
-            destination: `/auth/login?redirectTo=/asked/${askedId}`,
-            permanent: false,
-          },
-        };
-      }
-
-      return {
-        props: {
-          error: true,
-          asked: null,
-          message: err.response?.data.message,
-        },
-      };
-    }
-
+  } catch (err: any) {
     return {
       props: {
         error: true,
-        asked: null,
-        message: '알 수 없는 오류가 발생했습니다.',
+        board: null,
+        message:
+          err?.response?.data?.message || '알 수 없는 오류가 발생했습니다.',
       },
     };
   }

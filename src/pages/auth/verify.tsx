@@ -1,11 +1,13 @@
 import { AxiosError } from 'axios';
+import { GetServerSideProps } from 'next';
 import Router from 'next/router';
+import { Session } from 'next-auth';
+import { getSession } from 'next-auth/react';
 import { useRef, useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import useSWR from 'swr';
 
 import client from '@/lib/client';
-import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
 
 import Button from '@/components/buttons/Button';
@@ -18,7 +20,11 @@ import Seo from '@/components/Seo';
 import { Response } from '@/types/client';
 import { IClassInfoRow, ISchoolInfoRow } from '@/types/school';
 
-const SchoolVerify = () => {
+interface SchoolVerifyProps {
+  session: Session;
+}
+
+const SchoolVerify = ({ session }: SchoolVerifyProps) => {
   const [step, setStep] = useState<number>(1);
   const [schoolKeyword, setSchoolKeyword] = useState<string>('');
   const [image, setImage] = useState<File | null>(null);
@@ -35,7 +41,6 @@ const SchoolVerify = () => {
   const ref = useDetectClickOutside({
     onTriggered: () => setOpenSchoolDropdown(false),
   });
-  const { user, isLoading } = useUser();
   const { data: searchSchools, error: schoolSearchError } = useSWR<
     ISchoolInfoRow[]
   >(`/school/search?keyword=${schoolKeyword}`);
@@ -47,7 +52,7 @@ const SchoolVerify = () => {
       setShowLoading(true);
       const { data: schoolDetail } = await client.get<
         Response<IClassInfoRow[]>
-      >(`/school/${school.SD_SCHUL_CODE}/detail`);
+      >(`/school/${school.SD_SCHUL_CODE}/class`);
       setSelectSchoolDetail(schoolDetail.data);
     } catch (e) {
       return Toast('학교 정보를 불러오는데 실패했습니다.', 'error');
@@ -55,8 +60,6 @@ const SchoolVerify = () => {
       setShowLoading(false);
     }
   };
-
-  if (isLoading) return <LoadingScreen />;
 
   const handleNextStep = () => {
     setStep((prev) => prev + 1);
@@ -136,6 +139,7 @@ const SchoolVerify = () => {
     try {
       const formData = new FormData();
       formData.append('img', image);
+      formData.append('storage', 'schoolverify');
       const { data: uploadImage } = await client.post<Response<string>>(
         `/image`,
         formData,
@@ -143,18 +147,27 @@ const SchoolVerify = () => {
           headers: {
             'Content-Type': 'multipart/form-data',
             storage: 'schoolverify',
+            Authorization: `Bearer ${session.user?.token.accessToken}`,
           },
         }
       );
       uploadImageId = uploadImage.data;
 
-      const { data } = await client.post(`/school/verify`, {
-        imageId: uploadImageId,
-        schoolId: selectSchool?.SD_SCHUL_CODE,
-        grade,
-        class: classNumber,
-        dept: department,
-      });
+      const { data } = await client.post(
+        `/school/verify`,
+        {
+          imageId: uploadImageId,
+          schoolId: selectSchool?.SD_SCHUL_CODE,
+          grade,
+          class: classNumber,
+          dept: department,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session.user?.token.accessToken}`,
+          },
+        }
+      );
 
       Toast(
         '인증요청이 접수되었습니다! 심사 완료까지 약 1일~2일이 소요됩니다!',
@@ -165,16 +178,20 @@ const SchoolVerify = () => {
     } catch (error) {
       if (error instanceof AxiosError) {
         if (uploadImageId) {
-          await client.delete(`/image/${uploadImageId}`);
+          await client.delete(`/image/${uploadImageId}`, {
+            headers: {
+              Authorization: `Bearer ${session.user?.token.accessToken}`,
+            },
+          });
         }
         return Toast(error.response?.data.message, 'error');
       }
 
       return Toast('학교 인증 요청에 실패했습니다.', 'error');
     } finally {
-      imageUploadRef.current?.value == '';
       setImage(null);
       setVerifyLoading(false);
+      imageUploadRef.current?.value && (imageUploadRef.current.value = '');
     }
   };
 
@@ -411,7 +428,6 @@ const SchoolVerify = () => {
                 onChange={(e) => {
                   if (!e.target.files) return;
                   setImage(e.target.files[0]);
-                  imageUploadRef.current?.value == '';
                 }}
               />
             </button>
@@ -460,6 +476,22 @@ const SchoolVerify = () => {
       <LoginLayout>{steps[step]}</LoginLayout>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+  if (session)
+    return {
+      props: {
+        session,
+      },
+    };
+  return {
+    redirect: {
+      destination: '/auth/login?redirectTo=/auth/verify',
+      permanent: false,
+    },
+  };
 };
 
 export default SchoolVerify;

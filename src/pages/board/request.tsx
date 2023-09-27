@@ -1,27 +1,33 @@
 import { AxiosError } from 'axios';
+import { NextPage } from 'next';
 import Link from 'next/link';
 import Router from 'next/router';
+import { Session } from 'next-auth';
 import React from 'react';
 import useSWR from 'swr';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
-import useSchool from '@/lib/hooks/useSchool';
-import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
 
 import Button from '@/components/buttons/Button';
 import DashboardRightSection from '@/components/Dashboard/RightSection';
 import Input from '@/components/Input';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import Loading, { LoadingScreen } from '@/components/Loading';
+import Loading from '@/components/Loading';
 import Seo from '@/components/Seo';
 
 import { Board } from '@/types/article';
 
-const RequestBoard = () => {
-  const { user } = useUser();
-  const { school } = useSchool();
+interface RequestBoardProps {
+  session: Session;
+}
+
+const RequestBoard: NextPage<RequestBoardProps> = ({
+  session: {
+    user: { user },
+  },
+}) => {
   const [title, setTitle] = React.useState('');
   const [content, setContent] = React.useState('');
   const [isWriting, setIsWriting] = React.useState(false);
@@ -57,14 +63,10 @@ const RequestBoard = () => {
       setIsWriting(false);
     }
   };
-
-  if (!user) return <LoadingScreen />;
-  if (!school) return <LoadingScreen />;
-
   return (
     <>
       <Seo templateTitle='게시판생성요청' />
-      <DashboardLayout user={user} school={school}>
+      <DashboardLayout school={user.UserSchool}>
         <div className='mx-auto mt-5 flex max-w-[1280px] flex-row justify-center'>
           <div className='h-full min-h-[86vh] w-full max-w-[874px]'>
             <div className='mb-7 flex h-[230px] flex-row rounded-[20px] border p-5'>
@@ -196,7 +198,7 @@ const RequestBoard = () => {
               </Button>
             </div>
           </div>
-          <DashboardRightSection school={school} user={user} />
+          <DashboardRightSection school={user.UserSchool} user={user} />
         </div>
       </DashboardLayout>
     </>

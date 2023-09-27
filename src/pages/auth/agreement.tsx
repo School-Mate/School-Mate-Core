@@ -157,6 +157,9 @@ const LoginAgreement = () => {
           <Button
             className='mb-5 flex h-10 w-full items-center justify-center rounded-[10px] font-bold lg:h-[65px]'
             variant='outline'
+            onClick={() => {
+              Router.back();
+            }}
           >
             취소
           </Button>

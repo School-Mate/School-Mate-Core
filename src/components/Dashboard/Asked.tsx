@@ -1,6 +1,8 @@
 import Router from 'next/router';
 import React from 'react';
 
+import Profile from '@/components/Profile';
+
 import { AskedUser } from '@/types/asked';
 
 interface AskedProps {
@@ -21,21 +23,10 @@ const Asked: React.FC<AskedProps> = ({ askedUser }) => {
         }}
       >
         <div className='flex flex-row items-center'>
-          <div
+          <Profile
+            defaultProfile={askedUser.user.profile}
             className='relative h-[55px] w-[55px] rounded-full border border-[#D8D8D8]'
-            style={{
-              backgroundImage: askedUser.user.profile
-                ? `url(${
-                    process.env.NEXT_PUBLIC_S3_URL +
-                    '/' +
-                    askedUser.user.profile
-                  })`
-                : `url(/svg/CloverGray.svg)`,
-              backgroundColor: '#F1F1F1',
-              backgroundSize: askedUser.user.profile ? 'cover' : '30px 30px',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-            }}
+            size='small'
           />
           <div className='ml-3 flex max-w-[148px] flex-col whitespace-nowrap'>
             <h1 className='w-full truncate overflow-ellipsis text-lg font-bold'>

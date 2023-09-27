@@ -5,7 +5,6 @@ export const client = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
 });
 
 export const loggedClient = axios.create({
@@ -25,21 +24,4 @@ loggedClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export const swrfetcher = async <JSON = unknown>(
-  endpoints: string
-): Promise<JSON> =>
-  client
-    .get(endpoints, {
-      withCredentials: true,
-    })
-    .then((data) => data.data.data)
-    .catch((e: AxiosError) => {
-      const response = e.response as unknown as { data: { message: string } };
-
-      throw new Error(
-        response?.data?.message || '알 수 없는 에러가 발생했습니다.'
-      );
-    });
-
 export default client;

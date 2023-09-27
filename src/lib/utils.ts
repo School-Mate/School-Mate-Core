@@ -1,6 +1,7 @@
 import cookie from 'cookie';
 import dayjs from 'dayjs';
 import { GetServerSidePropsContext, NextPageContext } from 'next';
+import { Session } from 'next-auth';
 
 export const schoolMateDateFormat = (date: Date) => {
   const todayDate = new Date();
@@ -40,4 +41,16 @@ export const passwordCheck = (password: string): boolean => {
   const passwordRegex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
   return passwordRegex.test(password);
+};
+
+export const authRedirectUrlGenerator = (path: string) => {
+  return `/auth/login?redirectTo=${path}`;
+};
+
+export const reloadSession = async (): Promise<Session> => {
+  const res = await fetch('/api/auth/session?update');
+  const jwt = await res.json();
+  const event = new Event('visibilitychange');
+  document.dispatchEvent(event);
+  return jwt;
 };

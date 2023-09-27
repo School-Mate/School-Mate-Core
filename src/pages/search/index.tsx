@@ -1,52 +1,49 @@
-import { AxiosError } from "axios";
-import { GetServerSideProps, NextPage } from "next";
-import Link from "next/link";
-import Router, { useRouter } from "next/router";
-import useSWR from "swr";
+import { AxiosError } from 'axios';
+import { GetServerSideProps, NextPage } from 'next';
+import Link from 'next/link';
+import Router from 'next/router';
+import { Session } from 'next-auth';
+import { getSession } from 'next-auth/react';
+import useSWR from 'swr';
 
-import client from "@/lib/client";
-import clsxm from "@/lib/clsxm";
-import useSchool from "@/lib/hooks/useSchool";
-import useUser from "@/lib/hooks/useUser";
+import client from '@/lib/client';
+import clsxm from '@/lib/clsxm';
 
 import DashboardRightSection from '@/components/Dashboard/RightSection';
-import Empty from "@/components/Empty";
-import Error from "@/components/Error";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import Loading, { LoadingScreen } from "@/components/Loading";
-import Seo from "@/components/Seo";
+import Empty from '@/components/Empty';
+import Error from '@/components/Error';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import Loading from '@/components/Loading';
+import Seo from '@/components/Seo';
 
-import { ArticleItem } from "@/pages/board/[boardId]";
+import { ArticleItem } from '@/pages/board/[boardId]';
 
-import { Article, Board } from "@/types/article";
-import { Response } from "@/types/client";
+import { Article, Board } from '@/types/article';
+import { Response } from '@/types/client';
+import { UserSchool } from '@/types/user';
 
 interface SearchProps {
   keyword: string;
   articles: Article[];
-  error: boolean,
-  message: string,
+  error: boolean;
+  message: string;
+  session: Session;
 }
 
 const Search: NextPage<SearchProps> = ({
   keyword,
   articles,
   error,
-  message
+  message,
+  session,
 }) => {
-  const router = useRouter();
-  const { user } = useUser();
-  const { school } = useSchool();
   const { data: boards } = useSWR<Board[]>(`/board`);
-
-  if (!user) return <LoadingScreen />;
-  if (!school) return <LoadingScreen />;
   if (error) return <Error message={message} />;
 
   return (
     <>
-      <Seo templateTitle="검색 결과" />
-      <DashboardLayout user={user} school={school}>
+      <Seo templateTitle='검색 결과' />
+      <DashboardLayout school={session.user.user.UserSchool as UserSchool}>
         <div className='mx-auto mt-5 flex h-full min-h-[86vh] max-w-[1280px] flex-row justify-center'>
           <div className='h-full min-h-[86vh] w-full max-w-[874px]'>
             <div className='mb-7 flex h-[230px] flex-row rounded-[20px] border p-5'>
@@ -65,7 +62,7 @@ const Search: NextPage<SearchProps> = ({
                           href={`/board/${boardsBoard.id}`}
                           key={index}
                           className={clsxm(
-                            'flex items-center rounded-[10px] px-2 py-2 text-base hover:bg-gray-100',
+                            'flex items-center rounded-[10px] px-2 py-2 text-base hover:bg-gray-100'
                           )}
                         >
                           {boardsBoard.name}
@@ -86,7 +83,7 @@ const Search: NextPage<SearchProps> = ({
                           href={`/board/${boardsBoard.id}`}
                           key={index}
                           className={clsxm(
-                            'flex w-32 items-center rounded-[10px] px-2 py-2 text-base hover:bg-gray-100',
+                            'flex w-32 items-center rounded-[10px] px-2 py-2 text-base hover:bg-gray-100'
                           )}
                         >
                           {boardsBoard.name}
@@ -113,7 +110,9 @@ const Search: NextPage<SearchProps> = ({
                   onClick={() => {
                     Router.push(`/search?keyword=${keyword}`);
                   }}
-                >'{keyword}' 검색 결과</h1>
+                >
+                  '{keyword}' 검색 결과
+                </h1>
               </div>
               {articles.length === 0 ? (
                 <div className='mt-4 flex h-[80vh] flex-col rounded-[10px] border'>
@@ -130,12 +129,12 @@ const Search: NextPage<SearchProps> = ({
                         article={article}
                         className={clsxm(
                           index === 0 &&
-                          'rounded-t-[10px] border-l border-r border-t pt-3',
+                            'rounded-t-[10px] border-l border-r border-t pt-3',
                           index === articles.length - 1 &&
-                          'mb-5 rounded-b-[10px] border-b border-l border-r pb-3',
+                            'mb-5 rounded-b-[10px] border-b border-l border-r pb-3',
                           index !== 0 &&
-                          index !== articles.length - 1 &&
-                          'border-l border-r pb-3 pt-3',
+                            index !== articles.length - 1 &&
+                            'border-l border-r pb-3 pt-3',
                           'border-b'
                         )}
                       />
@@ -196,12 +195,13 @@ const Search: NextPage<SearchProps> = ({
                     </div>
                   </div>
                 </>
-
               )}
             </div>
           </div>
-          <DashboardRightSection school={school} user={user} />
-
+          <DashboardRightSection
+            school={session.user.user.UserSchool as UserSchool}
+            user={session.user.user}
+          />
         </div>
       </DashboardLayout>
     </>
@@ -210,22 +210,21 @@ const Search: NextPage<SearchProps> = ({
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const {
-    req: { cookies },
     query: { boardId, keyword },
   } = ctx;
+  const session = await getSession(ctx);
 
   try {
-    const { data: searchData } = await client.get<Response<{
-      board: Board[];
-      article: Article[];
-    }>>(
-      `/board/search?keyword=${keyword}`,
-      {
-        headers: {
-          Authorization: 'Bearer ' + cookies.Authorization,
-        },
-      }
-    );
+    const { data: searchData } = await client.get<
+      Response<{
+        board: Board[];
+        article: Article[];
+      }>
+    >(`/board/search?keyword=${keyword}`, {
+      headers: {
+        Authorization: 'Bearer ' + session?.user.token.accessToken,
+      },
+    });
 
     return {
       props: {
@@ -252,6 +251,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           articles: null,
           message: err.response?.data.message,
           keyword: keyword,
+          session: null,
         },
       };
     }
@@ -262,6 +262,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         articles: null,
         message: '알 수 없는 오류가 발생했습니다.',
         keyword: keyword,
+        session: null,
       },
     };
   }

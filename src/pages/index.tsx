@@ -1,46 +1,43 @@
 import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
-
-import client from '@/lib/client';
-import useSchool from '@/lib/hooks/useSchool';
-import useUser from '@/lib/hooks/useUser';
+import { Session } from 'next-auth';
+import { getSession } from 'next-auth/react';
 
 import DashboardLeftSection from '@/components/Dashboard/LeftSection';
 import DashboardRightSection from '@/components/Dashboard/RightSection';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import Layout from '@/components/layout/Layout';
-import { LoadingScreen } from '@/components/Loading';
 import Seo from '@/components/Seo';
 
-import { Response } from '@/types/client';
 import { UserSchoolWithUser } from '@/types/user';
 
 interface HomePageProps {
-  error: boolean;
-  school: UserSchoolWithUser | null;
-  message: string | null;
+  session: Session;
 }
 
-const HomePage: NextPage<HomePageProps> = ({ error }) => {
-  const { user, isLoading: loadingUser } = useUser();
-  const { school, isLoading: loadingSchool } = useSchool();
+const HomePage: NextPage<HomePageProps> = ({ session }) => {
+  if (session && session.user.user.UserSchool) {
+    const user = session.user.user;
 
-  if (loadingSchool && loadingUser && !error) return <LoadingScreen />;
-
-  if (school && user && !error)
     return (
-      <DashboardLayout user={user} school={school}>
+      <DashboardLayout school={user.UserSchool as UserSchoolWithUser}>
         <Seo
           templateTitle={
-            school.school.name ? school.school.name : school.school.defaultName
+            user.UserSchool?.school.name
+              ? user.UserSchool?.school.name
+              : user.UserSchool?.school.defaultName
           }
         />
         <div className='mx-auto mt-5 flex min-h-screen max-w-[1280px] flex-row justify-center'>
           <DashboardLeftSection />
-          <DashboardRightSection school={school} user={user} />
+          <DashboardRightSection
+            school={user.UserSchool as UserSchoolWithUser}
+            user={user}
+          />
         </div>
       </DashboardLayout>
     );
+  }
 
   return (
     <>
@@ -255,40 +252,17 @@ const HomePage: NextPage<HomePageProps> = ({ error }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const {
-    req: { cookies },
-  } = ctx;
+  const session = await getSession(ctx);
 
-  if (!cookies.Authorization)
+  if (session?.user?.user.UserSchool) {
     return {
       props: {
-        error: true,
-        message: null,
+        session,
       },
     };
-
-  try {
-    const { data: schoolData } = await client.get<Response<UserSchoolWithUser>>(
-      `/auth/me/school`,
-      {
-        headers: {
-          Authorization: 'Bearer ' + cookies.Authorization,
-        },
-      }
-    );
-
+  } else {
     return {
-      props: {
-        error: false,
-        message: null,
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        error: true,
-        message: '알 수 없는 오류가 발생했습니다.',
-      },
+      props: {},
     };
   }
 };

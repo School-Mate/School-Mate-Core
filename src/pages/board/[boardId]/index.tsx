@@ -1,21 +1,20 @@
-import { AxiosError } from 'axios';
 import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
 import Router from 'next/router';
+import { Session } from 'next-auth';
+import { getSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
-import useSchool from '@/lib/hooks/useSchool';
-import useUser from '@/lib/hooks/useUser';
 import { schoolMateDateFormat } from '@/lib/utils';
 
 import DashboardRightSection from '@/components/Dashboard/RightSection';
 import Empty from '@/components/Empty';
 import Error from '@/components/Error';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import Loading, { LoadingScreen } from '@/components/Loading';
+import Loading from '@/components/Loading';
 import NextImage from '@/components/NextImage';
 import Seo from '@/components/Seo';
 
@@ -26,12 +25,16 @@ interface BoardPageProps {
   error: boolean;
   board: Board;
   message: string;
+  session: Session;
 }
 
-const Board: NextPage<BoardPageProps> = ({ error, board, message }) => {
+const Board: NextPage<BoardPageProps> = ({
+  error,
+  board,
+  message,
+  session,
+}) => {
   const [page, setPage] = useState<number>(1);
-  const { user } = useUser();
-  const { school } = useSchool();
   const { data: articles } = useSWR<{
     articles: Article[];
     totalPage: number;
@@ -44,9 +47,6 @@ const Board: NextPage<BoardPageProps> = ({ error, board, message }) => {
       behavior: 'smooth',
     });
   }, [page]);
-
-  if (!user) return <LoadingScreen />;
-  if (!school) return <LoadingScreen />;
 
   if (error)
     return (
@@ -65,7 +65,7 @@ const Board: NextPage<BoardPageProps> = ({ error, board, message }) => {
   return (
     <>
       <Seo templateTitle={board.name} />
-      <DashboardLayout user={user} school={school}>
+      <DashboardLayout school={session.user.user.UserSchool}>
         <div className='mx-auto mt-5 flex h-full min-h-[86vh] max-w-[1280px] flex-row justify-center'>
           <div className='h-full min-h-[86vh] w-full max-w-[874px]'>
             <div className='mb-7 flex h-[230px] flex-row rounded-[20px] border p-5'>
@@ -162,12 +162,12 @@ const Board: NextPage<BoardPageProps> = ({ error, board, message }) => {
                           article={article}
                           className={clsxm(
                             index === 0 &&
-                            'rounded-t-[10px] border-l border-r border-t pt-3',
+                              'rounded-t-[10px] border-l border-r border-t pt-3',
                             index === articles.articles.length - 1 &&
-                            'mb-5 rounded-b-[10px] border-b border-l border-r pb-3',
+                              'mb-5 rounded-b-[10px] border-b border-l border-r pb-3',
                             index !== 0 &&
-                            index !== articles.articles.length - 1 &&
-                            'border-l border-r pb-3 pt-3',
+                              index !== articles.articles.length - 1 &&
+                              'border-l border-r pb-3 pt-3',
                             'border-b'
                           )}
                         />
@@ -243,7 +243,10 @@ const Board: NextPage<BoardPageProps> = ({ error, board, message }) => {
               )}
             </div>
           </div>
-          <DashboardRightSection school={school} user={user} />
+          <DashboardRightSection
+            school={session.user.user.UserSchool}
+            user={session.user.user}
+          />
         </div>
       </DashboardLayout>
     </>
@@ -300,7 +303,7 @@ export const ArticleItem: React.FC<{
             )}
             {article.commentCounts > 0 && (
               <>
-                <span className='font-normal mt-auto flex h-full items-center justify-center text-[9pt] text-[#729CBB]'>
+                <span className='mt-auto flex h-full items-center justify-center text-[9pt] font-normal text-[#729CBB]'>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src='/svg/Chat.svg' className='h-4 w-4' alt='chat' />
                   {article.commentCounts}
@@ -336,13 +339,24 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     req: { cookies },
     query: { boardId },
   } = ctx;
+  const session = await getSession(ctx);
+  const accessToken = session?.user.token.accessToken;
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/auth/login?redirect=/board/${boardId}`,
+        permanent: false,
+      },
+    };
+  }
 
   try {
     const { data: boardData } = await client.get<Response<Board>>(
       `/board/${boardId}`,
       {
         headers: {
-          Authorization: 'Bearer ' + cookies.Authorization,
+          Authorization: 'Bearer ' + accessToken,
         },
       }
     );
@@ -354,31 +368,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         message: null,
       },
     };
-  } catch (err) {
-    if (err instanceof AxiosError) {
-      if (err.response?.status === 401) {
-        return {
-          redirect: {
-            destination: `/auth/login?redirectTo=/board/${boardId}`,
-            permanent: false,
-          },
-        };
-      }
-
-      return {
-        props: {
-          error: true,
-          board: null,
-          message: err.response?.data.message,
-        },
-      };
-    }
-
+  } catch (err: any) {
     return {
       props: {
         error: true,
         board: null,
-        message: '알 수 없는 오류가 발생했습니다.',
+        message: err?.response?.data?.message || '알 수 없는 오류',
       },
     };
   }

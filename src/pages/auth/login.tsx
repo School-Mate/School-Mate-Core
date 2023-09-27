@@ -2,11 +2,12 @@ import { AxiosError } from 'axios';
 import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
 import Router from 'next/router';
+import { Session } from 'next-auth';
+import { getSession, signIn, signOut } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
-import client from '@/lib/client';
-import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
+import { reloadSession } from '@/lib/utils';
 
 import Button from '@/components/buttons/Button';
 import Checkbox from '@/components/CheckBox';
@@ -14,30 +15,29 @@ import LoginLayout from '@/components/layout/LoginLayout';
 import Logo from '@/components/Logo';
 import Seo from '@/components/Seo';
 
-import { Response } from '@/types/client';
-import { User } from '@/types/user';
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { redirectTo } = ctx.query;
+  const session = await getSession(ctx);
 
   return {
     props: {
       redirectTo: redirectTo || '/',
+      session,
     },
   };
 };
 
 interface LoginProps {
   redirectTo: string;
+  session: Session;
 }
 
-const Login: NextPage<LoginProps> = ({ redirectTo }) => {
+const Login: NextPage<LoginProps> = ({ redirectTo, session }) => {
   const [popup, setPopup] = useState<Window | null>();
   const [provider, setProvider] = useState<'kakao' | 'google'>();
   const [phone, setPhone] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loginLoading, setLoginLoading] = useState<boolean>(false);
-  const { mutateUser } = useUser();
 
   useEffect(() => {
     if (!popup) {
@@ -59,16 +59,21 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
         popup.close();
         timer && clearInterval(timer);
         try {
-          const { data } = await client.get<Response<User>>(
-            `/auth/${provider}/callback?code=${code}`
-          );
+          const res = await signIn('credentials', {
+            provider,
+            code,
+            redirect: false,
+          });
 
-          await mutateUser();
-
-          if (!data.data.verified) {
-            return Router.push('/auth/agreement');
+          if (!res?.ok) {
+            return Toast('로그인중 오류가 발생했습니다', 'error');
           } else {
-            return Router.push(redirectTo);
+            const newsession = await reloadSession();
+            if (newsession.user.registered) {
+              return Router.push(redirectTo);
+            } else {
+              return Router.push('/auth/agreement');
+            }
           }
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -106,8 +111,9 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
 
   const handleLogoutAndRegister = async () => {
     try {
-      await client.get('/auth/logout');
-      await mutateUser();
+      await signOut({
+        redirect: false,
+      });
     } catch (error) {
       console.error(error);
     } finally {
@@ -119,18 +125,20 @@ const Login: NextPage<LoginProps> = ({ redirectTo }) => {
     setLoginLoading(true);
 
     try {
-      const { data } = await client.post<Response<User>>('/auth/login', {
+      const res = await signIn('credentials', {
         phone: phone.replace(/-/g, ''),
         password,
+        provider: 'id',
+        redirect: false,
       });
-      await mutateUser();
-      Router.push(redirectTo);
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        Toast(error.response?.data?.message, 'error');
-        return;
+      if (!res?.ok) {
+        return Toast('올바르지 않은 비밀번호 또는 전화번호입니다', 'error');
+      }
+
+      if (redirectTo) {
+        Router.push(redirectTo);
       } else {
-        Toast('알 수 없는 오류가 발생했습니다.', 'error');
+        Router.push('/');
       }
     } finally {
       setLoginLoading(false);

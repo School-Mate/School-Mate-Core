@@ -4,7 +4,6 @@ import Router from 'next/router';
 import * as React from 'react';
 import useSWR from 'swr';
 
-import { swrfetcher } from '@/lib/client';
 import clsxm from '@/lib/clsxm';
 import Toast from '@/lib/toast';
 
@@ -14,19 +13,17 @@ import Button from '@/components/buttons/Button';
 import WigetAsked from '@/components/Dashboard/Asked';
 import Empty from '@/components/Empty';
 import Loading from '@/components/Loading';
+import Profile from '@/components/Profile';
 import Tooltips from '@/components/Tooltips';
 
 import { Article, Board } from '@/types/article';
 import { AskedQuestionWithMe, AskedUser } from '@/types/asked';
 
 const DashboardLeftSection: NextPage = () => {
-  const { data: askeds } = useSWR<AskedUser[]>(`/asked`, swrfetcher);
-  const { data: boards } = useSWR<Board[]>(`/board`, swrfetcher);
-  const { data: articles } = useSWR<Article[]>(`/board/suggest`, swrfetcher);
-  const { data: myAsked } = useSWR<AskedQuestionWithMe>(
-    `/auth/me/asked`,
-    swrfetcher
-  );
+  const { data: askeds } = useSWR<AskedUser[]>(`/asked`);
+  const { data: boards } = useSWR<Board[]>(`/board`);
+  const { data: articles } = useSWR<Article[]>(`/board/suggest`);
+  const { data: myAsked } = useSWR<AskedQuestionWithMe>(`/auth/me/asked`);
   const [selectedBoard, setSelectedBoard] = React.useState<
     'board' | 'asked' | 'planner'
   >('board');
@@ -125,23 +122,10 @@ const DashboardLeftSection: NextPage = () => {
           <div className='flex flex-row'>
             <div className='flex w-96 flex-col'>
               <div className='flex flex-row'>
-                <div
+                <Profile
+                  defaultProfile={myAsked?.user.user.profile}
                   className='relative h-20 w-20 rounded-full border border-[#D8D8D8]'
-                  style={{
-                    backgroundImage: myAsked?.user.user.profile
-                      ? `url(${
-                          process.env.NEXT_PUBLIC_S3_URL +
-                          '/' +
-                          myAsked?.user.user.profile
-                        })`
-                      : `url(/svg/CloverGray.svg)`,
-                    backgroundColor: '#F1F1F1',
-                    backgroundSize: myAsked?.user.user.profile
-                      ? 'cover'
-                      : '50px 50px',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center',
-                  }}
+                  size='medium'
                 />
                 <div className='ml-2 flex flex-col justify-center'>
                   <span className='ml-3 text-xl font-bold'>
@@ -161,22 +145,22 @@ const DashboardLeftSection: NextPage = () => {
                   : '피드를 입력해주세요!'}
               </span>
             </div>
-            <div className='ml-5 flex w-[400px] flex-row items-center justify-between rounded-[10px] bg-[#F9F9F9] p-5'>
-              <div className='flex flex-col items-center justify-center'>
+            <div className='ml-5 flex w-[400px] flex-row items-center rounded-[10px] bg-[#F9F9F9] p-5'>
+              <div className='mx-auto flex flex-col items-center justify-center'>
                 <span className='mb-2 text-lg font-bold text-black'>
                   {myAsked?.pendingCount}
                 </span>
                 <span className='text-lg text-[#A5A5A5]'>새 질문</span>
               </div>
-              <div className='h-full max-h-20 w-[1px] bg-[#D8D8D8]' />
-              <div className='flex flex-col items-center justify-center'>
+              <div className='mx-auto h-full max-h-20 w-[1px] bg-[#D8D8D8]' />
+              <div className='mx-auto flex flex-col items-center justify-center'>
                 <span className='mb-2 text-lg font-bold text-black'>
                   {myAsked?.successCount}
                 </span>
                 <span className='text-lg text-[#A5A5A5]'>답변완료</span>
               </div>
-              <div className='h-full max-h-20 w-[1px] bg-[#D8D8D8]' />
-              <div className='flex flex-col items-center justify-center'>
+              <div className='mx-auto h-full max-h-20 w-[1px] bg-[#D8D8D8]' />
+              <div className='mx-auto flex flex-col items-center justify-center'>
                 <span className='mb-2 text-lg font-bold text-black'>
                   {myAsked?.deniedCount}
                 </span>

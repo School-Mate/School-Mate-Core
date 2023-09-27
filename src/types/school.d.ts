@@ -168,7 +168,7 @@ export interface School {
   address: string;
   x: number;
   y: number;
-  kndsc: string;
+  type: string;
 }
 
 interface IClassInfoRow {

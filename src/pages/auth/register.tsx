@@ -1,11 +1,12 @@
 import { AxiosError } from 'axios';
 import { GetServerSideProps, NextPage } from 'next';
 import Router from 'next/router';
+import { Session } from 'next-auth';
+import { getSession, useSession } from 'next-auth/react';
 import * as React from 'react';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
-import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
 import { passwordCheck as passCheck } from '@/lib/utils';
 
@@ -17,9 +18,11 @@ import Seo from '@/components/Seo';
 
 interface RegisterProps {
   marketing: boolean;
+  session?: Session;
 }
 
-const Register: NextPage<RegisterProps> = ({ marketing }) => {
+const Register: NextPage<RegisterProps> = ({ marketing, session }) => {
+  const { update: updateSession } = useSession();
   const [messageSending, setMessageSending] = React.useState<boolean>(false);
   const [phoneVerifying, setPhoneVerifying] = React.useState<boolean>(false);
   const [phone, setPhone] = React.useState<string>('');
@@ -32,7 +35,6 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
   const [phoneVerifyCode, setPhoneVerifyCode] = React.useState<string>('');
   const [step, setStep] = React.useState<number>(1);
   const phoneVerifyCodeRef = React.useRef<HTMLInputElement>(null);
-  const { user, mutateUser, error: userError } = useUser();
 
   const handleSendPhoneToken = async () => {
     setMessageSending(true);
@@ -81,7 +83,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
       return;
     }
 
-    if (user?.provider != 'social') {
+    if (session?.user?.user.provider != 'social') {
       if (!passCheck(password)) {
         return Toast(
           '최소 8자, 하나 이상의 문자, 숫자, 특수문자를 포함해주세요',
@@ -100,19 +102,19 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
         phone: phone.replace(/-/g, ''),
         password,
         name,
-        provider: user
-          ? user.provider === 'social'
-            ? user.SocialLogin?.provider
+        provider: session
+          ? session.user?.user.provider === 'social'
+            ? session.user.user.SocialLogin?.provider
             : 'id'
           : 'id',
         code: phoneVerifyCode,
         token: phoneToken,
-        socialId: user ? user.SocialLogin?.socialId : null,
+        socialId: session?.user
+          ? session.user.user.SocialLogin?.socialId
+          : null,
         marketingAgree: marketing,
       });
-
-      await mutateUser();
-
+      updateSession();
       handleNextStep();
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -276,7 +278,12 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
         </div>
         <div className='mt-auto flex flex-col'>
           <hr className='my-8 border-[#BABABA] ' />
-          <div className={clsxm('flex flex-col', userError ? 'mb-5' : '')}>
+          <div
+            className={clsxm(
+              'flex flex-col',
+              !session?.user?.user.SocialLogin ? 'mb-5' : ''
+            )}
+          >
             <div className='mb-1 flex flex-row items-center'>
               <span className='text-sm font-bold lg:text-base'>이름</span>
             </div>
@@ -289,7 +296,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
                 onChange={(e) => {
                   setName(e.target.value);
                 }}
-                defaultValue={user?.name}
+                defaultValue={session?.user?.user.name}
                 placeholder='이름을 입력해주세요'
               />
             </div>
@@ -297,7 +304,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
           <div
             className={clsxm(
               'flex flex-col',
-              !userError ? 'hidden' : 'mb-5 block'
+              session?.user?.user.SocialLogin ? 'hidden' : 'mb-5 block'
             )}
           >
             <div className='mb-1 flex flex-row items-center'>
@@ -318,7 +325,7 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
           <div
             className={clsxm(
               'flex flex-col',
-              !userError ? 'hidden' : 'mb-5 block'
+              session?.user?.user.SocialLogin ? 'hidden' : 'mb-5 block'
             )}
           >
             <div className='mb-1 flex flex-row items-center'>
@@ -390,10 +397,12 @@ const Register: NextPage<RegisterProps> = ({ marketing }) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { marketing } = ctx.query;
+  const session = await getSession(ctx);
 
   return {
     props: {
       marketing: marketing === 'N' ? false : true,
+      session,
     },
   };
 };

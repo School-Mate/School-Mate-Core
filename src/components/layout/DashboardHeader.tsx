@@ -1,33 +1,31 @@
 import Link from 'next/link';
 import Router from 'next/router';
 import { useState } from 'react';
-
-import { User, UserSchoolWithUser } from '@/types/user';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 
+import { UserSchoolWithUser } from '@/types/user';
+
 interface HeaderProps {
-  user: User;
   school: UserSchoolWithUser;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, school }) => {
+const Header: React.FC<HeaderProps> = ({ school }) => {
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
 
   const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchKeyword(e.target.value);
-  }
+  };
 
   const handleOnEnter = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       Router.push(`/search?keyword=${searchKeyword}`);
     }
-  }
+  };
 
   const refUser = useDetectClickOutside({
     onTriggered: () => setShowInfo(false),
   });
-
 
   return (
     <>
@@ -61,15 +59,15 @@ const Header: React.FC<HeaderProps> = ({ user, school }) => {
                 }}
                 className='text-3xl font-bold'
               >
-                {school.school.kndsc === '고등학교'
+                {school.school.type === '고등학교'
                   ? school.school.name
                     ? school.school.name
                     : school.school.defaultName?.replace(/고등학교$/, '고')
                   : ''}
-                {school.school.kndsc === '중학교'
+                {school.school.type === '중학교'
                   ? school.school.name
                     ? school.school.name
-                    : school.school.defaultName?.replace(/고등학교$/, '고')
+                    : school.school.defaultName?.replace(/중학교$/, '중')
                   : ''}
               </span>
             </div>

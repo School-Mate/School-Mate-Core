@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 import client from '@/lib/client';
@@ -10,6 +11,7 @@ import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
 const PasswordChange = () => {
+  const { data: session } = useSession();
   const [nowPassword, setNowPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordCheck, setNewPasswordCheck] = useState('');

@@ -2,15 +2,15 @@ import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { GetServerSideProps, NextPage } from 'next';
 import Router, { useRouter } from 'next/router';
+import { Session } from 'next-auth';
+import { getSession } from 'next-auth/react';
 import React from 'react';
 import useSWR from 'swr';
 
 import client from '@/lib/client';
 import clsxm from '@/lib/clsxm';
-import useSchool from '@/lib/hooks/useSchool';
-import useUser from '@/lib/hooks/useUser';
 import Toast from '@/lib/toast';
-import { schoolMateDateFormat } from '@/lib/utils';
+import { authRedirectUrlGenerator, schoolMateDateFormat } from '@/lib/utils';
 
 import Button from '@/components/buttons/Button';
 import Checkbox from '@/components/CheckBox';
@@ -30,6 +30,7 @@ interface BoardPageProps {
   board: Board;
   article: Article;
   message: string;
+  session: Session;
 }
 
 const ArticlePage: NextPage<BoardPageProps> = ({
@@ -37,14 +38,13 @@ const ArticlePage: NextPage<BoardPageProps> = ({
   board,
   message,
   article,
+  session,
 }) => {
   const [commentPage, setCommentPage] = React.useState<number>(1);
   const [likeLoading, setLikeLoading] = React.useState<boolean>(false);
   const router = useRouter();
   const [addCommentsLoading, setAddCommentsLoading] =
     React.useState<boolean>(false);
-  const { user } = useUser();
-  const { school } = useSchool();
   const { data: commnets, mutate: reloadComments } = useSWR<{
     comments: Comment[];
     totalPage: number;
@@ -157,8 +157,6 @@ const ArticlePage: NextPage<BoardPageProps> = ({
     }
   };
 
-  if (!school) return <LoadingScreen />;
-  if (!user) return <LoadingScreen />;
   if (!article) return <LoadingScreen />;
 
   if (error) return <Error message={message} />;
@@ -166,7 +164,7 @@ const ArticlePage: NextPage<BoardPageProps> = ({
   return (
     <>
       <Seo templateTitle={board.name} />
-      <DashboardLayout user={user} school={school}>
+      <DashboardLayout school={session.user.user.UserSchool}>
         <div className='mx-auto mt-5 flex h-full min-h-[86vh] max-w-[1280px] flex-row justify-center'>
           <div className='flex w-full max-w-[874px] flex-col rounded-[20px] border-2 border-[#E3E5E8] p-7'>
             <div className='text-schoolmate-400 border-schoolmate-400 mb-3 flex flex-row border-b-2 pb-3'>
@@ -278,7 +276,7 @@ const ArticlePage: NextPage<BoardPageProps> = ({
                               onSubmit={addComment}
                               key={index}
                               loading={addCommentsLoading}
-                              user={user}
+                              user={session.user.user}
                               reloadComments={reloadComments}
                             />
                           </>
@@ -306,7 +304,10 @@ const ArticlePage: NextPage<BoardPageProps> = ({
               </div>
             </div>
           </div>
-          <DashboardRightSection school={school} user={user} />
+          <DashboardRightSection
+            school={session.user.user.UserSchool}
+            user={session.user.user}
+          />
         </div>
       </DashboardLayout>
     </>
@@ -608,13 +609,24 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     req: { cookies },
     query: { boardId, articleId },
   } = ctx;
+  const session = await getSession(ctx);
+  const accessToken = session?.user.token.accessToken;
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: authRedirectUrlGenerator(ctx.req.url as string),
+        permanent: false,
+      },
+    };
+  }
 
   try {
     const { data: boardData } = await client.get<Response<Board>>(
       `/board/${boardId}`,
       {
         headers: {
-          Authorization: 'Bearer ' + cookies.Authorization,
+          Authorization: 'Bearer ' + accessToken,
         },
       }
     );
@@ -623,7 +635,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       `/board/${boardId}/article/${articleId}`,
       {
         headers: {
-          Authorization: 'Bearer ' + cookies.Authorization,
+          Authorization: 'Bearer ' + accessToken,
         },
       }
     );
@@ -634,33 +646,16 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         board: boardData.data,
         article: articleData.data,
         message: null,
+        session,
       },
     };
-  } catch (err) {
-    if (err instanceof AxiosError) {
-      if (err.response?.status === 401) {
-        return {
-          redirect: {
-            destination: `/auth/login?redirectTo=/board/${boardId}/v/${articleId}`,
-            permanent: false,
-          },
-        };
-      }
-
-      return {
-        props: {
-          error: true,
-          board: null,
-          message: err.response?.data.message,
-        },
-      };
-    }
-
+  } catch (err: any) {
     return {
       props: {
         error: true,
         board: null,
-        message: '알 수 없는 오류가 발생했습니다.',
+        message:
+          err?.response?.data?.message || '알 수 없는 오류가 발생했습니다.',
       },
     };
   }
