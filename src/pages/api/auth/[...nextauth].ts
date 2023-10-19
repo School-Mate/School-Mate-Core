@@ -58,12 +58,26 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (trigger === 'update') {
-        token.data = {
+        try {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          ...token.data,
-          ...session.user,
-        };
+          const userToken = token.data.token.accessToken;
+          const { data: user } = await client.get('/auth/me', {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          });
+
+          token.data = {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            ...token.data,
+            user: user.data,
+            registered: user.data.isVerified,
+          };
+        } catch (e) {
+          console.log(e);
+        }
       }
       if (user) {
         token.data = user;

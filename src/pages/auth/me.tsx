@@ -107,16 +107,7 @@ const MyPage: NextPage<MyPageProps> = ({ session }) => {
           imageId: null,
         });
 
-        await update({
-          ...session,
-          user: {
-            ...session.user,
-            user: {
-              ...session.user?.user,
-              profile: null,
-            },
-          },
-        });
+        await update();
 
         Toast('프로필 사진을 삭제했습니다', 'success');
       } catch (e) {
@@ -152,14 +143,7 @@ const MyPage: NextPage<MyPageProps> = ({ session }) => {
         }
       );
 
-      await update({
-        user: {
-          user: {
-            ...session.user?.user,
-            profile: data.data,
-          },
-        },
-      });
+      await update();
 
       Toast('프로필 사진을 변경했습니다', 'success');
     } catch (e) {
@@ -180,14 +164,7 @@ const MyPage: NextPage<MyPageProps> = ({ session }) => {
       setEditUserNicknameLoading(true);
       await client.patch(`/auth/me/nickname`, { nickname: editUserNickname });
 
-      await update({
-        user: {
-          user: {
-            ...session.user?.user,
-            name: editUserNickname,
-          },
-        },
-      });
+      await update();
     } catch (e) {
       return Toast('닉네임 변경에 실패했습니다', 'error');
     } finally {

@@ -3,11 +3,16 @@ import { GetServerSideProps, NextPage } from 'next';
 import Link from 'next/link';
 import Router from 'next/router';
 import { Session } from 'next-auth';
-import { getSession, signIn, signOut } from 'next-auth/react';
+import {
+  getCsrfToken,
+  getSession,
+  signIn,
+  signOut,
+  useSession,
+} from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
-import Toast from '@/lib/toast';
-import { reloadSession } from '@/lib/utils';
+import Toast, { updateToast } from '@/lib/toast';
 
 import Button from '@/components/buttons/Button';
 import Checkbox from '@/components/CheckBox';
@@ -18,21 +23,25 @@ import Seo from '@/components/Seo';
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { redirectTo } = ctx.query;
   const session = await getSession(ctx);
+  const csrfToken = await getCsrfToken(ctx);
 
   return {
     props: {
       redirectTo: redirectTo || '/',
       session,
+      csrfToken,
     },
   };
 };
 
 interface LoginProps {
   redirectTo: string;
+  csrfToken: string;
   session: Session;
 }
 
-const Login: NextPage<LoginProps> = ({ redirectTo, session }) => {
+const Login: NextPage<LoginProps> = ({ redirectTo, session, csrfToken }) => {
+  const { data: CSRsession, update: updateSession, status } = useSession();
   const [popup, setPopup] = useState<Window | null>();
   const [provider, setProvider] = useState<'kakao' | 'google'>();
   const [phone, setPhone] = useState<string>('');
@@ -59,23 +68,27 @@ const Login: NextPage<LoginProps> = ({ redirectTo, session }) => {
         popup.close();
         timer && clearInterval(timer);
         try {
+          const Id = Toast('로그인 처리중...', 'loading');
           const res = await signIn('credentials', {
             provider,
             code,
             redirect: false,
           });
-
           if (!res?.ok) {
-            return Toast('로그인중 오류가 발생했습니다', 'error');
+            updateToast(Id, '로그인중 오류가 발생했습니다', 'error');
           } else {
-            const newsession = await reloadSession();
-            if (newsession.user.registered) {
-              return Router.push(redirectTo);
+            const session = await updateSession();
+            if (session?.user.registered) {
+              updateToast(Id, '로그인 성공!', 'success');
+              Router.push(redirectTo ? redirectTo : '/');
             } else {
-              return Router.push('/auth/agreement');
+              updateToast(Id, '회원가입을 진행해주세요!', 'success');
+              Router.push('/auth/agreement');
             }
           }
         } catch (error) {
+          console.log(error);
+
           if (error instanceof AxiosError) {
             return Toast(error.response?.data?.message, 'error');
           }
@@ -123,7 +136,7 @@ const Login: NextPage<LoginProps> = ({ redirectTo, session }) => {
 
   const handleLogin = async () => {
     setLoginLoading(true);
-
+    const Id = Toast('로그인 처리중...', 'loading');
     try {
       const res = await signIn('credentials', {
         phone: phone.replace(/-/g, ''),
@@ -132,9 +145,14 @@ const Login: NextPage<LoginProps> = ({ redirectTo, session }) => {
         redirect: false,
       });
       if (!res?.ok) {
-        return Toast('올바르지 않은 비밀번호 또는 전화번호입니다', 'error');
+        return updateToast(
+          Id,
+          '올바르지 않은 비밀번호 또는 전화번호입니다',
+          'error'
+        );
       }
 
+      updateToast(Id, '로그인 성공!', 'success');
       if (redirectTo) {
         Router.push(redirectTo);
       } else {

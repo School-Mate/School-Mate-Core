@@ -34,7 +34,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
   return (
-    <SessionProvider>
+    <SessionProvider session={pageProps.session}>
       <SWRConfig
         value={{
           fetcher: (resource) =>
