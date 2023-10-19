@@ -1,6 +1,6 @@
-import { toast } from 'react-toastify';
+import { Id, toast } from 'react-toastify';
 
-type ToastProps = 'error' | 'success' | 'info' | 'warning';
+type ToastProps = 'error' | 'success' | 'info' | 'warning' | 'loading';
 
 export default function Toast(message: string, type: ToastProps = 'info') {
   return toast[type](message, {
@@ -11,5 +11,17 @@ export default function Toast(message: string, type: ToastProps = 'info') {
     pauseOnHover: true,
     draggable: true,
     closeButton: false,
+  });
+}
+
+export function updateToast(
+  id: Id,
+  message: string,
+  type: 'error' | 'success' | 'info' | 'warning'
+) {
+  return toast.update(id, {
+    render: message,
+    isLoading: false,
+    type: type,
   });
 }
