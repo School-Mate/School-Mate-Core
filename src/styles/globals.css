@@ -116,3 +116,13 @@
     background-size: 0 2px, 100% 2px;
   }
 }
+
+body,
+input,
+textarea,
+select,
+button,
+table,
+pre {
+  font-family: 'Nanum Gothic', sans-serif;
+}
