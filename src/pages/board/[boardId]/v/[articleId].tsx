@@ -471,14 +471,14 @@ const AddComment: React.FC<AddCommetProps> = ({
     <>
       <div
         className={clsxm(
-          'flex h-12 w-full flex-row items-center border-b',
+          'flex h-12 w-full flex-row items-center',
           type === 'recomment' ? 'border-b-0 border-r' : ''
         )}
       >
         <input
           type='text'
           placeholder='댓글을 입력하세요'
-          className='h-full w-full px-4 py-3 text-base text-gray-700 outline-none transition-all duration-150 ease-in-out'
+          className='h-full w-full rounded-b-[10px] px-4 py-3 text-base text-gray-700 outline-none transition-all duration-150 ease-in-out'
           value={content}
           onChange={(e) => {
             setContent(e.target.value);
