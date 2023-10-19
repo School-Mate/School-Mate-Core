@@ -245,7 +245,7 @@ const DashboardLeftSection: NextPage = () => {
               플래너
             </SelectBoardButton> */}
           </div>
-          <div className='mt-4 flex w-[810px] flex-row'>
+          <div className='mt-4 flex w-[820px] flex-row'>
             {DashboardSelectItem[selectedBoard]}
           </div>
           <div className='my-6 w-full border' />
